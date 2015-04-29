@@ -16,11 +16,27 @@ end
 =end
 
 class Token
-	def initializa(type,value,nline,ncolum)
+	def initialize(type,value,nline,ncolumn)
 		@type = type
 		@value = value
 		@nline = nline
-		@ncolum = ncolum
+		@ncolumn = ncolumn
+	end
+
+	def get_type
+		return @type
+	end
+
+	def get_value
+		return @value
+	end
+
+	def get_nline
+		return @nline
+	end
+
+	def get_ncolumn
+		return @ncolumn
 	end
 end
 
@@ -30,19 +46,33 @@ class Lexer
 		@invalids = Array.new
 	end
 
+	def print
+		@tokens.each do |token|
+			puts "token #{token.get_type} value (#{token.get_value}) at line: #{token.get_nline}, column: #{token.get_ncolumn}" 
+		end
+	end
 	def read(file)
 		nline = 0
+		comment = false
 		file.each_line do |line|
 			#words = line.split
 			nline +=1
 			ncolumn = 1
+
 			while line != ""
 				#puts "Entra aqui3"
 				case line
 					#puts "Entra aqui"
 				when /^\{\-/
-					#puts "Entra aqui3"
+					comment = true
 					word = line[/^\{\-/]
+					line = line.partition(word).last
+					puts "#{ncolumn} #{word}"
+					ncolumn += word.size()
+
+				when /^\-\}/
+					comment = false
+					word = line[/^\-\}/]
 					line = line.partition(word).last
 					puts "#{ncolumn} #{word}"
 					ncolumn += word.size()
@@ -51,21 +81,19 @@ class Lexer
 					#puts "Entra aqui2"
 					word = line[/^[a-zA-Z][a-zA-Z0-9_]*/]
 					line = line.partition(word).last
+					if !comment then
+						@tokens << Token.new("INDENTIFIER",word,nline,ncolumn)
+					end
 					puts "#{ncolumn} #{word}"
 					ncolumn += word.size()
 					
-				when /^\-\}/
-					#puts "Entra aqui1"
-					word = line[/^\-\}/]
-					line = line.partition(word).last
-					puts "#{ncolumn} #{word}"
-					ncolumn += word.size()
-
 				when /^<(\||\\|\/|\-|\_|\s)>/
 					#puts "Entra aqui1"
 					word = line[/^<(\||\\|\/|\-|\_|\s)>/]
-
 					line = line.partition(word).last
+					if !comment then
+						@tokens << Token.new("CANVAS",word[1],nline,ncolumn)
+					end
 					puts "#{ncolumn} #{word[1]}"
 					ncolumn += word.size()
 					
@@ -82,5 +110,6 @@ end
 name_file = ARGV[0]
 file = open(name_file,"r")
 
-lexer = Lexer.new
-lexer.read(file)
+token = Lexer.new
+token.read(file)
+token.print
