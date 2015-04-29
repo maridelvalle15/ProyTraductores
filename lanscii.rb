@@ -110,6 +110,11 @@ end
 name_file = ARGV[0]
 file = open(name_file,"r")
 
+<<<<<<< HEAD
 token = Lexer.new
 token.read(file)
 token.print
+=======
+lexer = Lexer.new
+lexer.read(file)
+>>>>>>> 386ed19fed2857023ddaf131166d9fb3fe8d2348
