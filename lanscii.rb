@@ -10,4 +10,4 @@
 # 29/04/1993
 a = 5
 b = 6
-puts " c#{a + b} " dldfldfldf
+puts " c#{a + b} "
