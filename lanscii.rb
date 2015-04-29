@@ -22,15 +22,3 @@ class Lexer
 		@invalids = Array.new
 	end
 
-	def read(file)
-		file.each_line do |line|
-			puts "#{line}"
-		end
-	end
-end
-
-name_file = ARGV[0]
-file = open(name_file,"r")
-
-lexer = Lexer.new
-lexer.read(file)
