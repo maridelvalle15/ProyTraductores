@@ -41,6 +41,36 @@ class Lexer
 					word = line[/^\-\}/]
 					line = line.partition(word).last
 					ncolumn += word.size()
+
+				when /^(true|false|\\\/|\/\\|\^)/
+					word = line[/^(true|false|\\\/|\/\\|\^)/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "true" then
+							@tokens << Token.new("TRUE",word,nline,ncolumn)
+						elsif word == "false" then
+							@tokens << Token.new("FALSE",word,nline,ncolumn)
+						elsif word == "\^" then
+							 @tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						elsif word == "\\\/" then
+							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						elsif word == "\/\\" then
+							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+
+				when /^(read|write)/
+					word = line[/^(read|write)/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "read"
+							@tokens << Token.new("READ",word,nline,ncolumn)
+						elsif word == "write"
+							@tokens << Token.new("WRITE",word,nline,ncolumn)
+					 	end
+					 end
+					 ncolumn += word.size()
 					 
 				when /^[a-zA-Z][a-zA-Z0-9_]*/
 					word = line[/^[a-zA-Z][a-zA-Z0-9_]*/]
@@ -61,7 +91,21 @@ class Lexer
 						end
 					end
 					ncolumn += word.size()
-					
+
+				when /^[!%@]/
+					word = line[/^[!%@]/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "!"
+							@tokens << Token.new("EXCLAMATION MARK",word,nline,ncolumn)
+						elsif word == "%"
+							@tokens << Token.new("PERCENT",word,nline,ncolumn)
+						elsif word == "@"
+							@tokens << Token.new("AT",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+
 				when /^\s/
 					line = line.partition(/^\s/).last
 					ncolumn += 1
