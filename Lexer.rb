@@ -9,6 +9,7 @@
 # 	30/04/2015
 
 require "./Token.rb"
+require "./InvalidWord.rb"
 
 class Lexer
 	def initialize
@@ -16,17 +17,28 @@ class Lexer
 		@invalids = Array.new
 	end
 
-	def print
+	def get_tokens
+		return @tokens
+	end
+
+	def get_invalids
+		return @invalids
+	end
+
+	def print_tokens
 		@tokens.each do |token|
 			puts "token #{token.get_type} value (#{token.get_value}) at line: #{token.get_nline}, column: #{token.get_ncolumn}" 
+		end
+	end
+
+	def print_invalids
+		@invalids.each do |invalids|
+			puts "Error: Unexpected character: \"#{invalids.get_value}\" at line: #{invalids.get_nline}, column: #{invalids.get_ncolumn}" 
 		end
 	end
 	def read(file)
 		nline = 0
 		comment = false
-		# El else del case no me sirve. Se me ocurre usar un booleano asi tipo el de comment
-		# Con ese booleano entramos en un if para ver si hay error, y hacer break de los case o algo asi
-		# A menos que logremos arreglar eso
 		file.each_line do |line|
 			nline +=1
 			ncolumn = 1
@@ -232,6 +244,11 @@ class Lexer
 				when /^\s/
 					line = line.partition(/^\s/).last
 					ncolumn += 1
+				else
+					word = line[/^\S+/]
+					line = line.partition(word).last
+					@invalids << InvalidWord.new(word,nline,ncolumn)
+
 				end
 			end
 		end	
