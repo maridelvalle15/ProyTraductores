@@ -2,12 +2,11 @@
 # Proyecto Traductores
 # 
 # Integrantes:
+# 	Andres Navarro      11-10688
+# 	Marisela Del Valle  11-10217
 #
-# Andres Navarro      11-10688
-# Marisela Del Valle  11-10217
-#
-# Fecha Ultima Modificacion
-# 29/04/1993
+# Fecha Ultima Modificacion: 
+# 	29/04/1993
 
 class Token
 	def initialize(type,value,nline,ncolumn)
