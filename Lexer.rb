@@ -9,6 +9,7 @@
 # 	29/04/1993
 
 require "./Token.rb"
+require "./InvalidWord.rb"
 
 class Lexer
 	def initialize
@@ -232,6 +233,10 @@ class Lexer
 				when /^\s/
 					line = line.partition(/^\s/).last
 					ncolumn += 1
+				else
+					word = line[/^(.)*/]
+					line = line.partition(word).last
+
 				end
 			end
 		end	
