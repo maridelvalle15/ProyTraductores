@@ -15,4 +15,8 @@ file = open(name_file,"r")
 puts "./lanscii #{name_file}"
 token = Lexer.new
 token.read(file)
-token.print
+if token.get_invalids.size > 0 
+	token.print_invalids
+else 
+	token.print_tokens
+end
