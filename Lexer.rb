@@ -11,7 +11,10 @@
 require "./Token.rb"
 require "./InvalidWord.rb"
 
+
+
 class Lexer
+
 	def initialize
 		@tokens = Array.new
 		@invalids = Array.new
@@ -27,15 +30,18 @@ class Lexer
 
 	def print_tokens
 		@tokens.each do |token|
-			puts "token #{token.get_type} value (#{token.get_value}) at line: #{token.get_nline}, column: #{token.get_ncolumn}" 
+			print "token #{token.get_type} value (#{token.get_value}) "
+			puts "at line: #{token.get_nline}, column: #{token.get_ncolumn}" 
 		end
 	end
 
 	def print_invalids
 		@invalids.each do |invalids|
-			puts "Error: Unexpected character: \"#{invalids.get_value}\" at line: #{invalids.get_nline}, column: #{invalids.get_ncolumn}" 
+			print "Error: Unexpected character: \"#{invalids.get_value}\" "
+			puts "at line: #{invalids.get_nline}, column: #{invalids.get_ncolumn}"  
 		end
 	end
+	
 	def read(file)
 		nline = 0
 		comment = false
@@ -45,41 +51,26 @@ class Lexer
 
 			while line != ""				
 				case line
-				when /^\{\-/
-					comment = true
-					word = line[/^\{\-/]
-					line = line.partition(word).last
-					ncolumn += word.size()
 
-				when /^\-\}/
-					comment = false
-					word = line[/^\-\}/]
-					line = line.partition(word).last
-					ncolumn += word.size()
-
-				when /^(true|false|\\\/|\/\\|\^)/
-					word = line[/^(true|false|\\\/|\/\\|\^)/]
-					line = line.partition(word).last
-					if !comment then
-						if word == "true" then
-							@tokens << Token.new("TRUE",word,nline,ncolumn)
-						elsif word == "false" then
-							@tokens << Token.new("FALSE",word,nline,ncolumn)
-						elsif word == "\^" then
-							 @tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
-						elsif word == "\\\/" then
-							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
-						elsif word == "\/\\" then
-							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
-						end
+				when /^(\{\-|\-\})/
+					word = line[/^(\{\-|\-\})/]
+					if word == "\{\-"
+						comment = true
+					elsif word == "\-\}"
+						comment = false 
 					end
+					line = line.partition(word).last
 					ncolumn += word.size()
 
-				when /^(read|write)/
-					word = line[/^(read|write)/]
+				when /^(true|false|read|write)/
+					word = line[/^(true|false|read|write)/]
 					line = line.partition(word).last
 					if !comment then
-						if word == "read"
+						if word == "true" 
+							@tokens << Token.new("TRUE",word,nline,ncolumn)
+						elsif word == "false" 
+							@tokens << Token.new("FALSE",word,nline,ncolumn)
+						elsif word == "read"
 							@tokens << Token.new("READ",word,nline,ncolumn)
 						elsif word == "write"
 							@tokens << Token.new("WRITE",word,nline,ncolumn)
@@ -102,6 +93,20 @@ class Lexer
 						@tokens << Token.new("NUMBER",word,nline,ncolumn)
 					end
 					ncolumn += word.size()
+
+				when /^(\\\/|\/\\|\^)/
+					word = line[/^(\\\/|\/\\|\^)/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "\^" 
+							 @tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						elsif word == "\\\/" 
+							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						elsif word == "\/\\" 
+							@tokens << Token.new("BOOLEAN OPERATION",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
 					
 				when /^(<(\||\\|\/|\-|\_|\s)>|#)/
 					word = line[/^(<(\||\\|\/|\-|\_|\s)>|#)/]
@@ -115,62 +120,26 @@ class Lexer
 					end
 					ncolumn += word.size()
 
-				when /^>=/
-					word = line[/^>=/]
+				when /^(>=|<=|!=|>|<|=)/
+					word = line[/^(>=|<=|!=|>|<|=)/]
 					line = line.partition(word).last
 					if !comment then
 						if word == ">="
 							@tokens << Token.new("MORE EQUAL",word,nline,ncolumn)
-						end
-					end
-					ncolumn += word.size()
-				when /^<=/
-					word = line[/^<=/]
-					line = line.partition(word).last
-					if !comment then
-						if word == "<="
+						elsif word == "<="
 							@tokens << Token.new("LESS EQUAL",word,nline,ncolumn)
-						end
-					end
-					ncolumn += word.size()
-				when /^!=/
-					word = line[/^!=/]
-					line = line.partition(word).last
-					if !comment then
-						if word == "!="
+						elsif word == "!="
 							@tokens << Token.new("INEQUAL",word,nline,ncolumn)
-						end
-					end
-					ncolumn += word.size()
-				
-				when /^>/
-					word = line[/^>/]
-					line = line.partition(word).last
-					if !comment then
-						if word == ">"
+						elsif word == ">"
 							@tokens << Token.new("MORE",word,nline,ncolumn)
-						end
-					end
-					ncolumn += word.size()
-				when /^</
-					word = line[/^</]
-					line = line.partition(word).last
-					if !comment then
-						if word == "<"
+						elsif word == "<"
 							@tokens << Token.new("LESS",word,nline,ncolumn)
-						end
-					end
-					ncolumn += word.size()
-				when /^=/
-					word = line[/^=/]
-					line = line.partition(word).last
-					if !comment then
-						if word == "="
+						elsif word == "="
 							@tokens << Token.new("EQUAL",word,nline,ncolumn)
 						end
 					end
 					ncolumn += word.size()
-				
+
 				when /^[!%@]/
 					word = line[/^[!%@]/]
 					line = line.partition(word).last
@@ -197,6 +166,7 @@ class Lexer
 							@tokens << Token.new("TIMES",word,nline,ncolumn)
 						elsif word == "\/"
 							@tokens << Token.new("OBELUS",word,nline,ncolumn)
+						
 						end
 					end
 					ncolumn += word.size()
@@ -217,8 +187,8 @@ class Lexer
 					end
 					ncolumn += word.size()
 
-				when /^[\{\}\[\]\(\)\?;]/
-					word = line[/^[\{\}\[\]\(\)\?;]/]
+				when /^(\{|\}|\[|\]|\(|\)|\?|;|\.\.)/
+					word = line[/^(\{|\}|\[|\]|\(|\)|\?|;|\.\.)/]
 					line = line.partition(word).last
 					if !comment then
 						if word == "{"
@@ -237,6 +207,8 @@ class Lexer
 							@tokens << Token.new("INTERROGATION MARK",word,nline,ncolumn)
 						elsif word == ";"
 							@tokens << Token.new("SEMI COLON",word,nline,ncolumn)
+						elsif word == "\.\."
+							@tokens << Token.new("DOUBLE DOT",word,nline,ncolumn)
 						end
 					end
 					ncolumn += word.size()
@@ -244,11 +216,22 @@ class Lexer
 				when /^\s/
 					line = line.partition(/^\s/).last
 					ncolumn += 1
+
+				when /^[^\s\w-]+/
+					word = line[/^[^\s\w-]+/]
+					line = line.partition(word).last
+					if !comment then
+						@invalids << InvalidWord.new(word,nline,ncolumn)
+					end
+					ncolumn += word.size()
+
 				else
 					word = line[/^\S+/]
 					line = line.partition(word).last
-					@invalids << InvalidWord.new(word,nline,ncolumn)
-
+					if !comment then
+						@invalids << InvalidWord.new(word,nline,ncolumn)
+					end
+					ncolumn += word.size()
 				end
 			end
 		end	
