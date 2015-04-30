@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	29/04/1993
+# 	30/04/2015
 
 require "./Token.rb"
 require "./InvalidWord.rb"
@@ -95,8 +95,8 @@ class Lexer
 					end
 					ncolumn += word.size()
 
-				when /^[0-9]/
-					word = line[/^[0-9]/]
+				when /^[0-9][0-9]*/
+					word = line[/^[0-9][0-9]*/]
 					line = line.partition(word).last
 					if !comment then
 						@tokens << Token.new("NUMBER",word,nline,ncolumn)

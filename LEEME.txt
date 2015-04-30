@@ -1,0 +1,26 @@
+#
+# Proyecto Traductores
+# 
+# Integrantes:
+# 	Andres Navarro      11-10688
+# 	Marisela Del Valle  11-10217
+#
+# Fecha Ultima Modificacion: 
+# 	30/04/2015
+
+##LEEME##
+
+Implementacion :
+	Lenguaje de programacion : Ruby 1.9
+	Archivos :  lanscii.rb (main)
+				Lexer.rb
+				Token.rb
+				InvalidWord.rb
+
+Estado actual :
+	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, los imprime por pantalla indicando cual simbolo es y el numero y fila en el que se encuentra en el archivo.
+
+Problemas presentes :
+
+Comentarios adicionales :
+
