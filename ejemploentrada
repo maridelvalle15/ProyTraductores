@@ -1,7 +1,9 @@
 {- example program -}
 
-{ @cake lie !GLaDOS |
+{ @               cake lie ! GLaDOS secso %Holis |
     read lie;
+    GLaDOS= 2374;
+{- webo-}
     cake = <|>;
     (cake = lie ? GLaDOS = true : glaDos = false);
     write -1
