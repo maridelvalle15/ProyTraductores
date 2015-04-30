@@ -9,7 +9,9 @@
 # 	29/04/1993
 
 # Se crea en caso de encontrar un caracter no aceptado por el lenguaje Lanscii
+
 class InvalidWord
+	
 	# Inicializa los atributos de la clase
 	def initialize(value,nline,ncolumn)
 		@value = value 		# Valor del caracter
