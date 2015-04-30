@@ -24,11 +24,14 @@ class Lexer
 	def read(file)
 		nline = 0
 		comment = false
+		# El else del case no me sirve. Se me ocurre usar un booleano asi tipo el de comment
+		# Con ese booleano entramos en un if para ver si hay error, y hacer break de los case o algo asi
+		# A menos que logremos arreglar eso
 		file.each_line do |line|
 			nline +=1
 			ncolumn = 1
 
-			while line != ""
+			while line != ""				
 				case line
 				when /^\{\-/
 					comment = true
@@ -79,6 +82,14 @@ class Lexer
 						@tokens << Token.new("INDENTIFIER",word,nline,ncolumn)
 					end
 					ncolumn += word.size()
+
+				when /^[0-9]/
+					word = line[/^[0-9]/]
+					line = line.partition(word).last
+					if !comment then
+						@tokens << Token.new("NUMBER",word,nline,ncolumn)
+					end
+					ncolumn += word.size()
 					
 				when /^(<(\||\\|\/|\-|\_|\s)>|#)/
 					word = line[/^(<(\||\\|\/|\-|\_|\s)>|#)/]
@@ -92,6 +103,62 @@ class Lexer
 					end
 					ncolumn += word.size()
 
+				when /^>=/
+					word = line[/^>=/]
+					line = line.partition(word).last
+					if !comment then
+						if word == ">="
+							@tokens << Token.new("MORE EQUAL",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				when /^<=/
+					word = line[/^<=/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "<="
+							@tokens << Token.new("LESS EQUAL",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				when /^!=/
+					word = line[/^!=/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "!="
+							@tokens << Token.new("INEQUAL",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				
+				when /^>/
+					word = line[/^>/]
+					line = line.partition(word).last
+					if !comment then
+						if word == ">"
+							@tokens << Token.new("MORE",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				when /^</
+					word = line[/^</]
+					line = line.partition(word).last
+					if !comment then
+						if word == "<"
+							@tokens << Token.new("LESS",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				when /^=/
+					word = line[/^=/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "="
+							@tokens << Token.new("EQUAL",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+				
 				when /^[!%@]/
 					word = line[/^[!%@]/]
 					line = line.partition(word).last
@@ -106,11 +173,67 @@ class Lexer
 					end
 					ncolumn += word.size()
 
+				when /^(\+|-|\*|\/)/
+					word = line[/^(\+|-|\*|\/)/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "\+"
+							@tokens << Token.new("PLUS",word,nline,ncolumn)
+						elsif word == "-"
+							@tokens << Token.new("MINUS",word,nline,ncolumn)
+						elsif word == "\*"
+							@tokens << Token.new("TIMES",word,nline,ncolumn)
+						elsif word == "\/"
+							@tokens << Token.new("OBELUS",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+
+				when /^[:|$']/
+					word = line[/^[:|$']/]
+					line = line.partition(word).last
+					if !comment then
+						if word == ":"
+							@tokens << Token.new("COLON",word,nline,ncolumn)
+						elsif word == "|"
+							@tokens << Token.new("PIPE",word,nline,ncolumn)
+						elsif word == "$"
+							@tokens << Token.new("DOLLAR",word,nline,ncolumn)
+						elsif word == "'"
+							@tokens << Token.new("APOSTROPHE",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+
+				when /^[\{\}\[\]\(\)\?;]/
+					word = line[/^[\{\}\[\]\(\)\?;]/]
+					line = line.partition(word).last
+					if !comment then
+						if word == "{"
+							@tokens << Token.new("LCURLY",word,nline,ncolumn)
+						elsif word == "}"
+							@tokens << Token.new("RCURLY",word,nline,ncolumn)
+						elsif word == "["
+							@tokens << Token.new("LBRACKET",word,nline,ncolumn)
+						elsif word == "]"
+							@tokens << Token.new("RBRACKET",word,nline,ncolumn)
+						elsif word == "("
+							@tokens << Token.new("LPARENTHESIS",word,nline,ncolumn)
+						elsif word == ")"
+							@tokens << Token.new("RPARENTHESIS",word,nline,ncolumn)
+						elsif word == "?"
+							@tokens << Token.new("INTERROGATION MARK",word,nline,ncolumn)
+						elsif word == ";"
+							@tokens << Token.new("SEMI COLON",word,nline,ncolumn)
+						end
+					end
+					ncolumn += word.size()
+
 				when /^\s/
 					line = line.partition(/^\s/).last
 					ncolumn += 1
 				end
 			end
-		end
+		end	
 	end
 end

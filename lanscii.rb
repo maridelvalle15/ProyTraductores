@@ -12,7 +12,7 @@ require "./Lexer.rb"
 
 name_file = ARGV[0]
 file = open(name_file,"r")
-
+puts "./lanscii #{name_file}"
 token = Lexer.new
 token.read(file)
 token.print
