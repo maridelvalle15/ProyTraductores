@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	30/04/2015
+# 	1/04/2015
 
 # Analisis Teorico Practica
 
@@ -21,7 +21,7 @@ funcionan
 
 R1) E = {-.*-} 
 
-	La expresion regular fue construida de la forma mostrada ya que un comentario valido tiene ese misma estructura. El punto hace referencia a cualquier simbolo o espacio cero o mas veces que se encuentre entre {- -}. 
+	La expresion regular fue construida de la forma mostrada ya que un comentario valido tiene ese misma estructura. El punto hace referencia a cualquier simbolo o espacio (cero o mas veces) que se encuentre entre {- -}. 
 
 	El automata mostrado en la imagen R1.jpg representa al Lenguaje representado por E
 
@@ -44,7 +44,7 @@ R3)
 M2 que reconozca la unión de los lenguajes L(M0) y L(M1).
 
 R4) 
-	El automatas M2  mostrado en la imagen R4.jpg reconoce la union de L(M0) y L(M1)
+	El automatas M2  mostrado en la imagen R4_R5.jpg reconoce la union de L(M0) y L(M1)
 
 5. Un analizador lexicográfico debe ser capaz de discernir a cuál lenguaje
 pertenece una palabra (o, en este caso, token) que acaba de reconocer. De
@@ -53,22 +53,40 @@ diferenciar si la palabra reconocida pertenece al lenguaje L(M0) o L(M1).
 Inidique lo anterior en cada estado final de M2.
 
 R5)
+	El automatas M2  mostrado en la imagen R4_R5.jpg reconoce la union de L(M0) y L(M1), por lo tanto si E0 = write el estado final sera el numero 6 pero si entra E1 = ^[a-zA-Z][a-zA-Z0-9_]* entonces el estado final sera el numero 8
 
+	
 6. La asignación anterior de estados finales a lenguajes debe de crear conflictos de reconocimiento, indique cuáles son estos problemas y porqué ocurren.
 
 R6)	
+	El reconocimiento de conflicto se va generar con la palabra write la cual es reconocida por E0 y E1 por lo tanto sus estado finales seran 6 y 8
 
 7. De acuerdo con la pregunta anterior, indique cuáles son los conflictos del autómata propuesto M2, especificando las palabras que los generan, los
 lenguajes y estados finales involucrados
 
 R7)
 
+	Se convirtio el M2 (AFN-λ) construido en un AFD mostrado en la imagen R7.jpg
+
+	Si AFD acepta {2,8} o {8} entonces esta aceptando una palabra que corresponde a L1 , i.e. palabra w, pues en el λ−AFN original el estado 8 es de aceptaci´on para dicho lenguaje.
+
+	Si AFD acepta {3,8} o {8} entonces esta aceptando una palabra que corresponde a L1 ,  i.e. palabra wr,pues en el λ−AFN original el estado 8 es de aceptaci´on para dicho lenguaje
+
+	Si AFD acepta {4,8} o {8} entonces esta aceptando una palabra que corresponde a L1 , i.e. palabra wri pues en el λ−AFN original el estado 8 es de aceptaci´on para dicho lenguaje
+
+	Si AFD acepta {5,8} o {8} entonces esta aceptando una palabra que corresponde a L1 , i.e. palabras writ pues en el λ−AFN original el estado 8 es de aceptacion para dicho lenguaje
+
+	Si AFD acepta {6,8} o {8} entonces esta aceptando una palabra que corresponde a L0 ,i.e. palabra write pues en el λ−AFN original el estado 8 es de aceptacion para L1 y el estado 6 es de aceptacion para L0. Por presedencia debemos preferir L0.
+
 8. Diga cuál solución puede ser utilizada para resolver los conflictos de reconocimiento desarrollados en las preguntas 6 y 7. Explique brevemente
 su solución y por qué funciona.
 
 R8)
+	Nuestra solucion es generar un nuevo automata que reconozca la palabra write antes que cualquier secuencia de caracteres. Denotado por la imagen R8.jpg 
+
 
 9. ¿Cómo relaciona Ud. el desarrollo de las preguntas 2-8 con la imple-
 mentación de su analizador lexicográfico para el lenguaje Lanscii?
 
-R9) 
+R9)
+	Nuestra implementacion se basa en casos, el cual nuestro analizador lexicografico verifica la secuencia de las palabras reservadas (write,read,true y false) antes que cualquier secuencia de caracteres. 
