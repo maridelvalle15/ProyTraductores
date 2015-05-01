@@ -20,7 +20,7 @@ Implementacion :
 Estado actual :
 	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, los imprime por pantalla indicando cual simbolo es y el numero y fila en el que se encuentra en el archivo.
 
-Problemas presentes :
+Problemas presentes : null
 
-Comentarios adicionales :
+Comentarios adicionales : null
 
