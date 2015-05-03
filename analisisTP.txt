@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	1/04/2015
+# 	3/05/2015
 
 # Analisis Teorico Practica
 
@@ -21,7 +21,7 @@ funcionan
 
 R1) E = {-.*-} 
 
-	La expresion regular fue construida de la forma mostrada ya que un comentario valido tiene ese misma estructura. El punto hace referencia a cualquier simbolo o espacio (cero o mas veces) que se encuentre entre {- -}. 
+	La expresion regular fue construida de la forma mostrada ya que un comentario valido tiene ese misma estructura. El punto hace referencia a cualquier simbolo o espacio (cero o mas veces) que se encuentre entre {- -}. En el punto asterisco esta incluido el "-" y el "}" y si en la cadena estan seguidos, signfica que la expresion regular acepto el lenguaje.
 
 	El automata mostrado en la imagen R1.jpg representa al Lenguaje representado por E
 

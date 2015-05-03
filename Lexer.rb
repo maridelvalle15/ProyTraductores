@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	01/05/2015
+# 	03/05/2015
 
 require "./Token.rb"
 require "./InvalidWord.rb"
@@ -112,7 +112,12 @@ class Lexer
 					# Verifica que el numero no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-						@tokens << Token.new("NUMBER",word,nline,ncolumn)
+						if word.to_i <= 2147483647 then
+							@tokens << Token.new("NUMBER",word.to_i,nline,ncolumn)
+						else 
+							@invalids << InvalidWord.new(word.to_i,nline,ncolumn)
+						end
+
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
@@ -271,20 +276,8 @@ class Lexer
 					ncolumn += 1
 
 				# Caso simbolo no aceptado por el lenguaje
-				when /^[^\s\w-]+/
-					word = line[/^[^\s\w-]+/]
-					line = line.partition(word).last
-					# Verifica que no este dentro de un comentario
-					if !comment then
-						# Si se cumple la condicion, se crea un nuevo token
-						@invalids << InvalidWord.new(word,nline,ncolumn)
-					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
-					ncolumn += word.size()
-
-				# Caso simbolo no aceptado por el lenguaje
 				else
-					word = line[/^\S+/]
+					word = line[/^[^\s\w]/]
 					line = line.partition(word).last
 					# Verifica que no este dentro de un comentario
 					if !comment then

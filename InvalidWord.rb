@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	29/04/1993
+# 	3/05/1993
 
 # Se crea en caso de encontrar un caracter no aceptado por el lenguaje Lanscii
 

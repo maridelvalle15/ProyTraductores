@@ -1,14 +1,11 @@
 {- example program -}
-
-{ @ cake lie ! GLaDOS secso %Holis |
+{ @ cake lie!GLaDOS secso %Holis|
     read lie;
     GLaDOS= 2374;
 {-webo°°&-}
     cake = <|>;
-    ( cake .. hola | cake = activo)
-
-    (cake = lie ? GLaDOS = true : glaDos = false);
-    write -1
+    (cake..hola|cake=activo)
+    (cake=lie?GLaDOS=true:glaDos=false);
+    write-4444444
 }
-
-		mama
+	mama
