@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	30/04/2015
+# 	3/05/2015
 
 ##LEEME##
 
@@ -20,7 +20,12 @@ Implementacion :
 Estado actual :
 	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, los imprime por pantalla indicando cual simbolo es y el numero y fila en el que se encuentra en el archivo.
 
-Problemas presentes : null
+Problemas presentes : 
+	Por lo momentos el analizador lexicografico no presenta ningun problema de lectura.
 
-Comentarios adicionales : null
+Comentarios adicionales : 
+	
+	1) los caracteres inesperados, en el caso de no estar contenidos en un comentarios, son tomados uno por uno para evitar posibles conbinaciones de caracteres validos con inesperados. Ejemplo "&=&;" , nuestro analizador lexicografico analiza primero "&", despues el "=", luego el "&" y por ultimo ";".
+
+	2) Todos lo numeros enteros son convertidos en token por nuestro analizador lexigrafico. La restriccion numero menor de 32 bits con signo sera tomado en cuenta al momento de crear el parser.
 
