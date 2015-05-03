@@ -27,5 +27,5 @@ Comentarios adicionales :
 	
 	1) los caracteres inesperados, en el caso de no estar contenidos en un comentarios, son tomados uno por uno para evitar posibles conbinaciones de caracteres validos con inesperados. Ejemplo "&=&;" , nuestro analizador lexicografico analiza primero "&", despues el "=", luego el "&" y por ultimo ";".
 
-	2) Los numero enteros son convertinos de string a enteros al momento de convetirlos en token y llevarlos al arreglo de tokens. Si son numeros que no correspondan a los 32 bits con signo, son llevados al arreglo de invalids y tomados como caracter inesperado.
+	2) Todos lo numeros enteros son convertidos en token por nuestro analizador lexigrafico. La restriccion numero menor de 32 bits con signo sera tomado en cuenta al momento de crear el parser.
 

@@ -112,12 +112,7 @@ class Lexer
 					# Verifica que el numero no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-						if word.to_i <= 2147483647 then
 							@tokens << Token.new("NUMBER",word.to_i,nline,ncolumn)
-						else 
-							@invalids << InvalidWord.new(word.to_i,nline,ncolumn)
-						end
-
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
