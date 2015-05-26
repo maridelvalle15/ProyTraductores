@@ -173,9 +173,9 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == ">="
-							@tokens << Token.new("MORE_EQUAL",word,nline,ncolumn)
+							@tokens << Token.new("MORE EQUAL",word,nline,ncolumn)
 						elsif word == "<="
-							@tokens << Token.new("LESS_EQUAL",word,nline,ncolumn)
+							@tokens << Token.new("LESS EQUAL",word,nline,ncolumn)
 						elsif word == "\/="
 							@tokens << Token.new("INEQUAL",word,nline,ncolumn)
 						elsif word == ">"
@@ -228,7 +228,7 @@ class Lexer
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
-				# Caso :,|,$,'
+				# Caso :,|,$,',&,~,;
 				when /^[:|$'&~]/
 					word = line[/^[:|$'&~]/]
 					line = line.partition(word).last

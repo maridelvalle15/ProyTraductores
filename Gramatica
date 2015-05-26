@@ -1,4 +1,13 @@
-Gramatica
+Leyenda:
+
+ESTRUC: Estructura
+Dec : Declaracion
+Tipo: 
+Instr : Intruccion
+
+
+Gramatica:
+
 ESTRUC -> { DEC | INSTR }
 ESTRUC -> { INSTR}
 DEC -> DEC TIPO LISTIDENT
