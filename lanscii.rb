@@ -12,12 +12,6 @@
 
 require "./Lexer.rb"
 
-def time_diff_milli(start, finish)
-   (finish - start) * 1000.0
-end
-
-t1 = Time.now
-
 name_file = ARGV[0]				# Nombre del archivo recibido por entrada
 file = open(name_file,"r")		
 puts "./lanscii #{name_file}"	# Impresion de la primera linea de la salida del proyecto
@@ -25,12 +19,11 @@ token = Lexer.new				# Creamos una nueva clase Lexer. Se inicializan los arreglo
 token.read(file)				# Se inicia la lectura del archivo de entrada
 
 # Se imprimen los caracteres invalidos si fueron encontrados en el archivo
-if token.get_invalids.size > 0 
+if token.get_comment.size > 0
+	token.print_comment
+elsif token.get_invalids.size > 0 
 	token.print_invalids
 # Se imprimen los tokens si no se encontraron errores en el archivo
 else 
 	token.print_tokens
 end
-t2 = Time.now
-
-puts "time #{time_diff_milli(t1,t2)}"

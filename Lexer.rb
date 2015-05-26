@@ -19,6 +19,7 @@ class Lexer
 	def initialize
 		@tokens = Array.new
 		@invalids = Array.new
+		@comment = Array.new
 	end
 
 	# Devuelve el arreglo de tokens
@@ -29,6 +30,10 @@ class Lexer
 	# Devuelve el arreglo de caracteres invalidos
 	def get_invalids
 		return @invalids
+	end
+
+	def get_comment
+		return @comment
 	end
 
 	# Imprime los atributos de cada elemento del arreglo de tokens
@@ -44,6 +49,13 @@ class Lexer
 		@invalids.each do |invalids|
 			print "Error: Unexpected character: \"#{invalids.get_value}\" "
 			puts "at line: #{invalids.get_nline}, column: #{invalids.get_ncolumn}"  
+		end
+	end
+
+	def print_comment
+		@comment.each do |comment|
+			print "Error: Comment section opened but not closed"
+			puts "at line: #{comment.get_nline}, column: #{comment.get_ncolumn}"  
 		end
 	end
 	
@@ -65,8 +77,10 @@ class Lexer
 					word = line[/^(\{\-|\-\})/]
 					if word == "\{\-"
 						comment = true 		# se encontro el inicio de comentario
+						@comment << Token.new(nil,nil,nline,ncolumn)
 					elsif word == "\-\}"
 						comment = false 	# se cerro el comentario
+						@comment.pop
 					end
 					# Para este caso no se crea token, simplemente se corta la linea para continuar con la evaluacion de los siguientes caracteres/pabras
 					line = line.partition(word).last
@@ -100,7 +114,7 @@ class Lexer
 					# Verifica que el identificador no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-						@tokens << Token.new("IDENTIFIER",word,nline,ncolumn)
+						@tokens << Token.new("INDENTIFIER",word,nline,ncolumn)
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
@@ -143,7 +157,7 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "#" then 
-							@tokens << Token.new("EMPTY_CANVAS",word,nline,ncolumn)
+							@tokens << Token.new("EMPTY CANVAS",word,nline,ncolumn)
 						else
 							@tokens << Token.new("CANVAS",word[1],nline,ncolumn)
 						end
@@ -151,7 +165,7 @@ class Lexer
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
-				# Caso <=,>=,!=,>,<,=
+				# Caso <=,>=,/=,>,<,=
 				when /^(>=|<=|\/=|>|<|=)/
 					word = line[/^(>=|<=|\/=|>|<|=)/]
 					line = line.partition(word).last
@@ -183,7 +197,7 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "!"
-							@tokens << Token.new("EXCLAMATION_MARK",word,nline,ncolumn)
+							@tokens << Token.new("EXCLAMATION MARK",word,nline,ncolumn)
 						elsif word == "%"
 							@tokens << Token.new("PERCENT",word,nline,ncolumn)
 						elsif word == "@"
@@ -258,11 +272,11 @@ class Lexer
 						elsif word == ")"
 							@tokens << Token.new("RPARENTHESIS",word,nline,ncolumn)
 						elsif word == "?"
-							@tokens << Token.new("INTERROGATION_MARK",word,nline,ncolumn)
+							@tokens << Token.new("INTERROGATION MARK",word,nline,ncolumn)
 						elsif word == ";"
-							@tokens << Token.new("SEMI_COLON",word,nline,ncolumn)
+							@tokens << Token.new("SEMI COLON",word,nline,ncolumn)
 						elsif word == "\.\."
-							@tokens << Token.new("DOUBLE_DOT",word,nline,ncolumn)
+							@tokens << Token.new("DOUBLE DOT",word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
