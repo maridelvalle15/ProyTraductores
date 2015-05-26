@@ -1,0 +1,52 @@
+Gramatica
+ESTRUC -> { DEC | INSTR }
+ESTRUC -> { INSTR}
+DEC -> DEC TIPO LISTIDENT
+DEC -> lambda (?)
+TIPO -> tipo
+LISTIDENT -> identificador
+INSTR -> ASSIGN
+INSTR -> SEC
+INSTR -> ENTR
+INSTR -> SAL
+INSTR -> CONDIC
+INSTR -> ITERIND
+INSTR -> ITERDET
+INSTR -> INCOR
+ASSIGN -> identificador = EXPR
+SEC -> SEC INSTR
+ENTR -> read identificador
+SAL -> write EXPR
+CONDIC -> ( EXPR ? INSTR )
+CONDIC -> ( EXPR ? INSTR : INSTR) 
+ITERIND -> [ EXPR | INSTR]
+ITERDET -> [ EXPR .. EXPR | INSTR]
+ITERDET -> [ identificador : EXPR .. EXPR | INSTR]
+INCOR -> { LISTADEC | INSTR}
+INCOR -> { INSTR }
+LISTADEC -> LISTADEC DEC
+EXPR -> EXPRARIT
+EXPR -> EXPRBOOL
+EXPR -> EXPRRELAC
+EXPR -> EXPRLIENZ
+EXPRARIT -> numero + numero
+EXPRARIT -> numero - numero
+EXPRARIT -> numero * numero
+EXPRARIT -> numero / numero
+EXPRARIT -> numero % numero
+EXPRARIT -> - numero
+EXPRBOOL -> true /\ false
+EXPRBOOL -> false /\ true
+EXPRBOOL -> true \/ false
+EXPRBOOL -> false \/ true
+EXPRBOOL -> ^true
+EXPRBOOL -> ^false
+EXPRRELAC -> EXPRARIT operador EXPRARIT
+EXPRRELAC -> EXPRBOOL operador EXPRBOOL
+EXPRRELAC -> EXPRLIENZ = EXPRLIENZ
+EXPRRELAC -> EXPRLIENZ /= EXPRLIENZ
+EXPRLIENZ -> CANVAS & CANVAS
+EXPRLIENZ -> CANVAS ~ CANVAS
+EXPRLIENZ -> $ CANVAS
+EXPRLIENZ -> CANVAS '
+COMMENT -> {- blabla -} -> falta agregar al parser

@@ -1,0 +1,119 @@
+class Parser
+
+	token 	TRUE FALSE READ WRITE IDENTIFIER NUMBER NOT OR AND EMPTY_CANVAS CANVAS MORE_EQUAL LESS_EQUAL INEQUAL MORE LESS EQUAL EXCLAMATION_MARK PERCENT AT PLUS MINUS TIMES OBELUS COLON PIPE DOLLAR APORTROPHE LCURLY RCURLY LBRACKET RBRACKET LPARENTHESIS RPARENTHESIS INTERROGATION_MARK SEMI_COLON DOUBLE_DOT
+
+	rule
+	
+	ESTRUC
+	: LCURLY DEC PIPE INSTR RCURLY { result = }
+	| LCURLY INSTR RCURLY
+	;
+
+	DEC
+	: TIPO LISTIDENT DEC { result = }
+	| lambda (?)
+	;
+
+	TIPO
+	: tipo (?)
+	;
+
+	LISTIDENT
+	: IDENTIFIER { result = }
+	;
+
+	INSTR
+	: ASSIGN { rrsult = }
+	| SEC { result = }
+	| ENTR { result = }
+	| SAL { result = }
+	| CONDIC { result = }
+	| ITERIND { result = }
+	| ITERDET { result = }
+	| INCOR { result = }
+	;
+
+	ASSIGN
+	: IDENTIFIER EQUAL EXPR { result = }
+	;
+
+	SEC
+	: INSTR SEC { result = }
+	;
+
+	ENTR
+	: READ IDENTIFIER { result = }
+	;
+
+	SAL
+	: WRITE EXPR { result = }
+	;
+
+	CONDIC
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RCURLY { result = }
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RCURLY { result = }
+	;
+
+	ITERIND
+	: LBRACKET EXPR PIPE INSTR RBRACKET { result = }
+	;
+
+	ITERDET
+	: LBRACKET EXPR DOUBLE_COLON EXPR PIPE INSTR RBRACKET { result = }
+	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_COLON EXPR PIPE INSTR RBRACKET { result = }
+	;
+
+	INCOR
+	: LCURLY LISTADEC PIPE INSTR RCURLY { result = }
+	| LCURLY INSTR RCURLY { result = }
+	;
+
+	LISTADEC
+	: DEC LISTADEC { result = }
+	;
+
+	EXPR
+	: EXPRARIT { result = }
+	| EXPRBOOL { result = }
+	| EXPRRELAC { result = }
+	| EXPRLIENZ { result = }
+	;
+
+	EXPRARIT
+	: NUMBER PLUS NUMBER { result = }
+	| NUMBER MINUS NUMBER { result = }
+	| NUMBER TIMES NUMBER { result = }
+	| NUMBER OBELUS NUMBER { result = } 
+	| NUMBER PERCENT NUMBER { result = }
+	| MINUS NUMBER { result = }
+	;
+
+	EXPRBOOL
+	: TRUE AND FALSE { result = }
+	| FALSE AND TRUE { result = }
+	| TRUE OR FALSE { result = }
+	| FALSE OR TRUE { result = }
+	| NEGATION TRUE { result = }
+	| NEGATION FALSE { result = }
+	;
+
+	EXPRRELAC
+	: EXPRARIT LESS EXPRARIT { result = }
+	| EXPRARIT LESS_EQUAL EXPRARIT { result = }
+	| EXPRARIT MORE EXPRARIT { result = }
+	| EXPRARIT MORE_EQUAL EXPRARIT { result = }
+	| EXPRARIT EQUAL EXPRARIT { result = }
+	| EXPRARIT INEQUAL EXPRARIT { result = }
+	| EXPRBOOL AND EXPRBOOL { result = }
+	| EXPRBOOL OR EXPRBOOL { result = }
+	| EXPRLIENZ EQUAL EXPRLIENZ { result = }
+	| EXPRLIENZ INEQUAL EXPRLIENZ { result = }
+	;
+
+	EXPRLIENZ
+	: CANVAS AMPERSAND CANVAS { result = } 
+	| CANVAS VIRGULE CANVAS { result = } 
+	| DOLLAR CANVAS { result = }
+	| CANVAS APOSTROPHE { result = }
+	;
+
