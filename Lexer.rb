@@ -108,8 +108,8 @@ class Lexer
 					 ncolumn += word.size()
 					 
 				# Caso cualquier palabra que no sea true,false,read,write (identificadores)
-				when /^[a-zA-Z][a-zA-Z0-9_]*/
-					word = line[/^[a-zA-Z][a-zA-Z0-9_]*/]
+				when /^[a-zA-Z_][a-zA-Z0-9_]*/
+					word = line[/^[a-zA-Z_][a-zA-Z0-9_]*/]
 					line = line.partition(word).last
 					# Verifica que el identificador no este dentro de un comentario
 					if !comment then
