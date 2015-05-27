@@ -39,4 +39,8 @@ class Token
 	def get_ncolumn
 		return @ncolumn
 	end
+
+	def get_token
+		return [@type, @value]
+	end
 end

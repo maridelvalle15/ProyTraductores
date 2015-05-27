@@ -11,6 +11,7 @@
 # Archivo main del proyecto
 
 require "./Lexer.rb"
+require "./Parser.rb"
 
 name_file = ARGV[0]				# Nombre del archivo recibido por entrada
 file = open(name_file,"r")		
@@ -27,3 +28,7 @@ elsif token.get_invalids.size > 0
 else 
 	token.print_tokens
 end
+
+parser = Parser.new(token);
+lista = parser.parser
+puts lista;

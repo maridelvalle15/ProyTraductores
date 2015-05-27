@@ -11,23 +11,28 @@ class Parser
 		RPARENTHESIS INTERROGATION_MARK SEMI_COLON DOUBLE_DOT
 	rule
 	
+	PROGRAM 
+	: LCURLY BLOQUE RCURLY {result = [:BLOQUE,val[1]]; return result}
+	;
+
 	# Estructura Del Programa
-	ESTRUC
-	: LCURLY DEC PIPE INSTR RCURLY { result = }
-	| LCURLY INSTR RCURLY
+
+	BLOQUE
+	: DEC PIPE INSTR  { result = [[:DEC,val[0]],[:INSTR,val[1]]] }
+	| INSTR  { result = [:INSTR,val[0]]}
 	;
 
 
 	# Declaraciones
 	DEC
-	: TIPO LISTIDENT DEC { result = }
-	| TIPO LISTIDENT { result = }
+	: TIPO LISTIDENT DEC { result = [[:TIPO,val[0],[:LISTIDEN,val[1]]]+[:DEC,val[2]] }
+	| TIPO LISTIDENT { result = [[:TIPO,val[1]] }
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK {result =}
-	| PERCENT  {result =}
+	: EXCLAMATION_MARK { result = }
+	| PERCENT  {result =} 
 	| AT {result =}
 	;
 
@@ -42,16 +47,17 @@ class Parser
 	: ASSIGN { result = }
 	| SEC { result = }
 	| ENTR { result = }
-	| SAL { result = }
+	| SAL { result = val[0]}
 	| CONDIC { result = }
 	| ITERIND { result = }
 	| ITERDET { result = }
 	| INCOR { result = }
+	| PROGRAM {result = val[0]}
 	;
 
 	#Asignacion
 	ASSIGN
-	: IDENTIFIER EQUAL EXPR { result = }
+	: IDENTIFIER EQUAL EXPR { result = [:IDENTIFIER, val[0],:EQUAL,val[1]]}
 	;
 
 	#Secuenciacion
@@ -67,7 +73,7 @@ class Parser
 
 	#Salida
 	SAL
-	: WRITE EXPR { result = }
+	: WRITE EXPR { result = val[1]}
 	;
 
 	#Condicional
@@ -100,7 +106,7 @@ class Parser
 
 	#Expresiones 
 	EXPR
-	: EXPRARIT { result = }
+	: EXPRARIT { result = val[0] }
 	| EXPRBOOL { result = }
 	| EXPRRELAC { result = }
 	| EXPRLIENZ { result = }
@@ -108,7 +114,7 @@ class Parser
 
 	#Expresiones Aritmeticas
 	EXPRARIT
-	: NUMBER PLUS NUMBER { result = }
+	: NUMBER PLUS NUMBER { result = val[0] + val[2]}
 	| NUMBER MINUS NUMBER { result = }
 	| NUMBER TIMES NUMBER { result = }
 	| NUMBER OBELUS NUMBER { result = } 
@@ -144,7 +150,7 @@ class Parser
 	EXPRLIENZ
 	: CANVAS AMPERSAND CANVAS { result = } 
 	| CANVAS VIRGUILE CANVAS { result = } 
-	| DOLLAR CANVAS { result = }
+	| DOLLAR CANVAS { result = [val[0],val[1]] }
 	| CANVAS APOSTROPHE { result = }
 	;
 
@@ -154,4 +160,12 @@ end
 
 	def initialize(tokens)
 		@tokens = tokens
+	end
+
+	def parser
+		do_parse
+	end
+
+	def next_token
+		@tokens.next_token
 	end

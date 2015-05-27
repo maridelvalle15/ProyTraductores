@@ -20,6 +20,7 @@ class Lexer
 		@tokens = Array.new
 		@invalids = Array.new
 		@comment = Array.new
+		@copy = Array.new
 	end
 
 	# Devuelve el arreglo de tokens
@@ -56,6 +57,15 @@ class Lexer
 		@comment.each do |comment|
 			print "Error: Comment section opened but not closed"
 			puts "at line: #{comment.get_nline}, column: #{comment.get_ncolumn}"  
+		end
+	end
+
+	def next_token
+		if (token = @tokens.shift) != nil
+			@copy << token
+			return token.get_token
+		else
+			return nil
 		end
 	end
 	
@@ -95,13 +105,13 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "true" 
-							@tokens << Token.new("TRUE",word,nline,ncolumn)
+							@tokens << Token.new(:TRUE,word,nline,ncolumn)
 						elsif word == "false" 
-							@tokens << Token.new("FALSE",word,nline,ncolumn)
+							@tokens << Token.new(:FALSE,word,nline,ncolumn)
 						elsif word == "read"
-							@tokens << Token.new("READ",word,nline,ncolumn)
+							@tokens << Token.new(:READ,word,nline,ncolumn)
 						elsif word == "write"
-							@tokens << Token.new("WRITE",word,nline,ncolumn)
+							@tokens << Token.new(:WRITE,word,nline,ncolumn)
 					 	end
 					 end
 					 # Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -114,7 +124,7 @@ class Lexer
 					# Verifica que el identificador no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-						@tokens << Token.new("INDENTIFIER",word,nline,ncolumn)
+						@tokens << Token.new(:INDENTIFIER,word,nline,ncolumn)
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
@@ -126,7 +136,7 @@ class Lexer
 					# Verifica que el numero no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-							@tokens << Token.new("NUMBER",word.to_i,nline,ncolumn)
+							@tokens << Token.new(:NUMBER,word.to_i,nline,ncolumn)
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
@@ -139,11 +149,11 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "\^" 
-							 @tokens << Token.new("NOT",word,nline,ncolumn)
+							 @tokens << Token.new(:NOT,word,nline,ncolumn)
 						elsif word == "\\\/" 
-							@tokens << Token.new("OR",word,nline,ncolumn)
+							@tokens << Token.new(:OR,word,nline,ncolumn)
 						elsif word == "\/\\" 
-							@tokens << Token.new("AND",word,nline,ncolumn)
+							@tokens << Token.new(:AND,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -157,9 +167,9 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "#" then 
-							@tokens << Token.new("EMPTY CANVAS",word,nline,ncolumn)
+							@tokens << Token.new(:EMPTY_CANVAS,word,nline,ncolumn)
 						else
-							@tokens << Token.new("CANVAS",word[1],nline,ncolumn)
+							@tokens << Token.new(:CANVAS,word[1],nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -173,17 +183,17 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == ">="
-							@tokens << Token.new("MORE EQUAL",word,nline,ncolumn)
+							@tokens << Token.new(:MORE_EQUAL,word,nline,ncolumn)
 						elsif word == "<="
-							@tokens << Token.new("LESS EQUAL",word,nline,ncolumn)
+							@tokens << Token.new(:LESS_EQUAL,word,nline,ncolumn)
 						elsif word == "\/="
-							@tokens << Token.new("INEQUAL",word,nline,ncolumn)
+							@tokens << Token.new(:INEQUAL,word,nline,ncolumn)
 						elsif word == ">"
-							@tokens << Token.new("MORE",word,nline,ncolumn)
+							@tokens << Token.new(:MORE,word,nline,ncolumn)
 						elsif word == "<"
-							@tokens << Token.new("LESS",word,nline,ncolumn)
+							@tokens << Token.new(:LESS,word,nline,ncolumn)
 						elsif word == "="
-							@tokens << Token.new("EQUAL",word,nline,ncolumn)
+							@tokens << Token.new(:EQUAL,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -197,11 +207,11 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "!"
-							@tokens << Token.new("EXCLAMATION MARK",word,nline,ncolumn)
+							@tokens << Token.new(:EXCLAMATION_MARK,word,nline,ncolumn)
 						elsif word == "%"
-							@tokens << Token.new("PERCENT",word,nline,ncolumn)
+							@tokens << Token.new(:PERCENT,word,nline,ncolumn)
 						elsif word == "@"
-							@tokens << Token.new("AT",word,nline,ncolumn)
+							@tokens << Token.new(:AT,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -215,13 +225,13 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "\+"
-							@tokens << Token.new("PLUS",word,nline,ncolumn)
+							@tokens << Token.new(:PLUS,word,nline,ncolumn)
 						elsif word == "-"
-							@tokens << Token.new("MINUS",word,nline,ncolumn)
+							@tokens << Token.new(:MINUS,word,nline,ncolumn)
 						elsif word == "\*"
-							@tokens << Token.new("TIMES",word,nline,ncolumn)
+							@tokens << Token.new(:TIMES,word,nline,ncolumn)
 						elsif word == "\/"
-							@tokens << Token.new("OBELUS",word,nline,ncolumn)
+							@tokens << Token.new(:OBELUS,word,nline,ncolumn)
 						
 						end
 					end
@@ -236,17 +246,17 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == ":"
-							@tokens << Token.new("COLON",word,nline,ncolumn)
+							@tokens << Token.new(:COLON,word,nline,ncolumn)
 						elsif word == "|"
-							@tokens << Token.new("PIPE",word,nline,ncolumn)
+							@tokens << Token.new(:PIPE,word,nline,ncolumn)
 						elsif word == "$"
-							@tokens << Token.new("DOLLAR",word,nline,ncolumn)
+							@tokens << Token.new(:DOLLAR,word,nline,ncolumn)
 						elsif word == "'"
-							@tokens << Token.new("APOSTROPHE",word,nline,ncolumn)
+							@tokens << Token.new(:APOSTROPHE,word,nline,ncolumn)
 						elsif word == "&"
-							@tokens << Token.new("AMPERSAND",word,nline,ncolumn)
+							@tokens << Token.new(:AMPERSAND,word,nline,ncolumn)
 						elsif word == "~"
-							@tokens << Token.new("VIRGULE",word,nline,ncolumn)
+							@tokens << Token.new(:VIRGULE,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
@@ -260,23 +270,23 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "{"
-							@tokens << Token.new("LCURLY",word,nline,ncolumn)
+							@tokens << Token.new(:LCURLY,word,nline,ncolumn)
 						elsif word == "}"
-							@tokens << Token.new("RCURLY",word,nline,ncolumn)
+							@tokens << Token.new(:RCURLY,word,nline,ncolumn)
 						elsif word == "["
-							@tokens << Token.new("LBRACKET",word,nline,ncolumn)
+							@tokens << Token.new(:LBRACKET,word,nline,ncolumn)
 						elsif word == "]"
-							@tokens << Token.new("RBRACKET",word,nline,ncolumn)
+							@tokens << Token.new(:RBRACKET,word,nline,ncolumn)
 						elsif word == "("
-							@tokens << Token.new("LPARENTHESIS",word,nline,ncolumn)
+							@tokens << Token.new(:LPARENTHESIS,word,nline,ncolumn)
 						elsif word == ")"
-							@tokens << Token.new("RPARENTHESIS",word,nline,ncolumn)
+							@tokens << Token.new(:RPARENTHESIS,word,nline,ncolumn)
 						elsif word == "?"
-							@tokens << Token.new("INTERROGATION MARK",word,nline,ncolumn)
+							@tokens << Token.new(:INTERROGATION_MARK,word,nline,ncolumn)
 						elsif word == ";"
-							@tokens << Token.new("SEMI COLON",word,nline,ncolumn)
+							@tokens << Token.new(:SEMI_COLON,word,nline,ncolumn)
 						elsif word == "\.\."
-							@tokens << Token.new("DOUBLE DOT",word,nline,ncolumn)
+							@tokens << Token.new(:DOUBLE_DOT,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
