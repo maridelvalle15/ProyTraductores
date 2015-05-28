@@ -24,20 +24,20 @@ class Parser
 
 	# Declaraciones
 	DEC
-	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[2]],[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
-	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
+	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[2],[:TIPO,val[0]],[:LISTIDENT,val[1]]]] }
+	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0],[:LISTIDENT,val[1]]]] }
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK  { result = :BOOL } #Duda si colocar el tipo
+	: EXCLAMATION_MARK  { result = :BOOL } 
 	| PERCENT  			{ result = :INTEGER } 
 	| AT 				{ result = :LIENZO }
 	;
 
 	# Identificadores
 	LISTIDENT
-	: LISTIDENT IDENTIFIER  { result = [[:LISTIDENT,val[1]],[:IDENTIFIER,val[0]]] }
+	: LISTIDENT IDENTIFIER  { result = [[:LISTIDENT,val[0],[:IDENTIFIER,val[1]]]] }
 	| IDENTIFIER 		   	{ result = [:IDENTIFIER,val[0]] }
 	;
 
@@ -50,7 +50,6 @@ class Parser
 	| CONDIC 	{ result = [:CONDIC,val[0]] }
 	| ITERIND 	{ result = [:ITERIND,val[0]] }
 	| ITERDET 	{ result = [:ITERDET,val[0]] }
-	| INCOR 	{ result = [:INCOR,val[0]]}
 	| ESTRUCT 	{ result = [:ESTRUCT,val[0]] }
 	;
 
@@ -61,7 +60,7 @@ class Parser
 
 	#Secuenciacion
 	SEC
-	: INSTR SEMI_COLON SEC  { result = [[:INSTR,val[0]],[:SEC,val[2]] }
+	: INSTR SEMI_COLON SEC  { result = [[:INSTR,val[0]],[:SEC,val[2]]] }
 	| INSTR  				{ result = [:INSTR,val[0]] }
 	;
 
@@ -72,7 +71,7 @@ class Parser
 
 	#Salida
 	SAL
-	: WRITE EXPR { result = [:WRITE,[:IDENTIFIER,val[1]]]] }
+	: WRITE EXPR { result = [:WRITE,[:IDENTIFIER,val[1]]] }
 	;
 
 	#Condicional
@@ -89,7 +88,7 @@ class Parser
 	#Iteracion determinada
 	ITERDET
 	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 					{ result = [[:EXPR,val[1]],[:EXPR,val[3]],[:INSTR,val[5]]] }
-	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 	{ result = [[:IDENTIFIER,val[1],[:EXPR,val[3]],[:EXPR,val[5]],[:INSTR,val[7]]] }
+	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 	{ result = [[:IDENTIFIER,val[1]],[:EXPR,val[3]],[:EXPR,val[5]],[:INSTR,val[7]]] }
 	;
 
 	#Expresiones Aritmeticas
@@ -99,7 +98,7 @@ class Parser
 	| EXPR TIMES EXPR 				{ result = [:TIMES,val[0],val[2]] }
 	| EXPR OBELUS EXPR 				{ result = [:OBELUS,val[0],val[2]] } 
 	| EXPR PERCENT EXPR 			{ result = [:PERCENT,val[0],val[2]] }
-	| MINUS EXPR 					{ result = [:MINUS,val[1] }
+	| MINUS EXPR 					{ result = [:MINUS,val[1]] }
 	| EXPR AND EXPR 				{ result = [:AND,val[0],val[2]] }
 	| EXPR OR EXPR 					{ result = [:OR,val[0],val[2]] }
 	| NOT EXPR 						{ result = [:NOT,val[1]] }
