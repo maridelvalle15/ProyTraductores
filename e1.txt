@@ -1,16 +1,14 @@
 { %x y @lie !boo |
-x
-= 10 ;
-y
-= 15 ;
-boo = false ;
-lie = # ;
-{ @boo |
-boo = #
-} ;
-{
-{
-x = 42
-}
-}
+	x = 10 ;
+	y = 15 ;
+	boo = false ;
+	lie = # ;
+	{ @boo |
+	boo = # 
+	} ;
+	{
+		{
+			x = 42
+		}
+	}
 }

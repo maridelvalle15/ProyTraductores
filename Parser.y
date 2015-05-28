@@ -2,6 +2,16 @@
 
 class Parser
 
+	prechigh
+		nonassoc UMINUS
+		left TIMES OBELUS
+		left PLUS MINUS
+		nonassoc GREATER GREATER_EQUAL LESS LESS_EQUAL
+		nonassoc EQUAL INEQUAL
+		left OR
+		left AND
+	preclow
+
 	token 	
 		TRUE FALSE READ WRITE IDENTIFIER NUMBER NOT OR AND 
 		EMPTY_CANVAS CANVAS MORE_EQUAL LESS_EQUAL INEQUAL MORE 
@@ -99,7 +109,7 @@ class Parser
 	| EXPR TIMES EXPR 				{ result = [:TIMES,val[0],val[2]] }
 	| EXPR OBELUS EXPR 				{ result = [:OBELUS,val[0],val[2]] } 
 	| EXPR PERCENT EXPR 			{ result = [:PERCENT,val[0],val[2]] }
-	| MINUS EXPR 					{ result = [:MINUS,val[1]] }
+	| MINUS EXPR=UMINUS 			{ result = [:MINUS,val[1]] }
 	| EXPR AND EXPR 				{ result = [:AND,val[0],val[2]] }
 	| EXPR OR EXPR 					{ result = [:OR,val[0],val[2]] }
 	| NOT EXPR 						{ result = [:NOT,val[1]] }
@@ -114,6 +124,7 @@ class Parser
 	| DOLLAR EXPR 					{ result = [:DOLLAR,val[1]] }
 	| EXPR APOSTROPHE 				{ result = [:APOSTROPHE,val[1]] }
 	| VALORES 						{ result = [:VALORES,val[0]] }
+	| LPARENTHESIS EXPR RPARENTHESIS { result = [:EXPR, val[1]]}
 	;
 
 	VALORES
