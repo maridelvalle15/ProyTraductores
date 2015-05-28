@@ -124,7 +124,7 @@ class Lexer
 					# Verifica que el identificador no este dentro de un comentario
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
-						@tokens << Token.new(:INDENTIFIER,word,nline,ncolumn)
+						@tokens << Token.new(:IDENTIFIER,word,nline,ncolumn)
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()

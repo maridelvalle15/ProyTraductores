@@ -13,44 +13,45 @@ class Parser
 
 	#Programa Principal
 	PROGRAM 
-	: ESTRUCT { result = [:ESTRUCT,val[1]]; return result }
+	: ESTRUCT { result = [:ESTRUCT,val[0]]; return result }
 	;
 
 	# Estructura 
 	ESTRUCT
-	: LCURLY DEC PIPE INSTR RCURLY { result = [[:DEC,val[1]],[:INSTR,val[2]]] }
-	| LCURLY INSTR RCURLY  		   { result = [:INSTR,val[0]] }
+	: LCURLY IDENTIFIER RCURLY {result = [:IDENTIFIER, val[1]] }
+	| LCURLY DEC PIPE INSTR RCURLY { result = [[:DEC,val[1]],[:INSTR,val[3]]] }
+	| LCURLY INSTR RCURLY  		   { result = [:INSTR,val[1]] }
 	;
 
 	# Declaraciones
 	DEC
-	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[2],[:TIPO,val[0]],[:LISTIDENT,val[1]]]] }
-	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0],[:LISTIDENT,val[1]]]] }
+	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[0]],[:TIPO,val[1]],[:LISTIDENT,val[2]]] }
+	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK  { result = :BOOL } 
-	| PERCENT  			{ result = :INTEGER } 
-	| AT 				{ result = :LIENZO }
+	: EXCLAMATION_MARK  { result = [:BOOL,val[0]] } 
+	| PERCENT  			{ result = [:INTEGER,val[0]] } 
+	| AT 				{ result = [:LIENZO,val[0]] }
 	;
 
 	# Identificadores
 	LISTIDENT
-	: LISTIDENT IDENTIFIER  { result = [[:LISTIDENT,val[0],[:IDENTIFIER,val[1]]]] }
-	| IDENTIFIER 		   	{ result = [:IDENTIFIER,val[0]] }
+	: LISTIDENT IDENTIFIER { result = [[:LISTIDENT,val[0]],[:BOOLEAN,val[1]]] }
+	| IDENTIFIER 		   	{ result = [:BOOLEAN,val[0]] }
 	;
 
 	# Instrucciones
 	INSTR
-	: ASSIGN 	{ result = [:ASSIGN,val[0]] }
-	| SEC 		{ result = [:SEC, val[0]] }
-	| ENTR 		{ result = [:ENTR, val[0]] }
-	| SAL 		{ result = [:SAL,val[0]] }
-	| CONDIC 	{ result = [:CONDIC,val[0]] }
-	| ITERIND 	{ result = [:ITERIND,val[0]] }
-	| ITERDET 	{ result = [:ITERDET,val[0]] }
-	| ESTRUCT 	{ result = [:ESTRUCT,val[0]] }
+	| INSTR SEMI_COLON INSTR{ result = [[:INSTR, val[0]],[:INSTR,val[2]]] }
+	| ASSIGN 				{ result = [:ASSIGN,val[0]] }
+	| ENTR 					{ result = [:ENTR, val[0]] }
+	| SAL 					{ result = [:SAL,val[0]] }
+	| CONDIC 				{ result = [:CONDIC,val[0]] }
+	| ITERIND 				{ result = [:ITERIND,val[0]] }
+	| ITERDET 				{ result = [:ITERDET,val[0]] }
+	| ESTRUCT 				{ result = [:ESTRUCT,val[0]] }
 	;
 
 	#Asignacion
@@ -60,7 +61,7 @@ class Parser
 
 	#Secuenciacion
 	SEC
-	: INSTR SEMI_COLON SEC  { result = [[:INSTR,val[0]],[:SEC,val[2]]] }
+	: INSTR SEMI_COLON INSTR  { result = [[:SEC,val[0]],[:SEC,val[2]]] }
 	| INSTR  				{ result = [:INSTR,val[0]] }
 	;
 
@@ -76,8 +77,8 @@ class Parser
 
 	#Condicional
 	CONDIC
-	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RCURLY 			{ result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
-	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RCURLY { result = [[:EXPR,val[1]],[:INSTR,val[3]],[:INSTR,val[5]]] }
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS 			{ result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS { result = [[:EXPR,val[1]],[:INSTR,val[3]],[:INSTR,val[5]]] }
 	;
 
 	#Iteracion indeterminada
@@ -133,10 +134,11 @@ class Parser
 
 	LIENZO
 	: CANVAS { result = [:CANVAS,val[0]] }
+	| EMPTY_CANVAS {result = [:EMPTY_CANVAS,val[0]]}
 	;
 
 	VARIABLE
-	: IDENTIFIER { result = :IDENTIFIER,val[0]}
+	: IDENTIFIER { result = [:IDENTIFIER,val[0]]}
 	;
 
 end
