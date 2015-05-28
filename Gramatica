@@ -1,34 +1,59 @@
 Leyenda:
 
-ESTRUC: Estructura
-Dec : Declaracion
-Tipo: 
-Instr : Intruccion
+PROGR: Estructura Programa Principal
+ESTRUC: Estructura Subprograma
+DEC : Declaracion de variables
+TIPO: Tipo de variables  
+LISTIDENT: Lista de Identificadores
+INSTR : Intruccion del programa
+ASSIGN : Asignacion
+SEC: Secuenciacion
+ENTR: Entrada
+SAL: Salida
+CONDIC: Condicional
 
 
 Gramatica:
 
+PROGR -> ESTRUC
+
 ESTRUC -> { DEC | INSTR }
-ESTRUC -> { INSTR}
-DEC -> DEC TIPO LISTIDENT
-DEC -> lambda (?)
-TIPO -> tipo
-LISTIDENT -> identificador
+	| { INSTR}
+
+DEC -> DEC TIPO LISTIDENT 
+	| TIPO LISTIDENT
+TIPO -> !
+
+	| %
+	| @
+
+LISTIDENT -> LISTIDENT IDENTIFICADOR 
+			| IDENTIFICADOR 
+
 INSTR -> ASSIGN
-INSTR -> SEC
-INSTR -> ENTR
-INSTR -> SAL
-INSTR -> CONDIC
-INSTR -> ITERIND
-INSTR -> ITERDET
-INSTR -> INCOR
-ASSIGN -> identificador = EXPR
-SEC -> SEC INSTR
+	| SEC
+	| ENTR
+	| SAL
+	| CONDIC
+	| ITERIND
+	| ITERDET
+	| INCOR
+	| ESTRUCT
+
+ASSIGN -> IDENTIFICADOR  = EXPR
+
+SEC -> SEC ; INSTR
+	| INSTR
+
 ENTR -> read identificador
+
 SAL -> write EXPR
+
 CONDIC -> ( EXPR ? INSTR )
-CONDIC -> ( EXPR ? INSTR : INSTR) 
+	| ( EXPR ? INSTR : INSTR) 
+
 ITERIND -> [ EXPR | INSTR]
+
 ITERDET -> [ EXPR .. EXPR | INSTR]
 ITERDET -> [ identificador : EXPR .. EXPR | INSTR]
 INCOR -> { LISTADEC | INSTR}

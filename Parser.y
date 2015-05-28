@@ -10,81 +10,80 @@ class Parser
 		VIRGUILE LCURLY RCURLY LBRACKET RBRACKET LPARENTHESIS 
 		RPARENTHESIS INTERROGATION_MARK SEMI_COLON DOUBLE_DOT
 	rule
-	
+
+	#Programa Principal
 	PROGRAM 
-	: LCURLY BLOQUE RCURLY {result = [:BLOQUE,val[1]]; return result}
+	: ESTRUCT { result = [:ESTRUCT,val[1]]; return result }
 	;
 
-	# Estructura Del Programa
-
-	BLOQUE
-	: DEC PIPE INSTR  { result = [[:DEC,val[0]],[:INSTR,val[1]]] }
-	| INSTR  { result = [:INSTR,val[0]]}
+	# Estructura 
+	ESTRUCT
+	: LCURLY DEC PIPE INSTR RCURLY { result = [[:DEC,val[1]],[:INSTR,val[2]]] }
+	| LCURLY INSTR RCURLY  		   { result = [:INSTR,val[0]] }
 	;
-
 
 	# Declaraciones
 	DEC
-	: TIPO LISTIDENT DEC { result = [[:TIPO,val[0],[:LISTIDEN,val[1]]]+[:DEC,val[2]] }
-	| TIPO LISTIDENT { result = [[:TIPO,val[1]] }
+	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[2]],[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
+	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK { result = }
-	| PERCENT  {result =} 
-	| AT {result =}
+	: EXCLAMATION_MARK  { result = :BOOL } #Duda si colocar el tipo
+	| PERCENT  			{ result = :INTEGER } 
+	| AT 				{ result = :CANVAS }
 	;
 
 	# Identificadores
 	LISTIDENT
-	: IDENTIFIER LISTIDENT {result = }
-	| IDENTIFIER 		   {result = }
+	: LISTIDENT IDENTIFIER  { result = [[:LISTIDENT,val[1]],[:IDENTIFIER,val[0]]] }
+	| IDENTIFIER 		   	{ result = [:IDENTIFIER,val[0]] }
 	;
 
 	# Instrucciones
 	INSTR
-	: ASSIGN { result = }
-	| SEC { result = }
-	| ENTR { result = }
-	| SAL { result = val[0]}
-	| CONDIC { result = }
-	| ITERIND { result = }
-	| ITERDET { result = }
-	| INCOR { result = }
-	| PROGRAM {result = val[0]}
+	: ASSIGN 	{ result = [:ASSIGN,val[0]] }
+	| SEC 		{ result = [:SEC, val[0]] }
+	| ENTR 		{ result = [:ENTR, val[0]] }
+	| SAL 		{ result = [:SAL,val[0]] }
+	| CONDIC 	{ result = [:CONDIC,val[0]] }
+	| ITERIND 	{ result = [:ITERIND,val[0]] }
+	| ITERDET 	{ result = [:ITERDET,val[0]] }
+	| INCOR 	{ result = [:INCOR,val[0]]}
+	| ESTRUCT 	{ result = [:ESTRUCT,val[0]] }
 	;
 
 	#Asignacion
 	ASSIGN
-	: IDENTIFIER EQUAL EXPR { result = [:IDENTIFIER, val[0],:EQUAL,val[1]]}
+	: IDENTIFIER EQUAL EXPR { result = [[:IDENTIFIER,val[0]],[:EXPR,val[2]]] }
 	;
 
 	#Secuenciacion
 	SEC
-	: INSTR SEMI_COLON SEC { result = }
-	| INSTR
+	: INSTR SEMI_COLON SEC  { result = [[:INSTR,val[0]],[:SEC,val[2]] }
+	| INSTR  				{ result = [:INSTR,val[0]] }
 	;
 
 	# Entrada
 	ENTR
-	: READ IDENTIFIER { result = }
+	: READ IDENTIFIER { result = [:READ,[:IDENTIFIER,val[1]]] }
 	;
 
 	#Salida
 	SAL
-	: WRITE EXPR { result = val[1]}
+	: WRITE EXPR { result = [:WRITE,[:IDENTIFIER,val[1]]]] }
 	;
 
 	#Condicional
 	CONDIC
-	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RCURLY { result = }
-	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RCURLY { result = }
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RCURLY 			{ result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RCURLY { result = [[:EXPR,val[1]],[:INSTR,val[3]],[:INSTR,val[5]]] }
 	;
 
 	#Iteracion indeterminada
 	ITERIND
-	: LBRACKET EXPR PIPE INSTR RBRACKET { result = }
+	: LBRACKET EXPR PIPE INSTR RBRACKET { result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
 	;
 
 	#Iteracion determinada
@@ -106,7 +105,7 @@ class Parser
 
 	#Expresiones 
 	EXPR
-	: EXPRARIT { result = val[0] }
+	: EXPRARIT { result = }
 	| EXPRBOOL { result = }
 	| EXPRRELAC { result = }
 	| EXPRLIENZ { result = }
@@ -114,7 +113,7 @@ class Parser
 
 	#Expresiones Aritmeticas
 	EXPRARIT
-	: NUMBER PLUS NUMBER { result = val[0] + val[2]}
+	: NUMBER PLUS NUMBER { result = }
 	| NUMBER MINUS NUMBER { result = }
 	| NUMBER TIMES NUMBER { result = }
 	| NUMBER OBELUS NUMBER { result = } 
@@ -150,7 +149,7 @@ class Parser
 	EXPRLIENZ
 	: CANVAS AMPERSAND CANVAS { result = } 
 	| CANVAS VIRGUILE CANVAS { result = } 
-	| DOLLAR CANVAS { result = [val[0],val[1]] }
+	| DOLLAR CANVAS { result =  }
 	| CANVAS APOSTROPHE { result = }
 	;
 
