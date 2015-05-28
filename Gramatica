@@ -1,7 +1,7 @@
 Leyenda:
 
 PROGR: Estructura Programa Principal
-ESTRUC: Estructura Subprograma
+ESTRUC: Estructura Subprograma, Incorporacion de alcance
 DEC : Declaracion de variables
 TIPO: Tipo de variables  
 LISTIDENT: Lista de Identificadores
@@ -11,6 +11,10 @@ SEC: Secuenciacion
 ENTR: Entrada
 SAL: Salida
 CONDIC: Condicional
+ITERIND: Iteracion indeterminada 
+ITERDET: Iteracion determinada
+EXPR: Expresion
+
 
 
 Gramatica:
@@ -22,8 +26,8 @@ ESTRUC -> { DEC | INSTR }
 
 DEC -> DEC TIPO LISTIDENT 
 	| TIPO LISTIDENT
-TIPO -> !
 
+TIPO -> !
 	| %
 	| @
 
@@ -37,7 +41,6 @@ INSTR -> ASSIGN
 	| CONDIC
 	| ITERIND
 	| ITERDET
-	| INCOR
 	| ESTRUCT
 
 ASSIGN -> IDENTIFICADOR  = EXPR
@@ -55,32 +58,48 @@ CONDIC -> ( EXPR ? INSTR )
 ITERIND -> [ EXPR | INSTR]
 
 ITERDET -> [ EXPR .. EXPR | INSTR]
-ITERDET -> [ identificador : EXPR .. EXPR | INSTR]
-INCOR -> { LISTADEC | INSTR}
-INCOR -> { INSTR }
-LISTADEC -> LISTADEC DEC
-EXPR -> EXPRARIT
-EXPR -> EXPRBOOL
-EXPR -> EXPRRELAC
-EXPR -> EXPRLIENZ
-EXPRARIT -> numero + numero
-EXPRARIT -> numero - numero
-EXPRARIT -> numero * numero
-EXPRARIT -> numero / numero
-EXPRARIT -> numero % numero
-EXPRARIT -> - numero
-EXPRBOOL -> true /\ false
-EXPRBOOL -> false /\ true
-EXPRBOOL -> true \/ false
-EXPRBOOL -> false \/ true
-EXPRBOOL -> ^true
-EXPRBOOL -> ^false
-EXPRRELAC -> EXPRARIT operador EXPRARIT
-EXPRRELAC -> EXPRBOOL operador EXPRBOOL
-EXPRRELAC -> EXPRLIENZ = EXPRLIENZ
-EXPRRELAC -> EXPRLIENZ /= EXPRLIENZ
-EXPRLIENZ -> CANVAS & CANVAS
-EXPRLIENZ -> CANVAS ~ CANVAS
-EXPRLIENZ -> $ CANVAS
-EXPRLIENZ -> CANVAS '
-COMMENT -> {- blabla -} -> falta agregar al parser
+	| [ identificador : EXPR .. EXPR | INSTR]
+
+EXPR -> EXPR + EXPR 				
+	| EXPR - EXPR 				
+	| EXPR * EXPR 				
+	| EXPR / EXPR 				
+	| EXPR % EXPR 			
+	| - EXPR 					
+	| EXPR /\ EXPR 				
+	| EXPR \/ EXPR 					
+	| ^ EXPR 						
+	| EXPR < EXPR 				
+	| EXPR <= EXPR 			
+	| EXPR > EXPR 				
+	| EXPR > EXPR 			
+	| EXPR = EXPR 				
+	| EXPR /= EXPR 			
+	| EXPR & EXPR 			
+	| EXPR ~ EXPR 			
+	| $ EXPR 					
+	| EXPR '				
+	| VALORES 						
+
+VALORES -> NUMEROS 	
+	| BOOLEAN 	
+	| LIENZO 	
+	| VARIABLE 	
+	;
+
+NUMEROS-> Numero	
+
+BOOLEAN-> TRUE 	
+	| FALSE 
+	;
+
+LIENZO-> </>
+	| <|>
+	| # 
+	| <\>
+	| <_> 
+	| <-> 
+	| < >  
+
+VARIABLE-> Identificador 
+	

@@ -32,7 +32,7 @@ class Parser
 	TIPO
 	: EXCLAMATION_MARK  { result = :BOOL } #Duda si colocar el tipo
 	| PERCENT  			{ result = :INTEGER } 
-	| AT 				{ result = :CANVAS }
+	| AT 				{ result = :LIENZO }
 	;
 
 	# Identificadores
@@ -88,69 +88,56 @@ class Parser
 
 	#Iteracion determinada
 	ITERDET
-	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET { result = }
-	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET { result = }
-	;
-
-	# Incorporacion de alcance
-	INCOR
-	: LCURLY LISTADEC PIPE INSTR RCURLY { result = }
-	| LCURLY INSTR RCURLY { result = }
-	;
-
-	#Incorporacion de alcance
-	LISTADEC
-	: DEC { result = }
-	;
-
-	#Expresiones 
-	EXPR
-	: EXPRARIT { result = }
-	| EXPRBOOL { result = }
-	| EXPRRELAC { result = }
-	| EXPRLIENZ { result = }
+	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 					{ result = [[:EXPR,val[1]],[:EXPR,val[3]],[:INSTR,val[5]]] }
+	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 	{ result = [[:IDENTIFIER,val[1],[:EXPR,val[3]],[:EXPR,val[5]],[:INSTR,val[7]]] }
 	;
 
 	#Expresiones Aritmeticas
-	EXPRARIT
-	: NUMBER PLUS NUMBER { result = }
-	| NUMBER MINUS NUMBER { result = }
-	| NUMBER TIMES NUMBER { result = }
-	| NUMBER OBELUS NUMBER { result = } 
-	| NUMBER PERCENT NUMBER { result = }
-	| MINUS NUMBER { result = }
+	EXPR
+	: EXPR PLUS EXPR 				{ result = [:PLUS,val[0],val[2]] }
+	| EXPR MINUS EXPR 				{ result = [:MINUS,val[0],val[2]] }
+	| EXPR TIMES EXPR 				{ result = [:TIMES,val[0],val[2]] }
+	| EXPR OBELUS EXPR 				{ result = [:OBELUS,val[0],val[2]] } 
+	| EXPR PERCENT EXPR 			{ result = [:PERCENT,val[0],val[2]] }
+	| MINUS EXPR 					{ result = [:MINUS,val[1] }
+	| EXPR AND EXPR 				{ result = [:AND,val[0],val[2]] }
+	| EXPR OR EXPR 					{ result = [:OR,val[0],val[2]] }
+	| NOT EXPR 						{ result = [:NOT,val[1]] }
+	| EXPR LESS EXPR 				{ result = [:LESS,val[0],val[2]] }
+	| EXPR LESS_EQUAL EXPR 			{ result = [:LESS_EQUAL,val[0],val[2]] }
+	| EXPR MORE EXPR 				{ result = [:MORE,val[0],val[2]] } 
+	| EXPR MORE_EQUAL EXPR 			{ result = [:MORE_EQUAL,val[0],val[2]] }
+	| EXPR EQUAL EXPR 				{ result = [:EQUAL,val[0],val[2]] }
+	| EXPR INEQUAL EXPR 			{ result = [:INEQUEAL,val[0],val[2]] }
+	| EXPR AMPERSAND EXPR 			{ result = [:AMPERSAND,val[0],val[2]] } 
+	| EXPR VIRGUILE EXPR 			{ result = [:VIRGUILE,val[0],val[2]] }
+	| DOLLAR EXPR 					{ result = [:DOLLAR,val[1]] }
+	| EXPR APOSTROPHE 				{ result = [:APOSTROPHE,val[1]] }
+	| VALORES 						{ result = [:VALORES,val[0]] }
 	;
 
-	#Expresiones Booleanas
-	EXPRBOOL
-	: TRUE AND FALSE { result = }
-	| FALSE AND TRUE { result = }
-	| TRUE OR FALSE { result = }
-	| FALSE OR TRUE { result = }
-	| NOT TRUE { result = }
-	| NOT FALSE { result = }
+	VALORES
+	: NUMEROS 	{ result = [:NUMEROS,val[0]]}
+	| BOOLEAN 	{ result = [:BOOLEAN,val[0]]}
+	| LIENZO 	{ result = [:LIENZO,val[0]]}
+	| VARIABLE 	{ result = [:VARIABLE,val[0]]}
 	;
 
-	#Expresiones relacionales
-	EXPRRELAC
-	: EXPRARIT LESS EXPRARIT { result = }
-	| EXPRARIT LESS_EQUAL EXPRARIT { result = }
-	| EXPRARIT MORE EXPRARIT { result = }
-	| EXPRARIT MORE_EQUAL EXPRARIT { result = }
-	| EXPRARIT EQUAL EXPRARIT { result = }
-	| EXPRARIT INEQUAL EXPRARIT { result = }
-	| EXPRBOOL AND EXPRBOOL { result = }
-	| EXPRBOOL OR EXPRBOOL { result = }
-	| EXPRLIENZ EQUAL EXPRLIENZ { result = }
-	| EXPRLIENZ INEQUAL EXPRLIENZ { result = }
+	NUMEROS
+	: NUMBER 	{ result = [:NUMBER,val[0]]}
 	;
 
-	#Expresiones sobre liensos
-	EXPRLIENZ
-	: CANVAS AMPERSAND CANVAS { result = } 
-	| CANVAS VIRGUILE CANVAS { result = } 
-	| DOLLAR CANVAS { result =  }
-	| CANVAS APOSTROPHE { result = }
+	BOOLEAN
+	: TRUE 	{ result = [:TRUE,val[0]] }
+	| FALSE { result = [:FALSE,val[0]] }
+	;
+
+	LIENZO
+	: CANVAS { result = [:CANVAS,val[0]] }
+	;
+
+	VARIABLE
+	: IDENTIFIER { result = :IDENTIFIER,val[0]}
 	;
 
 end
