@@ -1,160 +1,167 @@
 #!/usr/bin/env ruby
 
+
+
 class Parser
 
 	prechigh
-		nonassoc UMINUS
-		left TIMES OBELUS
+		left SEMI_COLON
+		left INTERROGATION_MARK
+		left COLON
+		left DOUBLE_DOT
+		left PIPE
+		nonassoc MINUS_UNARY # - unario 
+		left MULTIPLY DIVISION PERCENT
 		left PLUS MINUS
-		nonassoc GREATER GREATER_EQUAL LESS LESS_EQUAL
+		nonassoc LESS_EQUAL LESS MORE MORE_EQUAL
 		nonassoc EQUAL INEQUAL
-		left OR
+		right NOT
 		left AND
+		left OR
+		right APOSTROPHE 
+		left DOLLAR
+		left VIRGUILE AMPERSAND
 	preclow
+
 
 	token 	
 		TRUE FALSE READ WRITE IDENTIFIER NUMBER NOT OR AND 
 		EMPTY_CANVAS CANVAS MORE_EQUAL LESS_EQUAL INEQUAL MORE 
 		LESS EQUAL EXCLAMATION_MARK PERCENT AT PLUS MINUS 
-		TIMES OBELUS COLON PIPE DOLLAR APOSTROPHE AMPERSAND 
+		MULTIPLY DIVISION COLON PIPE DOLLAR APOSTROPHE AMPERSAND 
 		VIRGUILE LCURLY RCURLY LBRACKET RBRACKET LPARENTHESIS 
 		RPARENTHESIS INTERROGATION_MARK SEMI_COLON DOUBLE_DOT
 	rule
 
-	#Programa Principal
-	PROGRAM 
-	: ESTRUCT { result = [:ESTRUCT,val[0]]; return result }
+	#Programa principal
+	S 
+	: ESTRUCT { result = S.new(val[0]); result.print_tree}
 	;
 
 	# Estructura 
 	ESTRUCT
-	: LCURLY IDENTIFIER RCURLY {result = [:IDENTIFIER, val[1]] }
-	| LCURLY DEC PIPE INSTR RCURLY { result = [[:DEC,val[1]],[:INSTR,val[3]]] }
-	| LCURLY INSTR RCURLY  		   { result = [:INSTR,val[1]] }
+	: LCURLY DEC PIPE INSTR RCURLY { result = ESTRUCT.new(val[1],val[3]) }
+	| LCURLY INSTR RCURLY  		   { result = ESTRUCT.new(nil,val[1]) }  
 	;
 
 	# Declaraciones
 	DEC
-	: DEC TIPO LISTIDENT  	{ result = [[:DEC,val[0]],[:TIPO,val[1]],[:LISTIDENT,val[2]]] }
-	| TIPO LISTIDENT 	 	{ result = [[:TIPO,val[0]],[:LISTIDENT,val[1]]] }
+	: DEC TIPO LISTIDENT  	
+	| TIPO LISTIDENT 	 	
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK  { result = [:BOOL,val[0]] } 
-	| PERCENT  			{ result = [:INTEGER,val[0]] } 
-	| AT 				{ result = [:LIENZO,val[0]] }
+	: EXCLAMATION_MARK  
+	| PERCENT  			
+	| AT 				
 	;
 
 	# Identificadores
 	LISTIDENT
-	: LISTIDENT IDENTIFIER { result = [[:LISTIDENT,val[0]],[:BOOLEAN,val[1]]] }
-	| IDENTIFIER 		   	{ result = [:BOOLEAN,val[0]] }
+	: LISTIDENT VARIABLE  
+	| VARIABLE 		   	
+	;
+
+	#Variable
+	VARIABLE 
+	: IDENTIFIER
 	;
 
 	# Instrucciones
 	INSTR
-	| INSTR SEMI_COLON INSTR{ result = [[:INSTR, val[0]],[:INSTR,val[2]]] }
-	| ASSIGN 				{ result = [:ASSIGN,val[0]] }
-	| ENTR 					{ result = [:ENTR, val[0]] }
-	| SAL 					{ result = [:SAL,val[0]] }
-	| CONDIC 				{ result = [:CONDIC,val[0]] }
-	| ITERIND 				{ result = [:ITERIND,val[0]] }
-	| ITERDET 				{ result = [:ITERDET,val[0]] }
-	| ESTRUCT 				{ result = [:ESTRUCT,val[0]] }
+	: INSTR SEMI_COLON INSTR 
+	| ASSIGN 	 		
+	| IN  		
+	| OUT  						 { result = INSTR.new(nil,val[0]) }
+	| CONDIC 	
+	| ITERIND 	
+	| ITERDET 	
+	| ESTRUCT 	
 	;
 
 	#Asignacion
 	ASSIGN
-	: IDENTIFIER EQUAL EXPR { result = [[:IDENTIFIER,val[0]],[:EXPR,val[2]]] }
-	;
-
-	#Secuenciacion
-	SEC
-	: INSTR SEMI_COLON INSTR  { result = [[:SEC,val[0]],[:SEC,val[2]]] }
-	| INSTR  				{ result = [:INSTR,val[0]] }
+	: VARIABLE EQUAL EXPR 
 	;
 
 	# Entrada
-	ENTR
-	: READ IDENTIFIER { result = [:READ,[:IDENTIFIER,val[1]]] }
+	IN
+	: READ VARIABLE 
 	;
 
 	#Salida
-	SAL
-	: WRITE EXPR { result = [:WRITE,[:IDENTIFIER,val[1]]] }
+	OUT
+	: WRITE EXPR 				{ result = WRITE.new(val[1]) }
 	;
 
 	#Condicional
 	CONDIC
-	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS 			{ result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
-	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS { result = [[:EXPR,val[1]],[:INSTR,val[3]],[:INSTR,val[5]]] }
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS  			
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS 
 	;
 
 	#Iteracion indeterminada
 	ITERIND
-	: LBRACKET EXPR PIPE INSTR RBRACKET { result = [[:EXPR,val[1]],[:INSTR,val[3]]] }
+	: LBRACKET EXPR PIPE INSTR RBRACKET
 	;
 
 	#Iteracion determinada
 	ITERDET
-	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 					{ result = [[:EXPR,val[1]],[:EXPR,val[3]],[:INSTR,val[5]]] }
-	| LBRACKET IDENTIFIER COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 	{ result = [[:IDENTIFIER,val[1]],[:EXPR,val[3]],[:EXPR,val[5]],[:INSTR,val[7]]] }
+	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 
+	| LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 
 	;
 
 	#Expresiones Aritmeticas
 	EXPR
-	: EXPR PLUS EXPR 				{ result = [:PLUS,val[0],val[2]] }
-	| EXPR MINUS EXPR 				{ result = [:MINUS,val[0],val[2]] }
-	| EXPR TIMES EXPR 				{ result = [:TIMES,val[0],val[2]] }
-	| EXPR OBELUS EXPR 				{ result = [:OBELUS,val[0],val[2]] } 
-	| EXPR PERCENT EXPR 			{ result = [:PERCENT,val[0],val[2]] }
-	| MINUS EXPR=UMINUS 			{ result = [:MINUS,val[1]] }
-	| EXPR AND EXPR 				{ result = [:AND,val[0],val[2]] }
-	| EXPR OR EXPR 					{ result = [:OR,val[0],val[2]] }
-	| NOT EXPR 						{ result = [:NOT,val[1]] }
-	| EXPR LESS EXPR 				{ result = [:LESS,val[0],val[2]] }
-	| EXPR LESS_EQUAL EXPR 			{ result = [:LESS_EQUAL,val[0],val[2]] }
-	| EXPR MORE EXPR 				{ result = [:MORE,val[0],val[2]] } 
-	| EXPR MORE_EQUAL EXPR 			{ result = [:MORE_EQUAL,val[0],val[2]] }
-	| EXPR EQUAL EXPR 				{ result = [:EQUAL,val[0],val[2]] }
-	| EXPR INEQUAL EXPR 			{ result = [:INEQUEAL,val[0],val[2]] }
-	| EXPR AMPERSAND EXPR 			{ result = [:AMPERSAND,val[0],val[2]] } 
-	| EXPR VIRGUILE EXPR 			{ result = [:VIRGUILE,val[0],val[2]] }
-	| DOLLAR EXPR 					{ result = [:DOLLAR,val[1]] }
-	| EXPR APOSTROPHE 				{ result = [:APOSTROPHE,val[1]] }
-	| VALORES 						{ result = [:VALORES,val[0]] }
-	| LPARENTHESIS EXPR RPARENTHESIS { result = [:EXPR, val[1]]}
+	: IDENTIF 							{result = EXPR_IDENT.new(val[0])}
+	| EXPR PLUS EXPR 
+	| EXPR MINUS EXPR
+ 	| EXPR MULTIPLY EXPR
+ 	| EXPR DIVISION EXPR
+	| EXPR PERCENT EXPR
+	| MINUS EXPR =MINUS_UNARY
+	| LPARENTHESIS EXPR RPARENTHESIS
+	| EXPR AND EXPR
+ 	| EXPR OR EXPR
+	| NOT EXPR
+	| EXPR AMPERSAND EXPR
+	| EXPR VIRGUILE EXPR
+	| DOLLAR EXPR
+	| EXPR APOSTROPHE 
+	| EXPR LESS  EXPR
+	| EXPR LESS_EQUAL EXPR
+	| EXPR MORE EXPR
+	| EXPR MORE_EQUAL EXPR
+	| EXPR EQUAL EXPR
+	| EXPR INEQUAL EXPR
 	;
 
-	VALORES
-	: NUMEROS 	{ result = [:NUMEROS,val[0]]}
-	| BOOLEAN 	{ result = [:BOOLEAN,val[0]]}
-	| LIENZO 	{ result = [:LIENZO,val[0]]}
-	| VARIABLE 	{ result = [:VARIABLE,val[0]]}
+	IDENTIF
+	: NUM
+	| BOOL
+	| LIEN 		{result = IDENTIF.new(val[0])}
+	| VARIABLE
 	;
 
-	NUMEROS
-	: NUMBER 	{ result = [:NUMBER,val[0]]}
+	NUM 
+	: NUMBER
 	;
 
-	BOOLEAN
-	: TRUE 	{ result = [:TRUE,val[0]] }
-	| FALSE { result = [:FALSE,val[0]] }
+	BOOL
+	: TRUE
+	| FALSE
 	;
 
-	LIENZO
-	: CANVAS { result = [:CANVAS,val[0]] }
-	| EMPTY_CANVAS {result = [:EMPTY_CANVAS,val[0]]}
-	;
-
-	VARIABLE
-	: IDENTIFIER { result = [:IDENTIFIER,val[0]]}
+	LIEN
+	: CANVAS  	{ result = LIEN.new(val[0])}
 	;
 
 end
 
 ---- inner 
+
+require "./Clases.rb"
 
 	def initialize(tokens)
 		@tokens = tokens

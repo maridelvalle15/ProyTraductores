@@ -52,14 +52,14 @@ class Lexer
 			puts "at line: #{invalids.get_nline}, column: #{invalids.get_ncolumn}"  
 		end
 	end
-
+	# Imprime que no se cerre el comentario en lanscii
 	def print_comment
 		@comment.each do |comment|
 			print "Error: Comment section opened but not closed"
 			puts "at line: #{comment.get_nline}, column: #{comment.get_ncolumn}"  
 		end
 	end
-
+	# Metodo para ser utilizado por racc (Parser)
 	def next_token
 		if (token = @tokens.shift) != nil
 			@copy << token
@@ -229,9 +229,9 @@ class Lexer
 						elsif word == "-"
 							@tokens << Token.new(:MINUS,word,nline,ncolumn)
 						elsif word == "\*"
-							@tokens << Token.new(:TIMES,word,nline,ncolumn)
+							@tokens << Token.new(:MULTIPLY,word,nline,ncolumn)
 						elsif word == "\/"
-							@tokens << Token.new(:OBELUS,word,nline,ncolumn)
+							@tokens << Token.new(:DIVISION,word,nline,ncolumn)
 						
 						end
 					end
@@ -256,7 +256,7 @@ class Lexer
 						elsif word == "&"
 							@tokens << Token.new(:AMPERSAND,word,nline,ncolumn)
 						elsif word == "~"
-							@tokens << Token.new(:VIRGULE,word,nline,ncolumn)
+							@tokens << Token.new(:VIRGUILE,word,nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado

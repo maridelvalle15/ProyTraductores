@@ -1,28 +1,29 @@
 Leyenda:
 
-PROGR: Estructura Programa Principal
-ESTRUC: Estructura Subprograma, Incorporacion de alcance
-DEC : Declaracion de variables
-TIPO: Tipo de variables  
-LISTIDENT: Lista de Identificadores
-INSTR : Intruccion del programa
-ASSIGN : Asignacion
-SEC: Secuenciacion
-ENTR: Entrada
-SAL: Salida
-CONDIC: Condicional
-ITERIND: Iteracion indeterminada 
-ITERDET: Iteracion determinada
-EXPR: Expresion
-
-
+S 			: Program Principal
+ESTRUCT 	: Estructura 
+DEC 		: Declaracion de variables
+TIPO 		: Tipo de variables  
+LISTIDENT 	: Lista de Identificadores
+INSTR  		: Intruccion del programa
+ASSIGN  	: Asignacion
+IN 			: Entrada
+OUT 		: Salida
+CONDIC 		: Condicional
+ITERIND 	: Iteracion indeterminada
+ITERDET 	: Iteracion determinada
+EXPR  		: Expresion
+IDENTIF 	: Identificador
+NUM 		: Numeros
+BOOL 		: Boolean
+LIEN 		: Lienzo
 
 Gramatica:
 
-PROGR -> ESTRUC
+S-> ESTRUCT
 
-ESTRUC -> { DEC | INSTR }
-	| { INSTR}
+ESTRUCT -> { DEC | INSTR }
+	| { INSTR }
 
 DEC -> DEC TIPO LISTIDENT 
 	| TIPO LISTIDENT
@@ -31,75 +32,70 @@ TIPO -> !
 	| %
 	| @
 
-LISTIDENT -> LISTIDENT IDENTIFICADOR 
-			| IDENTIFICADOR 
+LISTIDENT -> LISTIDENT VARIABLE
+	| VARIABLE
 
-INSTR -> ASSIGN
-	| SEC
-	| ENTR
-	| SAL
+VARIABLE -> IDENTIFIER
+
+INSTR -> INSTR ; INTRS 
+	| ASSIGN
+	| IN
+	| OUT
 	| CONDIC
 	| ITERIND
 	| ITERDET
 	| ESTRUCT
 
-ASSIGN -> IDENTIFICADOR  = EXPR
+ASSIGN -> VARIABLE = EXPR
 
-SEC -> SEC ; INSTR
-	| INSTR
+IN -> READ VARIABLE
 
-ENTR -> read identificador
-
-SAL -> write EXPR
+OUT -> WRITE EXPR
 
 CONDIC -> ( EXPR ? INSTR )
-	| ( EXPR ? INSTR : INSTR) 
+	| ( EXPR ? INSTR : INSTR )  
 
-ITERIND -> [ EXPR | INSTR]
+ITERIND -> [ EXPR | INSTR ]
 
-ITERDET -> [ EXPR .. EXPR | INSTR]
-	| [ identificador : EXPR .. EXPR | INSTR]
+ITERDET -> [ EXPR .. EXPR | INSTR ]
+	| [ VARIABLE : EXPR .. EXPR | INSTR ]
 
-EXPR -> EXPR + EXPR 				
-	| EXPR - EXPR 				
-	| EXPR * EXPR 				
-	| EXPR / EXPR 				
-	| EXPR % EXPR 			
-	| - EXPR 					
-	| EXPR /\ EXPR 				
-	| EXPR \/ EXPR 					
-	| ^ EXPR 						
-	| EXPR < EXPR 				
-	| EXPR <= EXPR 			
-	| EXPR > EXPR 				
-	| EXPR > EXPR 			
-	| EXPR = EXPR 				
-	| EXPR /= EXPR 			
-	| EXPR & EXPR 			
-	| EXPR ~ EXPR 			
-	| $ EXPR 					
-	| EXPR '				
-	| VALORES 						
+EXPR -> IDENTIF 
+	| EXPR + EXPR
+	| EXPR - EXPR
+ 	| EXPR * EXPR
+ 	| EXPR / EXPR
+	| EXPR % EXPR
+	| - EXPR
+	| (EXPR)
+	| EXPR /\ EXPR
+ 	| EXPR \/ EXPR
+	| ^EXPR
+	| EXPR & EXPR
+	| EXPR ~ EXPR
+	| $ EXPR
+	| EXPR '
+	| EXPR < EXPR
+	| EXPR <= EXPR
+	| EXPR > EXPR
+	| EXPR >= EXPR
+	| EXPR = EXPR
+	| EXPR /= EXPR
 
-VALORES -> NUMEROS 	
-	| BOOLEAN 	
-	| LIENZO 	
-	| VARIABLE 	
-	;
+IDENTIF -> NUM
+	| BOOL
+	| LIEN
+	| VARIABLE
 
-NUMEROS-> Numero	
+NUM -> NUMBER
 
-BOOLEAN-> TRUE 	
-	| FALSE 
-	;
+BOOL-> TRUE
+	| FALSE
 
-LIENZO-> </>
-	| <|>
-	| # 
+LIEN-> </>
+	| < >
 	| <\>
-	| <_> 
-	| <-> 
-	| < >  
-
-VARIABLE-> Identificador 
-	
+	| <|>
+	| #
+	| <_>
+	| <->
