@@ -1,4 +1,15 @@
-# Clases a ser Tomadas para el arbol sintactico
+#!/usr/bin/env ruby
+#
+# Proyecto Traductores
+# 
+# Integrantes:
+# 	Andres Navarro      11-10688
+# 	Marisela Del Valle  11-10217
+#
+# Fecha Ultima Modificacion: 
+# 	30/05/2015
+
+# Clases A hacer utilizas por el parser para crear el arbol AST
 
 class S 
 	def initialize(symbol,estruct)
@@ -21,12 +32,7 @@ class ESTRUCT
 	end
 
 	def print_tree(num)
-
-		@estruct.each do |estruct|
-			if estruct != nil
-				estruct.print_tree(num)
-			end
-		end
+		@estruct[1].print_tree(num)
 	end
 end
 
@@ -219,14 +225,48 @@ class EXPR_IDENT
 	def print_tree(num)
 		@expr.each do |expr|
 			if expr != nil
-				for i in 1..num
-					print "| "
-				end
-				print @symbol  
-				puts ": "
-				expr.print_tree(num+1)
+				expr.print_tree(num)
 			end
 		end
+	end
+end
+
+class EXPR_BIN
+	def initialize(symbol,val,symbol1,expr1,symbol2,expr2)
+		@arit = symbol
+		@val = val
+		@symbol = [symbol1,symbol2]
+		@expr = [expr1,expr2]
+	end
+
+	def print_tree(num)
+		for k in 1..num
+			print "| "
+		end
+		print "OPERATION: "  
+		puts @val
+
+		for i in 0..1
+			@expr[i].print_tree(num+1)
+		end
+	end
+end
+
+class EXPR_UNARIA
+	def initialize(symbol,val,symbol1,expr1)
+		@arit = symbol
+		@val = val
+		@symbol = symbol1
+		@expr = expr1
+	end
+
+	def print_tree(num)
+		for k in 1..num
+			print "| "
+		end
+		print "SIGNO: "  
+		puts @val
+		@expr.print_tree(num+1)
 	end
 end
 
@@ -272,7 +312,10 @@ class IDENTIFICADOR
 			print @symbol  
 			print ": "
 			puts "#{@identificador[0]}"
+		elsif @symbol == :EMPTY_CANVAS
+			print @symbol  
+			print ": "
+			puts "#{@identificador[0]}"
 		end
 	end
 end
-

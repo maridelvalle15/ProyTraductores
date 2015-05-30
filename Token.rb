@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # Proyecto Traductores
 # 
@@ -6,7 +7,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	3/05/2015
+# 	30/05/2015
 
 # Clase que crea un token para el simbolo valido para Lanscii encontrado en el archivo
 
@@ -40,6 +41,7 @@ class Token
 		return @ncolumn
 	end
 
+	# Devuelve un arreglo con el tipo y valor del simbolo
 	def get_token
 		return [@type, @value]
 	end

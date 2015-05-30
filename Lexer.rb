@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # Proyecto Traductores
 # 
@@ -6,12 +7,14 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	03/05/2015
+# 	30/05/2015
 
 require "./Token.rb"
 require "./InvalidWord.rb"
 
-# Clase que inicializa los arreglos de tokens y/o caracteres inesperados (en caso de ser encontrados), contiene procesimientos relacionados a los tokens y convierte los simbolos, segun corresponda el caso, en tokens
+# Clase que inicializa los arreglos de tokens y/o caracteres inesperados 
+#(en caso de ser encontrados), contiene procesimientos relacionados a los 
+# tokens y convierte los simbolos, segun corresponda el caso, en tokens
 
 class Lexer
 
@@ -69,13 +72,14 @@ class Lexer
 		end
 	end
 	
-	# Lectura del archivo. Se lee linea por linea, y a medida que se encuentran se toman la(s) palabra(s) o caracter(es) para identificar si pertenecen o no al lenguaje
+	# Lectura del archivo. Se lee linea por linea, y a medida que se encuentran se toman 
+	# la(s) palabra(s) o caracter(es) para identificar si pertenecen o no al lenguaje
 	def read(file)
 		nline = 0			# entero que cuenta el numero de lineas en el archivo
 		comment = false 	# booleano que indica si se ha encontrado o no un comentario
 		file.each_line do |line|
 			nline +=1		# Para cada linea se imcrementa el contador en 1
-			ncolumn = 1		# En cada nueva linea se inicializa el contador de columnas del 					archivo en 1 
+			ncolumn = 1		# En cada nueva linea se inicializa el contador de columnas del archivo en 1 
 
 			# Se chequea que la linea a leer no sea vacia
 			while line != ""				
@@ -92,9 +96,11 @@ class Lexer
 						comment = false 	# se cerro el comentario
 						@comment.pop
 					end
-					# Para este caso no se crea token, simplemente se corta la linea para continuar con la evaluacion de los siguientes caracteres/pabras
+					# Para este caso no se crea token, simplemente se corta la linea para continuar 
+					# con la evaluacion de los siguientes caracteres/palabras
 					line = line.partition(word).last
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso true,false,read,write
@@ -114,7 +120,8 @@ class Lexer
 							@tokens << Token.new(:WRITE,word,nline,ncolumn)
 					 	end
 					 end
-					 # Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					 ncolumn += word.size()
 					 
 				# Caso cualquier palabra que no sea true,false,read,write (identificadores)
@@ -126,7 +133,8 @@ class Lexer
 						# Si se cumple la condicion, se crea un nuevo token
 						@tokens << Token.new(:IDENTIFIER,word,nline,ncolumn)
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso para los numeros
@@ -138,7 +146,8 @@ class Lexer
 						# Si se cumple la condicion, se crea un nuevo token
 							@tokens << Token.new(:NUMBER,word.to_i,nline,ncolumn)
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso operadores booleanos (/\,\/,^)
@@ -156,7 +165,8 @@ class Lexer
 							@tokens << Token.new(:AND,word,nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 					
 				# Caso lienzos (<|>,<\>,<->,< >,#)
@@ -172,7 +182,8 @@ class Lexer
 							@tokens << Token.new(:CANVAS,word[1],nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso <=,>=,/=,>,<,=
@@ -196,7 +207,8 @@ class Lexer
 							@tokens << Token.new(:EQUAL,word,nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso !,%,@
@@ -214,7 +226,8 @@ class Lexer
 							@tokens << Token.new(:AT,word,nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso operadores aritmeticos (+,-,*,/)
@@ -235,7 +248,8 @@ class Lexer
 						
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso :,|,$,',&,~,;
@@ -259,7 +273,8 @@ class Lexer
 							@tokens << Token.new(:VIRGUILE,word,nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso {,},[,],(,),?,;,..
@@ -289,7 +304,8 @@ class Lexer
 							@tokens << Token.new(:DOUBLE_DOT,word,nline,ncolumn)
 						end
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Caso espacio en blanco
@@ -307,7 +323,8 @@ class Lexer
 						# Si se cumple la condicion, se crea un nuevo token
 						@invalids << InvalidWord.new(word,nline,ncolumn)
 					end
-					# Para saber en que columna se encuentra la siguiente palabra/caracter, en lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
+					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 
+					# lugar de incrementarlo en 1 se le incrementa en el tamaño de la palabra que se haya encontrado
 					ncolumn += word.size()
 
 				# Cierra case

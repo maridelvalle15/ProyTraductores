@@ -1,5 +1,3 @@
 { 
-	@ andres bruja ! hola como % nini | write llkk
-	
-
+	hola = (5 % -5)+5
 }

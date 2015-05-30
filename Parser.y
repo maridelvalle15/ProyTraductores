@@ -1,5 +1,17 @@
 #!/usr/bin/env ruby
+#
+# Proyecto Traductores
+# 
+# Integrantes:
+# 	Andres Navarro      11-10688
+# 	Marisela Del Valle  11-10217
+#
+# Fecha Ultima Modificacion: 
+# 	30/05/2015
 
+# Clase Parser que genera el Arbol Abstracto Sintacto tomando como entrada 
+# un arreglo de tokens y utlizando la herramiento racc traduce este archivo
+# en un .rb
 
 
 class Parser
@@ -104,34 +116,30 @@ class Parser
 
 	#Expresiones Aritmeticas
 	EXPR
-	: IDENTIFICADOR 					{result = EXPR_IDENT.new(:IDENTIFICADOR,val[0])}
-	| EXPR PLUS EXPR 
-	| EXPR MINUS EXPR
- 	| EXPR MULTIPLY EXPR
- 	| EXPR DIVISION EXPR
-	| EXPR PERCENT EXPR
-	| MINUS EXPR =MINUS_UNARY
-	| LPARENTHESIS EXPR RPARENTHESIS
-	| EXPR AND EXPR
- 	| EXPR OR EXPR
-	| NOT EXPR
-	| EXPR AMPERSAND EXPR
-	| EXPR VIRGUILE EXPR
-	| DOLLAR EXPR
-	| EXPR APOSTROPHE 
-	| EXPR LESS  EXPR
-	| EXPR LESS_EQUAL EXPR
-	| EXPR MORE EXPR
-	| EXPR MORE_EQUAL EXPR
-	| EXPR EQUAL EXPR
-	| EXPR INEQUAL EXPR
-	;
-
-	IDENTIFICADOR
-	: NUM 		{result = IDENTIF.new(:NUM,val[0])}
-	| BOOL		{result = IDENTIF.new(:BOOL,val[0])}
-	| LIEN 		{result = IDENTIF.new(:LIEN,val[0])}
-	| VARIABLE 	{result = IDENTIF.new(:VARIABLE,val[0])}
+	: NUM 								{result = IDENTIF.new(:NUM,val[0])}
+	| BOOL								{result = IDENTIF.new(:BOOL,val[0])}
+	| LIEN 								{result = IDENTIF.new(:LIEN,val[0])}
+	| VARIABLE 							{result = IDENTIF.new(:VARIABLE,val[0])} 
+	| EXPR PLUS EXPR 					{result = EXPR_BIN.new(:PLUS,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR MINUS EXPR 					{result = EXPR_BIN.new(:MINUS,val[1],:EXPR,val[0],:EXPR,val[2])}
+ 	| EXPR MULTIPLY EXPR 				{result = EXPR_BIN.new(:MULTIPLY,val[1],:EXPR,val[0],:EXPR,val[2])}
+ 	| EXPR DIVISION EXPR 				{result = EXPR_BIN.new(:DIVISION,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR PERCENT EXPR 				{result = EXPR_BIN.new(:PERCENT,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| MINUS EXPR =MINUS_UNARY 			{result = EXPR_UNARIA.new(:MINUS_UNARY,val[0],:EXPR,val[1])}
+	| LPARENTHESIS EXPR RPARENTHESIS 	{result = EXPR_IDENT.new(:EXPR,val[1])}
+	| EXPR AND EXPR 					{result = EXPR_BIN.new(:AND,val[1],:EXPR,val[0],:EXPR,val[2])}
+ 	| EXPR OR EXPR 						{result = EXPR_BIN.new(:OR,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| NOT EXPR 							{result = EXPR_UNARIA.new(:NOT,val[0],:EXPR,val[1])}
+	| EXPR AMPERSAND EXPR 				{result = EXPR_BIN.new(:AMPERSAND,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR VIRGUILE EXPR 				{result = EXPR_BIN.new(:VIRGUILE,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| DOLLAR EXPR  						{result = EXPR_UNARIA.new(:DOLLAR,val[0],:EXPR,val[1])}
+	| EXPR APOSTROPHE  					{result = EXPR_UNARIA.new(:APOSTROPHE,val[1],:EXPR,val[0])}
+	| EXPR LESS  EXPR 					{result = EXPR_BIN.new(:LESS,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR LESS_EQUAL EXPR 				{result = EXPR_BIN.new(:LESS_EQUAL,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR MORE EXPR 					{result = EXPR_BIN.new(:MORE,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR MORE_EQUAL EXPR 				{result = EXPR_BIN.new(:MORE_EQUAL,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR EQUAL EXPR 					{result = EXPR_BIN.new(:EQUAL,val[1],:EXPR,val[0],:EXPR,val[2])}
+	| EXPR INEQUAL EXPR 				{result = EXPR_BIN.new(:INEQUAL,val[1],:EXPR,val[0],:EXPR,val[2])}
 	;
 
 	NUM 
@@ -144,7 +152,8 @@ class Parser
 	;
 
 	LIEN
-	: CANVAS  	{ result = IDENTIFICADOR.new(:CANVAS,val[0])}
+	: CANVAS  		{ result = IDENTIFICADOR.new(:CANVAS,val[0])}
+	| EMPTY_CANVAS	{ result = IDENTIFICADOR.new(:EMPTY_CANVAS,val[0])}
 	;
 
 end

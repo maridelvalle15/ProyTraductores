@@ -25,6 +25,7 @@ if token.get_comment.size > 0
 	token.print_comment
 elsif token.get_invalids.size > 0 
 	token.print_invalids
+# Se imprimen los tokens si no se encontraron errores en el archivo
 end
 
 parser = Parser.new(token);
