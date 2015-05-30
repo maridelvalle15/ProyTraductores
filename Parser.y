@@ -35,7 +35,7 @@ class Parser
 
 	#Programa principal
 	S 
-	: ESTRUCT { result = S.new(:S,val[0]); result.print_tree(1)}
+	: ESTRUCT { result = S.new(:S,val[0]); result.print_tree(0)}
 	;
 
 	# Estructura 
@@ -46,21 +46,21 @@ class Parser
 
 	# Declaraciones
 	DEC
-	: DEC TIPO LISTIDENT  	
-	| TIPO LISTIDENT 	 	
+	: DEC TIPO LISTIDENT  			{result = DECLARATION.new(:DEC,val[0],:TIPO,val[1],:LISTIDENT,val[2])}
+	| TIPO LISTIDENT 	 			{result = DECLARATION.new(nil,nil,:TIPO,val[0],:LISTIDENT,val[1])}
 	;
 
 	# Tipos 
 	TIPO
-	: EXCLAMATION_MARK  
-	| PERCENT  			
-	| AT 				
+	: EXCLAMATION_MARK  {result = TIPO.new(:BOOLEAN,val[0])}
+	| PERCENT  			{result = TIPO.new(:INTEGER,val[0])}
+	| AT 				{result = TIPO.new(:LIENZO,val[0])}
 	;
 
 	# Identificadores
 	LISTIDENT
-	: LISTIDENT VARIABLE  
-	| VARIABLE 		   	
+	: LISTIDENT VARIABLE {result = LISTIDENT.new(:LISTIDENT,val[0],:VARIABLE,val[1])}
+	| VARIABLE 		   	 {result = LISTIDENT.new(nil,nil,:VARIABLE,val[0])}
 	;
 
 	#Variable
@@ -71,45 +71,35 @@ class Parser
 	# Instrucciones
 	INSTR
 	: INSTR SEMI_COLON INSTR 	{ result = INSTR.new(:INSTR,val[0],:INSTR,val[2]) }
-	| ASSIGN 	 		
-	| IN  		
-	| OUT  						 { result = INSTR.new(:OUT,val[0],nil,nil) }
-	| CONDIC 	
-	| ITERIND 	
-	| ITERDET 	
-	| ESTRUCT 	
+	| ASSIGN 	 				{ result = INSTR.new(:ASSIGN,val[0],nil,nil) }
+	| READ VARIABLE   			{ result = WRITE_READ.new(:READ,val[1]) }
+	| WRITE EXPR  				{ result = WRITE_READ.new(:WRITE,val[1]) }
+	| CONDIC 					{ result = INSTR.new(:CONDIC,val[0],nil,nil) }
+	| ITERIND 					{ result = INSTR.new(:ITERIND,val[0],nil,nil) }
+	| ITERDET 					{ result = INSTR.new(:ITERDET,val[0],nil,nil) }
+	| ESTRUCT 					{ result = INSTR.new(:ESTRUCT,val[0],nil,nil) }
 	;
 
 	#Asignacion
 	ASSIGN
-	: VARIABLE EQUAL EXPR 
+	: VARIABLE EQUAL EXPR 		{result = ASSIGN.new(:VARIABLE,val[0],:EXPR,val[2])}
 	;
-
-	# Entrada
-	IN
-	: READ VARIABLE 
-	;
-
-	#Salida
-	OUT
-	: WRITE EXPR 				{ result = WRITE.new(:WRITE,val[1]) }
-	;
-
+ 
 	#Condicional
 	CONDIC
-	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS  			
-	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS 
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS  				{result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],nil,nil)}	
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS  	{result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],:ELSE,val[5])}
 	;
 
 	#Iteracion indeterminada
 	ITERIND
-	: LBRACKET EXPR PIPE INSTR RBRACKET
+	: LBRACKET EXPR PIPE INSTR RBRACKET {result = ITERIND.new(:WHILE,val[1],:DO,val[3])}
 	;
 
 	#Iteracion determinada
 	ITERDET
-	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 
-	| LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 
+	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 				{result = ITERDET.new(nil,nil,:EXPR,val[1],:EXPR,val[3],:INSTR,val[5])}
+	| LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET  {result = ITERDET.new(:VARIABLE,val[1],:EXPR,val[3],:EXPR,val[5],:INSTR,val[7])}
 	;
 
 	#Expresiones Aritmeticas

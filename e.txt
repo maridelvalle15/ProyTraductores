@@ -1,4 +1,5 @@
 { 
-	write llkk;
-	write 8888
+	@ andres bruja ! hola como % nini | write llkk
+	
+
 }

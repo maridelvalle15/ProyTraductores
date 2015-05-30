@@ -21,6 +21,7 @@ class ESTRUCT
 	end
 
 	def print_tree(num)
+
 		@estruct.each do |estruct|
 			if estruct != nil
 				estruct.print_tree(num)
@@ -38,29 +39,176 @@ class INSTR
 	def print_tree(num)
 		@instr.each do |instr|
 			if instr != nil
-				instr.print_tree(num)
+				if @symbol[0] != :INSTR 
+					for i in 1..num
+						print "| "
+					end
+					print @symbol[0]
+					puts ": "
+					instr.print_tree(num+1)	
+				else
+					instr.print_tree(num)
+				end
 			end
 		end
 	end
 end
 
-class WRITE
+class DECLARATION
+	def initialize(symbol1=nil,dec=nil,symbol2,tipo,symbol3,listident)
+		@symbol = [symbol1,symbol2,symbol3]
+		@values = [dec,tipo,listident]
+	end
+
+	def print_tree(num)
+		for i in 0..2
+			if @symbol[i] != nil
+				for j in 1..num
+					print "| "
+				end 
+				print @symbol[i]  
+				puts ": "
+				@values[i].print_tree(num+1)
+			end
+		end
+	end
+end
+
+class TIPO
+	def initialize(symbol,tipo)
+		@symbol = symbol
+		@tipo = tipo
+	end
+
+	def print_tree(num)
+		for i in 1..num
+			print "| "
+		end
+		print @symbol  
+		print ": "
+		puts @tipo
+	end
+end
+
+
+class LISTIDENT 
+	def initialize(symbol1=nil,listident=nil,symbol2,variable)
+		@symbol = [symbol1,symbol2]
+		@values = [listident,variable]
+	end
+
+	def print_tree(num)
+		for i in 0..1
+			if @symbol[i] != nil
+				for j in 1..num
+					print "| "
+				end
+				print @symbol[i]
+				puts ": "
+				@values[i].print_tree(num+1)
+			end
+		end
+	end
+end
+
+class ASSIGN
+	def initialize(symbol1,variable,symbol2,expr)
+		@symbol = [symbol1,symbol2]
+		@values = [variable,expr]
+	end
+
+	def print_tree(num)
+
+		for i in 0..1
+			for j in 1..num
+				print "| "
+			end
+			print @symbol[i]  
+			puts ": "
+			@values[i].print_tree(num+1)
+		end
+	end
+end
+
+class WRITE_READ
 	def initialize(symbol,expr)
 		@symbol = symbol
 		@write = [expr]
 	end
 
 	def print_tree(num)
-		print @symbol  
-		puts ": "
+		
 		@write.each do |write|
 			for i in 1..num
 				print "| "
 			end
+			print @symbol  
+			puts ": "
 			write.print_tree(num+1)
 		end
 	end
 end
+
+class CONDITIONAL
+	def initialize(symbol1,expr,symbol2,instr1,symbol3=nil,instr2=nil)
+		@symbol = [symbol1,symbol2,symbol3]
+		@values = [expr,instr1,instr2]
+	end
+
+	def print_tree(num)
+		for i in 0..2
+			if @symbol[i] != nil
+				for j in 1..num
+					print "| "
+				end 
+				print @symbol[i]  
+				puts ": "
+				@values[i].print_tree(num+1)
+			end
+		end
+	end
+end
+
+class ITERIND
+	def initialize(symbol1,expr,symbol2,instr)
+		@symbol = [symbol1,symbol2]
+		@values = [expr,instr]
+	end
+
+	def print_tree(num)
+		for i in 0..1
+			if @symbol[i] != nil
+				for j in 1..num
+					print "| "
+				end 
+				print @symbol[i]  
+				puts ": "
+				@values[i].print_tree(num+1)
+			end
+		end
+	end
+end
+
+class ITERDET
+	def initialize(symbol=nil,var=nil,symbol1,expr1,symbol2,expr2,symbol3,instr)
+		@symbol = [symbol,symbol1,symbol2,symbol3]
+		@values = [var,expr1,expr2,instr]
+	end
+
+	def print_tree(num)
+		for i in 0..3
+			if @symbol[i] != nil
+				for j in 1..num
+					print "| "
+				end 
+				print @symbol[i]  
+				puts ": "
+				@values[i].print_tree(num+1)
+			end
+		end
+	end
+end
+
 
 class EXPR_IDENT
 	def initialize(symbol,identf)
@@ -69,13 +217,13 @@ class EXPR_IDENT
 	end
 
 	def print_tree(num)
-		print @symbol  
-		puts ": "
 		@expr.each do |expr|
 			if expr != nil
 				for i in 1..num
 					print "| "
 				end
+				print @symbol  
+				puts ": "
 				expr.print_tree(num+1)
 			end
 		end
@@ -101,6 +249,9 @@ class IDENTIFICADOR
 	end
 
 	def print_tree(num)
+		for i in 1..num
+			print "| "
+		end 
 		if @symbol == :CANVAS 
 			print @symbol  
 			print ": "
