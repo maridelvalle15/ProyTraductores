@@ -1,3 +1,4 @@
 { 
-	write </>	
+	write llkk;
+	write 8888
 }

@@ -29,7 +29,7 @@ rule 24 CONDIC: LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHE
 rule 25 ITERIND: LBRACKET EXPR PIPE INSTR RBRACKET
 rule 26 ITERDET: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET
 rule 27 ITERDET: LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET
-rule 28 EXPR: IDENTIF
+rule 28 EXPR: IDENTIFICADOR
 rule 29 EXPR: EXPR PLUS EXPR
 rule 30 EXPR: EXPR MINUS EXPR
 rule 31 EXPR: EXPR MULTIPLY EXPR
@@ -50,10 +50,10 @@ rule 45 EXPR: EXPR MORE EXPR
 rule 46 EXPR: EXPR MORE_EQUAL EXPR
 rule 47 EXPR: EXPR EQUAL EXPR
 rule 48 EXPR: EXPR INEQUAL EXPR
-rule 49 IDENTIF: NUM
-rule 50 IDENTIF: BOOL
-rule 51 IDENTIF: LIEN
-rule 52 IDENTIF: VARIABLE
+rule 49 IDENTIFICADOR: NUM
+rule 50 IDENTIFICADOR: BOOL
+rule 51 IDENTIFICADOR: LIEN
+rule 52 IDENTIFICADOR: VARIABLE
 rule 53 NUM: NUMBER
 rule 54 BOOL: TRUE
 rule 55 BOOL: FALSE
@@ -108,7 +108,7 @@ rule 56 LIEN: CANVAS
   EXPR (56)
     on right: 20 22 23 24 25 26 27 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
     on left : 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
-  IDENTIF (57)
+  IDENTIFICADOR (57)
     on right: 28
     on left : 49 50 51 52
   NUM (58)
@@ -359,7 +359,7 @@ state 21
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 33
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -381,7 +381,7 @@ state 22
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 47
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -405,7 +405,7 @@ state 23
 
   EXPR          go to state 48
   VARIABLE      go to state 49
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -506,7 +506,7 @@ state 31
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 54
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -560,7 +560,7 @@ state 33
 
 state 34
 
-  28) EXPR : IDENTIF _
+  28) EXPR : IDENTIFICADOR _
 
   $default      reduce using rule 28 (EXPR)
 
@@ -579,7 +579,7 @@ state 35
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 71
   NUM           go to state 39
   BOOL          go to state 40
@@ -600,7 +600,7 @@ state 36
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 72
   NUM           go to state 39
   BOOL          go to state 40
@@ -621,7 +621,7 @@ state 37
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 73
   NUM           go to state 39
   BOOL          go to state 40
@@ -642,7 +642,7 @@ state 38
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 74
   NUM           go to state 39
   BOOL          go to state 40
@@ -651,30 +651,30 @@ state 38
 
 state 39
 
-  49) IDENTIF : NUM _
+  49) IDENTIFICADOR : NUM _
 
-  $default      reduce using rule 49 (IDENTIF)
+  $default      reduce using rule 49 (IDENTIFICADOR)
 
 
 state 40
 
-  50) IDENTIF : BOOL _
+  50) IDENTIFICADOR : BOOL _
 
-  $default      reduce using rule 50 (IDENTIF)
+  $default      reduce using rule 50 (IDENTIFICADOR)
 
 
 state 41
 
-  51) IDENTIF : LIEN _
+  51) IDENTIFICADOR : LIEN _
 
-  $default      reduce using rule 51 (IDENTIF)
+  $default      reduce using rule 51 (IDENTIFICADOR)
 
 
 state 42
 
-  52) IDENTIF : VARIABLE _
+  52) IDENTIFICADOR : VARIABLE _
 
-  $default      reduce using rule 52 (IDENTIF)
+  $default      reduce using rule 52 (IDENTIFICADOR)
 
 
 state 43
@@ -789,10 +789,10 @@ state 48
 state 49
 
   27) ITERDET : LBRACKET VARIABLE _ COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET
-  52) IDENTIF : VARIABLE _
+  52) IDENTIFICADOR : VARIABLE _
 
   COLON         shift, and go to state 78
-  $default      reduce using rule 52 (IDENTIF)
+  $default      reduce using rule 52 (IDENTIFICADOR)
 
 
 state 50
@@ -882,7 +882,7 @@ state 55
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 80
   NUM           go to state 39
   BOOL          go to state 40
@@ -903,7 +903,7 @@ state 56
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 81
   NUM           go to state 39
   BOOL          go to state 40
@@ -924,7 +924,7 @@ state 57
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 82
   NUM           go to state 39
   BOOL          go to state 40
@@ -945,7 +945,7 @@ state 58
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 83
   NUM           go to state 39
   BOOL          go to state 40
@@ -966,7 +966,7 @@ state 59
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 84
   NUM           go to state 39
   BOOL          go to state 40
@@ -987,7 +987,7 @@ state 60
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 85
   NUM           go to state 39
   BOOL          go to state 40
@@ -1008,7 +1008,7 @@ state 61
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 86
   NUM           go to state 39
   BOOL          go to state 40
@@ -1029,7 +1029,7 @@ state 62
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 87
   NUM           go to state 39
   BOOL          go to state 40
@@ -1050,7 +1050,7 @@ state 63
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 88
   NUM           go to state 39
   BOOL          go to state 40
@@ -1078,7 +1078,7 @@ state 65
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 89
   NUM           go to state 39
   BOOL          go to state 40
@@ -1099,7 +1099,7 @@ state 66
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 90
   NUM           go to state 39
   BOOL          go to state 40
@@ -1120,7 +1120,7 @@ state 67
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 91
   NUM           go to state 39
   BOOL          go to state 40
@@ -1141,7 +1141,7 @@ state 68
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 92
   NUM           go to state 39
   BOOL          go to state 40
@@ -1162,7 +1162,7 @@ state 69
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 93
   NUM           go to state 39
   BOOL          go to state 40
@@ -1183,7 +1183,7 @@ state 70
   CANVAS        shift, and go to state 46
   LPARENTHESIS  shift, and go to state 36
 
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   EXPR          go to state 94
   NUM           go to state 39
   BOOL          go to state 40
@@ -1381,7 +1381,7 @@ state 77
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 98
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -1402,7 +1402,7 @@ state 78
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 99
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41
@@ -2051,7 +2051,7 @@ state 104
   LPARENTHESIS  shift, and go to state 36
 
   EXPR          go to state 107
-  IDENTIF       go to state 34
+  IDENTIFICADOR  go to state 34
   NUM           go to state 39
   BOOL          go to state 40
   LIEN          go to state 41

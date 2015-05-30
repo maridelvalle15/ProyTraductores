@@ -269,8 +269,8 @@ racc_reduce_table = [
   1, 47, :_reduce_none,
   2, 48, :_reduce_none,
   1, 48, :_reduce_none,
-  1, 49, :_reduce_none,
-  3, 46, :_reduce_none,
+  1, 49, :_reduce_11,
+  3, 46, :_reduce_12,
   1, 46, :_reduce_none,
   1, 46, :_reduce_none,
   1, 46, :_reduce_15,
@@ -307,13 +307,13 @@ racc_reduce_table = [
   3, 56, :_reduce_none,
   3, 56, :_reduce_none,
   3, 56, :_reduce_none,
-  1, 57, :_reduce_none,
-  1, 57, :_reduce_none,
+  1, 57, :_reduce_49,
+  1, 57, :_reduce_50,
   1, 57, :_reduce_51,
-  1, 57, :_reduce_none,
-  1, 58, :_reduce_none,
-  1, 59, :_reduce_none,
-  1, 59, :_reduce_none,
+  1, 57, :_reduce_52,
+  1, 58, :_reduce_53,
+  1, 59, :_reduce_54,
+  1, 59, :_reduce_55,
   1, 60, :_reduce_56 ]
 
 racc_reduce_n = 57
@@ -442,7 +442,7 @@ Racc_token_to_s_table = [
   "ITERIND",
   "ITERDET",
   "EXPR",
-  "IDENTIF",
+  "IDENTIFICADOR",
   "NUM",
   "BOOL",
   "LIEN" ]
@@ -455,21 +455,21 @@ Racc_debug_parser = false
 
 module_eval(<<'.,.,', 'Parser.y', 37)
   def _reduce_1(val, _values, result)
-     result = S.new(val[0]); result.print_tree
+     result = S.new(:S,val[0]); result.print_tree(1)
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 42)
   def _reduce_2(val, _values, result)
-     result = ESTRUCT.new(val[1],val[3]) 
+     result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 43)
   def _reduce_3(val, _values, result)
-     result = ESTRUCT.new(nil,val[1]) 
+     result = ESTRUCT.new(nil,nil,:INSTR,val[1]) 
     result
   end
 .,.,
@@ -488,9 +488,19 @@ module_eval(<<'.,.,', 'Parser.y', 43)
 
 # reduce 10 omitted
 
-# reduce 11 omitted
+module_eval(<<'.,.,', 'Parser.y', 67)
+  def _reduce_11(val, _values, result)
+     result = IDENTIFICADOR.new(:IDENTIFIER,val[0])
+    result
+  end
+.,.,
 
-# reduce 12 omitted
+module_eval(<<'.,.,', 'Parser.y', 72)
+  def _reduce_12(val, _values, result)
+     result = INSTR.new(:INSTR,val[0],:INSTR,val[2]) 
+    result
+  end
+.,.,
 
 # reduce 13 omitted
 
@@ -498,7 +508,7 @@ module_eval(<<'.,.,', 'Parser.y', 43)
 
 module_eval(<<'.,.,', 'Parser.y', 75)
   def _reduce_15(val, _values, result)
-     result = INSTR.new(nil,val[0]) 
+     result = INSTR.new(:OUT,val[0],nil,nil) 
     result
   end
 .,.,
@@ -517,7 +527,7 @@ module_eval(<<'.,.,', 'Parser.y', 75)
 
 module_eval(<<'.,.,', 'Parser.y', 94)
   def _reduce_22(val, _values, result)
-     result = WRITE.new(val[1]) 
+     result = WRITE.new(:WRITE,val[1]) 
     result
   end
 .,.,
@@ -534,7 +544,7 @@ module_eval(<<'.,.,', 'Parser.y', 94)
 
 module_eval(<<'.,.,', 'Parser.y', 116)
   def _reduce_28(val, _values, result)
-    result = EXPR_IDENT.new(val[0])
+    result = EXPR_IDENT.new(:IDENTIFICADOR,val[0])
     result
   end
 .,.,
@@ -579,28 +589,58 @@ module_eval(<<'.,.,', 'Parser.y', 116)
 
 # reduce 48 omitted
 
-# reduce 49 omitted
-
-# reduce 50 omitted
-
-module_eval(<<'.,.,', 'Parser.y', 142)
-  def _reduce_51(val, _values, result)
-    result = IDENTIF.new(val[0])
+module_eval(<<'.,.,', 'Parser.y', 140)
+  def _reduce_49(val, _values, result)
+    result = IDENTIF.new(:NUM,val[0])
     result
   end
 .,.,
 
-# reduce 52 omitted
+module_eval(<<'.,.,', 'Parser.y', 141)
+  def _reduce_50(val, _values, result)
+    result = IDENTIF.new(:BOOL,val[0])
+    result
+  end
+.,.,
 
-# reduce 53 omitted
+module_eval(<<'.,.,', 'Parser.y', 142)
+  def _reduce_51(val, _values, result)
+    result = IDENTIF.new(:LIEN,val[0])
+    result
+  end
+.,.,
 
-# reduce 54 omitted
+module_eval(<<'.,.,', 'Parser.y', 143)
+  def _reduce_52(val, _values, result)
+    result = IDENTIF.new(:VARIABLE,val[0])
+    result
+  end
+.,.,
 
-# reduce 55 omitted
+module_eval(<<'.,.,', 'Parser.y', 147)
+  def _reduce_53(val, _values, result)
+     result = IDENTIFICADOR.new(:NUMBER,val[0])
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'Parser.y', 151)
+  def _reduce_54(val, _values, result)
+     result = IDENTIFICADOR.new(:TRUE,val[0])
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'Parser.y', 152)
+  def _reduce_55(val, _values, result)
+     result = IDENTIFICADOR.new(:FALSE,val[0])
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'Parser.y', 156)
   def _reduce_56(val, _values, result)
-     result = LIEN.new(val[0])
+     result = IDENTIFICADOR.new(:CANVAS,val[0])
     result
   end
 .,.,

@@ -35,13 +35,13 @@ class Parser
 
 	#Programa principal
 	S 
-	: ESTRUCT { result = S.new(val[0]); result.print_tree}
+	: ESTRUCT { result = S.new(:S,val[0]); result.print_tree(1)}
 	;
 
 	# Estructura 
 	ESTRUCT
-	: LCURLY DEC PIPE INSTR RCURLY { result = ESTRUCT.new(val[1],val[3]) }
-	| LCURLY INSTR RCURLY  		   { result = ESTRUCT.new(nil,val[1]) }  
+	: LCURLY DEC PIPE INSTR RCURLY { result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]) }
+	| LCURLY INSTR RCURLY  		   { result = ESTRUCT.new(nil,nil,:INSTR,val[1]) }  
 	;
 
 	# Declaraciones
@@ -65,15 +65,15 @@ class Parser
 
 	#Variable
 	VARIABLE 
-	: IDENTIFIER
+	: IDENTIFIER 	{ result = IDENTIFICADOR.new(:IDENTIFIER,val[0])}
 	;
 
 	# Instrucciones
 	INSTR
-	: INSTR SEMI_COLON INSTR 
+	: INSTR SEMI_COLON INSTR 	{ result = INSTR.new(:INSTR,val[0],:INSTR,val[2]) }
 	| ASSIGN 	 		
 	| IN  		
-	| OUT  						 { result = INSTR.new(nil,val[0]) }
+	| OUT  						 { result = INSTR.new(:OUT,val[0],nil,nil) }
 	| CONDIC 	
 	| ITERIND 	
 	| ITERDET 	
@@ -92,7 +92,7 @@ class Parser
 
 	#Salida
 	OUT
-	: WRITE EXPR 				{ result = WRITE.new(val[1]) }
+	: WRITE EXPR 				{ result = WRITE.new(:WRITE,val[1]) }
 	;
 
 	#Condicional
@@ -114,7 +114,7 @@ class Parser
 
 	#Expresiones Aritmeticas
 	EXPR
-	: IDENTIF 							{result = EXPR_IDENT.new(val[0])}
+	: IDENTIFICADOR 					{result = EXPR_IDENT.new(:IDENTIFICADOR,val[0])}
 	| EXPR PLUS EXPR 
 	| EXPR MINUS EXPR
  	| EXPR MULTIPLY EXPR
@@ -137,24 +137,24 @@ class Parser
 	| EXPR INEQUAL EXPR
 	;
 
-	IDENTIF
-	: NUM
-	| BOOL
-	| LIEN 		{result = IDENTIF.new(val[0])}
-	| VARIABLE
+	IDENTIFICADOR
+	: NUM 		{result = IDENTIF.new(:NUM,val[0])}
+	| BOOL		{result = IDENTIF.new(:BOOL,val[0])}
+	| LIEN 		{result = IDENTIF.new(:LIEN,val[0])}
+	| VARIABLE 	{result = IDENTIF.new(:VARIABLE,val[0])}
 	;
 
 	NUM 
-	: NUMBER
+	: NUMBER	{ result = IDENTIFICADOR.new(:NUMBER,val[0])}
 	;
 
 	BOOL
-	: TRUE
-	| FALSE
+	: TRUE		{ result = IDENTIFICADOR.new(:TRUE,val[0])}
+	| FALSE		{ result = IDENTIFICADOR.new(:FALSE,val[0])}
 	;
 
 	LIEN
-	: CANVAS  	{ result = LIEN.new(val[0])}
+	: CANVAS  	{ result = IDENTIFICADOR.new(:CANVAS,val[0])}
 	;
 
 end
