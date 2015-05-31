@@ -1,0 +1,5 @@
+{ 	
+
+	hola = ^< > >= fos * dos >= lll
+
+}
