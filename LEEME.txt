@@ -6,7 +6,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	30/05/2015
+# 	31/05/2015
 
 ##LEEME##
 
@@ -25,14 +25,16 @@ Estado actual :
 	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo y lo imprime por pantalla.
 
 Problemas presentes : 
-	Por lo momentos el analizador lexicografico y el analizador sintactico no presenta ningun problema de lectura y de implementacion. Faltaria es atrapar el error de sintaxis a voluntad, ya que por defecto  nuestro parser utitiliza el metodo on_error del racc para atrapar esa excepcion y no sabemos si asi se debe manejar o no. De resto esta todo bien.
+	Presenta problemas cuando se leen varias expresiones relacionales consecutivas, a menos que las expresiones esten parentizadas. De resto esta todo bien.
 
 Comentarios adicionales : 
 	
-	1) los caracteres inesperados, en el caso de no estar contenidos en un comentarios, son tomados uno por uno para evitar posibles conbinaciones de caracteres validos con inesperados. Ejemplo "\=\;" , nuestro analizador lexicografico analiza primero "\", despues el "=", luego el "\" y por ultimo ";".
+	1) Los caracteres inesperados, en el caso de no estar contenidos en un comentario, son tomados uno por uno para evitar posibles combinaciones de caracteres validos con inesperados. Ejemplo "\=\;" , nuestro analizador lexicografico analiza primero "\", despues el "=", luego el "\" y por ultimo ";".
 
-	2) Todos lo numeros enteros son convertidos en token por nuestro analizador lexigrafico. La restriccion numero menor de 32 bits con signo sera tomado en cuenta mas adelante.
+	2) Todos lo numeros enteros son convertidos en token por nuestro analizador lexicografico. La restriccion numero menor de 32 bits con signo sera tomado en cuenta mas adelante.
 
-	3) Se creo el arbol sintactico tambien con las declaraciones del bloque a pesar que en esta entrega no se imprimen. Cualquier cambie que amerite no tomar en cuenta las declaraciones se pueden realizar para la siguiente entrega referente a la tabla de simbolos
+	3) Se creo el arbol sintactico tambien con las declaraciones del bloque a pesar que en esta entrega no se imprimen. Cualquier cambio que amerite no tomar en cuenta las declaraciones se pueden realizar para la siguiente entrega referente a la tabla de simbolos
 
 	4) Tenemos distintos nombres de salida para el arbol sintactico abstracto pero las estructura del arbol esta bien implementada. 
+
+	5) Al atrapar el error de parseo, aparece el mensaje "Syntax error:" seguido del error encontrado. No se especifica mas nada ya que no es especificado en el enunciado.

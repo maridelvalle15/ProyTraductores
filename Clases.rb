@@ -9,7 +9,7 @@
 # Fecha Ultima Modificacion: 
 # 	30/05/2015
 
-# Clases utilizadas por el parser para crear el arbol sintacto abstracto
+# Clases utilizadas por el parser para crear el arbol sintactico abstracto
 
 # Clase que representa la regla del programa principal
 class S 
@@ -102,7 +102,7 @@ class TYPE
 	end
 end
 
-#Clase que representa la regla de la lista de identificacione de las declaraciones
+#Clase que representa la regla de la lista de identificaciones de las declaraciones
 class LISTIDENT 
 	def initialize(symbol1=nil,listident=nil,symbol2,variable)
 		@symbol = [symbol1,symbol2]
@@ -226,7 +226,7 @@ class ITERDET
 	end
 end
 
-#Clase que representa la regla de expresion parentizadas
+#Clase que representa la regla de expresiones parentizadas
 class EXPR_PARENTHESIS
 	def initialize(symbol,expr)
 		@symbol = symbol

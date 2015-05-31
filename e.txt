@@ -14,9 +14,9 @@
 		( <-> * </> ? write andres: hola = ^< >  );
 		hola = # /\ <_>;
 		hola = <|> \/ <\>;
-		hola = ((^< > >= fos) * (dos >= lll)) ;
+		hola = (^< > >= fos) * dos >= lll ;
 		hola = (true = (true = (-8 + 5 = 5)));
-		hola = (futbol & ( true' * 8) >= 5);
+		hola = futbol & ( true' * 8) >= 5;
 		hola = $nina
 	};
 	write true;
