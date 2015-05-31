@@ -20,13 +20,13 @@ file = open(name_file,"r")
 token = Lexer.new				# Creamos una nueva clase Lexer. Se inicializan los arreglos de tokens y de caracteres invalidos
 token.read(file)				# Se inicia la lectura del archivo de entrada
 
-# Se imprimen los caracteres invalidos si fueron encontrados en el archivo
+# Se imprime la linea donde empezo un comentario que no fue cerrado 
 if token.get_comment.size > 0
 	token.print_comment
+# Se imprimen los caracteres invalidos si fueron encontrados en el archivo
 elsif token.get_invalids.size > 0 
 	token.print_invalids
-# Se imprimen los tokens si no se encontraron errores en el archivo
 end
 
-parser = Parser.new(token);
-parser.parser
+parser = Parser.new(token); # Creamos una nueva clase Parser cuyo parametro es el arreglo de tokens  
+parser.parser #Se llama al metodo parser que genera el arbol abstracto sintactico y lo imprime.

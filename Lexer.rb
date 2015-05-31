@@ -36,6 +36,7 @@ class Lexer
 		return @invalids
 	end
 
+	# Devuelve el arreglo de inicio de comentario
 	def get_comment
 		return @comment
 	end

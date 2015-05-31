@@ -9,8 +9,9 @@
 # Fecha Ultima Modificacion: 
 # 	30/05/2015
 
-# Clases A hacer utilizas por el parser para crear el arbol AST
+# Clases utilizadas por el parser para crear el arbol sintacto abstracto
 
+# Clase que representa la regla del programa principal
 class S 
 	def initialize(symbol,estruct)
 		@symbol= symbol
@@ -25,10 +26,12 @@ class S
 	end
 end
 
+# Clase que representa la regla de la estructura del programa
+# representado por { DEC | INSTR } o { INSTR }
 class ESTRUCT 
-	def initialize(symbol1=nil,dec=nil,symbol2,instr)
+	def initialize(symbol1=nil,declaration=nil,symbol2,instr)
 		@symbol = [symbol1,symbol2]
-		@estruct = [dec,instr]
+		@estruct = [declaration,instr]
 	end
 
 	def print_tree(num)
@@ -36,6 +39,7 @@ class ESTRUCT
 	end
 end
 
+# Clase que representa la regla de las posibles instrucciones dentro de la estructura del programa
 class INSTR
 	def initialize(symbol1,instr1,symbol2=nil,instr2=nil)
 		@symbol= [symbol1, symbol2]
@@ -60,10 +64,11 @@ class INSTR
 	end
 end
 
+#Clase que representa la regla de declaraciones de identificadores
 class DECLARATION
-	def initialize(symbol1=nil,dec=nil,symbol2,tipo,symbol3,listident)
+	def initialize(symbol1=nil,declaration=nil,symbol2,tipo,symbol3,listident)
 		@symbol = [symbol1,symbol2,symbol3]
-		@values = [dec,tipo,listident]
+		@values = [declaration,tipo,listident]
 	end
 
 	def print_tree(num)
@@ -80,10 +85,11 @@ class DECLARATION
 	end
 end
 
-class TIPO
-	def initialize(symbol,tipo)
+#Clase que representa la regla de los diferentes tipos de identificadores de las declaraciones 
+class TYPE
+	def initialize(symbol,type)
 		@symbol = symbol
-		@tipo = tipo
+		@type = type
 	end
 
 	def print_tree(num)
@@ -92,11 +98,11 @@ class TIPO
 		end
 		print @symbol  
 		print ": "
-		puts @tipo
+		puts @type
 	end
 end
 
-
+#Clase que representa la regla de la lista de identificacione de las declaraciones
 class LISTIDENT 
 	def initialize(symbol1=nil,listident=nil,symbol2,variable)
 		@symbol = [symbol1,symbol2]
@@ -117,6 +123,7 @@ class LISTIDENT
 	end
 end
 
+#Clase que representa la regla de asignacion de las instrucciones del programa
 class ASSIGN
 	def initialize(symbol1,variable,symbol2,expr)
 		@symbol = [symbol1,symbol2]
@@ -136,6 +143,7 @@ class ASSIGN
 	end
 end
 
+#Clase que representa la regla de write o read de las instrucciones del programa
 class WRITE_READ
 	def initialize(symbol,expr)
 		@symbol = symbol
@@ -155,6 +163,7 @@ class WRITE_READ
 	end
 end
 
+#Clase que representa la regla de condicion if-then-else de las instrucciones del programa
 class CONDITIONAL
 	def initialize(symbol1,expr,symbol2,instr1,symbol3=nil,instr2=nil)
 		@symbol = [symbol1,symbol2,symbol3]
@@ -175,6 +184,7 @@ class CONDITIONAL
 	end
 end
 
+#Clase que representa la regla de iteracion indeterminada while-do de las instrucciones del programa
 class ITERIND
 	def initialize(symbol1,expr,symbol2,instr)
 		@symbol = [symbol1,symbol2]
@@ -195,6 +205,7 @@ class ITERIND
 	end
 end
 
+#Clase que representa la regla de iteracion determinada de las instrucciones del programa
 class ITERDET
 	def initialize(symbol=nil,var=nil,symbol1,expr1,symbol2,expr2,symbol3,instr)
 		@symbol = [symbol,symbol1,symbol2,symbol3]
@@ -215,22 +226,19 @@ class ITERDET
 	end
 end
 
-
-class EXPR_IDENT
-	def initialize(symbol,identf)
+#Clase que representa la regla de expresion parentizadas
+class EXPR_PARENTHESIS
+	def initialize(symbol,expr)
 		@symbol = symbol
-		@expr = [identf]
+		@expr_parenthesis = expr
 	end
 
 	def print_tree(num)
-		@expr.each do |expr|
-			if expr != nil
-				expr.print_tree(num)
-			end
-		end
+		@expr_parenthesis.print_tree(num)
 	end
 end
 
+#Clase que representa la regla de expresiones binarias
 class EXPR_BIN
 	def initialize(symbol,val,symbol1,expr1,symbol2,expr2)
 		@arit = symbol
@@ -252,6 +260,7 @@ class EXPR_BIN
 	end
 end
 
+#Clase que representa la regla de expresiones unarias
 class EXPR_UNARIA
 	def initialize(symbol,val,symbol1,expr1)
 		@arit = symbol
@@ -270,22 +279,23 @@ class EXPR_UNARIA
 	end
 end
 
-class IDENTIF
-	def initialize(symbol,val)
+#Clase que representa la regla de valores posibles de las expresiones
+class EXPR_VALUE
+	def initialize(symbol,expr_value)
 		@symbol = symbol
-		@identif = [val]
+		@expr_value = expr_value
 	end
 
 	def print_tree(num)
-		@identif[0].print_tree(num)
+		@expr_value.print_tree(num)
 	end
 end
 
-
-class IDENTIFICADOR
-	def initialize(symbol,identificador)
+#Clase que representa la regla de valores (lienzos, booleanos, numeros o identificadores)
+class VALUE
+	def initialize(symbol,value)
 		@symbol = symbol
-		@identificador = [identificador]
+		@value = [value]
 	end
 
 	def print_tree(num)
@@ -295,27 +305,27 @@ class IDENTIFICADOR
 		if @symbol == :CANVAS 
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		elsif @symbol == :TRUE 
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		elsif @symbol == :FALSE 
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		elsif @symbol == :NUMBER 
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		elsif @symbol == :IDENTIFIER
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		elsif @symbol == :EMPTY_CANVAS
 			print @symbol  
 			print ": "
-			puts "#{@identificador[0]}"
+			puts "#{@value[0]}"
 		end
 	end
 end

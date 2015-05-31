@@ -2,18 +2,15 @@ Leyenda:
 
 S 			: Program Principal
 ESTRUCT 	: Estructura 
-DEC 		: Declaracion de variables
-TIPO 		: Tipo de variables  
+DECLAR 		: Declaracion de variables
+TYPE 		: Tipo de variables  
 LISTIDENT 	: Lista de Identificadores
 INSTR  		: Intruccion del programa
 ASSIGN  	: Asignacion
-IN 			: Entrada
-OUT 		: Salida
 CONDIC 		: Condicional
 ITERIND 	: Iteracion indeterminada
 ITERDET 	: Iteracion determinada
 EXPR  		: Expresion
-IDENTIF 	: Identificador
 NUM 		: Numeros
 BOOL 		: Boolean
 LIEN 		: Lienzo
@@ -22,13 +19,13 @@ Gramatica:
 
 S-> ESTRUCT
 
-ESTRUCT -> { DEC | INSTR }
+ESTRUCT -> { DECLAR | INSTR }
 	| { INSTR }
 
-DEC -> DEC TIPO LISTIDENT 
-	| TIPO LISTIDENT
+DECLAR -> DECLAR TYPE LISTIDENT 
+	| TYPE LISTIDENT
 
-TIPO -> !
+TYPE -> !
 	| %
 	| @
 
@@ -37,20 +34,16 @@ LISTIDENT -> LISTIDENT VARIABLE
 
 VARIABLE -> IDENTIFIER
 
-INSTR -> INSTR ; INTRS 
+INSTR -> INSTR ; INSTR
 	| ASSIGN
-	| IN
-	| OUT
+	| READ VARIABLE
+	| WRITE EXPR
 	| CONDIC
 	| ITERIND
 	| ITERDET
 	| ESTRUCT
 
 ASSIGN -> VARIABLE = EXPR
-
-IN -> READ VARIABLE
-
-OUT -> WRITE EXPR
 
 CONDIC -> ( EXPR ? INSTR )
 	| ( EXPR ? INSTR : INSTR )  
@@ -60,8 +53,7 @@ ITERIND -> [ EXPR | INSTR ]
 ITERDET -> [ EXPR .. EXPR | INSTR ]
 	| [ VARIABLE : EXPR .. EXPR | INSTR ]
 
-EXPR -> IDENTIF 
-	| EXPR + EXPR
+EXPR -> EXPR + EXPR
 	| EXPR - EXPR
  	| EXPR * EXPR
  	| EXPR / EXPR
@@ -81,8 +73,7 @@ EXPR -> IDENTIF
 	| EXPR >= EXPR
 	| EXPR = EXPR
 	| EXPR /= EXPR
-
-IDENTIF -> NUM
+	| NUM
 	| BOOL
 	| LIEN
 	| VARIABLE
