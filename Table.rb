@@ -11,48 +11,33 @@
 
 # Archivo main del proyecto
 
-require "./Symbol.rb"
-
 class Table
 	def initialize
-		@symbols = []
+		@symbols = Hash.new()
+		@actual = @symbols
+		@ant = @symbols
 	end
 
 	def insert(symbol, identifier)
-		symbol = Symbol.new(symbol, identifier)
-		@symbols << symbol
-	end
-
-	def delete(identifier)
-		@symbols.each do |symbol|
-			if symbol.get_identifier == identifier
-				@symbols.delete(symbol)
-			end
+		if !@symbols.has_key?(identifier)
+			@symbols[identifier] = symbol
+		else
+			puts "Elemento ya encontrado en la table"
 		end
 	end
 
-	def update(symbol,identifier)
-		@symbols.each do |symbol|
-			if symbol.get_identifier == identifier 
-				symbol.change_symbol(symbol)
-			end
-		end
+	def get_symbols
+		return @symbols
 	end
 
-	def is_in(identifier)
-		@symbols.each do |symbol|
-			if  symbol.get_identifier == identifier 
-				return true
-			end
-		end
-		return false
-	end
-
-	def get_value(identifier)
-		@symbols.each do |symbol|
-			if  symbol.get_identifier == identifier 
-				return symbol.get_valuer
-			end
-		end
+	def print_table
+		puts @symbols
 	end
 end
+
+
+hola = Table.new()
+hola.insert(:INT,3)
+puts "#{hola.get_symbols()}"
+#hola.insert(:INT,hola);
+

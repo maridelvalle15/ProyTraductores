@@ -48,7 +48,7 @@ class Parser
 
 	# Programa principal
 	S 
-	: ESTRUCT 							{ result = S.new(:S,val[0]); result.print_tree(0) }
+	: ESTRUCT 							{ @AST = S.new(:S,val[0]); @AST.print_tree(0) }
 	;
 
 	# Estructura del programa
@@ -165,9 +165,12 @@ end
 ---- inner 
 
 require "./Clases.rb"
+require "./Table.rb"
 	# Inicializacion de la clase parser cuyo parametro de entrada es el arreglo de tokens
 	def initialize(tokens)
 		@tokens = tokens
+		@tabla = Table.new
+		@AST = nil
 	end
 
 	# Metodo principal del parser realiza el analisis sintactico 
