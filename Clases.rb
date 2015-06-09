@@ -34,6 +34,10 @@ class ESTRUCT
 		@estruct = [declaration,instr]
 	end
 
+	def get_dec 
+		return @estruct[0]
+	end 
+
 	def print_tree(num)
 		@estruct[1].print_tree(num)
 	end
@@ -66,9 +70,21 @@ end
 
 #Clase que representa la regla de declaraciones de identificadores
 class DECLARATION
-	def initialize(symbol1=nil,declaration=nil,symbol2,tipo,symbol3,listident)
+	def initialize(symbol1=nil,declaration=nil,symbol2,type,symbol3,listident)
 		@symbol = [symbol1,symbol2,symbol3]
-		@values = [declaration,tipo,listident]
+		@values = [declaration,type,listident]
+	end
+
+	def get_dec
+		return @values[0]
+	end
+
+	def get_type
+		return @values[1].get_symbol
+	end
+
+	def get_listident
+		return @values[2]
 	end
 
 	def print_tree(num)
@@ -92,6 +108,10 @@ class TYPE
 		@type = type
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
 	def print_tree(num)
 		for i in 1..num
 			print "| "
@@ -107,6 +127,14 @@ class LISTIDENT
 	def initialize(symbol1=nil,listident=nil,symbol2,variable)
 		@symbol = [symbol1,symbol2]
 		@values = [listident,variable]
+	end
+
+	def get_listident
+		return @values[0]
+	end
+
+	def get_variable
+		return @values[1]
 	end
 
 	def print_tree(num)
@@ -295,7 +323,11 @@ end
 class VALUE
 	def initialize(symbol,value)
 		@symbol = symbol
-		@value = [value]
+		@value = value
+	end
+
+	def get_value
+		return @value
 	end
 
 	def print_tree(num)
@@ -305,27 +337,27 @@ class VALUE
 		if @symbol == :CANVAS 
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#{@value}"
 		elsif @symbol == :TRUE 
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#@value"
 		elsif @symbol == :FALSE 
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#{@value}"
 		elsif @symbol == :NUMBER 
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#{@value}"
 		elsif @symbol == :IDENTIFIER
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#{@value}"
 		elsif @symbol == :EMPTY_CANVAS
 			print @symbol  
 			print ": "
-			puts "#{@value[0]}"
+			puts "#{@value}"
 		end
 	end
 end

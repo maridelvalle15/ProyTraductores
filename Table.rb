@@ -89,7 +89,7 @@ class Table
 	def print 
 		aux = @actual
 		while aux != nil do
-			puts "Tabla"
+			puts "Tabla:"
 			aux.print_symbols
 			aux = aux.get_father()
 		end

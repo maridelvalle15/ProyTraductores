@@ -10,9 +10,12 @@ class Parser < Racc::Parser
 module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 166)
 
 require "./Clases.rb"
-	# Inicialitazion de la clase parser cuyo parametro de entrada es el arreglo de tokens
+require "./Table.rb"
+	# Inicializacion de la clase parser cuyo parametro de entrada es el arreglo de tokens
 	def initialize(tokens)
 		@tokens = tokens
+		@tabla = Table.new
+		@AST = nil
 	end
 
 	# Metodo principal del parser realiza el analisis sintactico 
@@ -22,6 +25,23 @@ require "./Clases.rb"
 	# Metodo que itera sobre el arreglo de tokens
 	def next_token
 		@tokens.next_token
+	end
+
+	def insertar(declaraciones)
+		if declaraciones.get_dec == nil
+			aux = declaraciones.get_type
+			aux2 = declaraciones.get_listident
+			if aux2.get_listident == nil
+				aux3 = aux2.get_variable.get_value
+			end
+		end
+		puts "######################"
+		puts "Tabla"
+		@tabla.insert(aux,aux3)
+		@tabla.print_actual()
+		puts
+		puts "######################"
+		puts "Arbol"
 	end
 ...end Parser.y/module_eval...
 ##### State transition tables begin ###
@@ -455,14 +475,14 @@ Racc_debug_parser = false
 
 module_eval(<<'.,.,', 'Parser.y', 50)
   def _reduce_1(val, _values, result)
-     result = S.new(:S,val[0]); result.print_tree(0) 
+     @AST = S.new(:S,val[0]); @AST.print_tree(0) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 55)
   def _reduce_2(val, _values, result)
-     result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]) 
+     result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]); insertar(result.get_dec) 
     result
   end
 .,.,
@@ -476,7 +496,7 @@ module_eval(<<'.,.,', 'Parser.y', 56)
 
 module_eval(<<'.,.,', 'Parser.y', 61)
   def _reduce_4(val, _values, result)
-     result = DECLARATION.new(:DEC,val[0],:TIPO,val[1],:LISTIDENT,val[2]) 
+     result = DECLARATION.new(:DEC,val[0],:TIPO,val[1],:LISTIDENT,val[2]); 
     result
   end
 .,.,

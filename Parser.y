@@ -53,13 +53,13 @@ class Parser
 
 	# Estructura del programa
 	ESTRUCT
-	: LCURLY DECLAR PIPE INSTR RCURLY 	{ result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]) }
+	: LCURLY DECLAR PIPE INSTR RCURLY 	{ result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]); insertar(result.get_dec) }
 	| LCURLY INSTR RCURLY  		   		{ result = ESTRUCT.new(nil,nil,:INSTR,val[1]) }  
 	;
 
 	# Declaraciones de variables
 	DECLAR
-	: DECLAR TYPE LISTIDENT  			{ result = DECLARATION.new(:DEC,val[0],:TIPO,val[1],:LISTIDENT,val[2]) }
+	: DECLAR TYPE LISTIDENT  			{ result = DECLARATION.new(:DEC,val[0],:TIPO,val[1],:LISTIDENT,val[2]); }
 	| TYPE LISTIDENT 	 				{ result = DECLARATION.new(nil,nil,:TIPO,val[0],:LISTIDENT,val[1]) }
 	;
 
@@ -180,4 +180,21 @@ require "./Table.rb"
 	# Metodo que itera sobre el arreglo de tokens
 	def next_token
 		@tokens.next_token
+	end
+
+	def insertar(declaraciones)
+		if declaraciones.get_dec == nil
+			aux = declaraciones.get_type
+			aux2 = declaraciones.get_listident
+			if aux2.get_listident == nil
+				aux3 = aux2.get_variable.get_value
+			end
+		end
+		puts "######################"
+		puts "Tabla"
+		@tabla.insert(aux,aux3)
+		@tabla.print_actual()
+		puts
+		puts "######################"
+		puts "Arbol"
 	end
