@@ -15,14 +15,16 @@
 class S 
 	def initialize(symbol,estruct)
 		@symbol= symbol
-		@estruct = [estruct]
+		@estruct = estruct
 
 	end
 
-	def print_tree(num)
-		@estruct.each do |estruct|
-			estruct.print_tree(num)
-		end
+	def get_estruct
+		return @estruct
+	end
+
+	def print_tree(num) #Al final de todo este metodo se borrara
+		@estruct.print_tree(num)
 	end
 end
 
@@ -37,6 +39,10 @@ class ESTRUCT
 	def get_dec 
 		return @estruct[0]
 	end 
+
+	def get_inst
+		return @estruct[1]
+	end
 
 	def print_tree(num)
 		@estruct[1].print_tree(num)

@@ -77,6 +77,6 @@ class TableSymbol
 	end
 
 	def print_symbols
-		@symbols.each { |key,value| puts "Variable: #{key}, Valores: #{value}" }
+		@symbols.each { |key,value| puts "#{key}, #{value}"}
 	end
 end

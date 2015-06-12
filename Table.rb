@@ -96,15 +96,13 @@ class Table
 	end
 end
 
-
-
 =begin
 tabla = Table.new()
 tabla.insert(:INT,3)
 tabla.insert(:INT,6)
 tabla.print_actual()
 tabla.addscope()
-tabla.insert(:MIa,5)
+tabla.insert(:MIa,3)
 tabla.print()
 puts
 tabla.delete(3)
@@ -114,6 +112,7 @@ tabla.endscope()
 tabla.insert(:MEGA,55)
 tabla.print()
 puts
+=begin
 tabla.addscope()
 tabla.insert(:DACA,554)
 tabla.print()

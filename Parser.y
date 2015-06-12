@@ -48,12 +48,12 @@ class Parser
 
 	# Programa principal
 	S 
-	: ESTRUCT 							{ @AST = S.new(:S,val[0]); @AST.print_tree(0) }
+	: ESTRUCT 							{ @AST = S.new(:S,val[0]); return @AST}
 	;
 
 	# Estructura del programa
 	ESTRUCT
-	: LCURLY DECLAR PIPE INSTR RCURLY 	{ result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3]); insertar(result.get_dec) }
+	: LCURLY DECLAR PIPE INSTR RCURLY 	{ result = ESTRUCT.new(:DEC,val[1],:INSTR,val[3])}
 	| LCURLY INSTR RCURLY  		   		{ result = ESTRUCT.new(nil,nil,:INSTR,val[1]) }  
 	;
 
@@ -100,8 +100,10 @@ class Parser
  
 	#Condicional
 	CONDIC
-	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS  				{ result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],nil,nil) }	
-	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS  	{ result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],:ELSE,val[5]) }
+	: LPARENTHESIS EXPR INTERROGATION_MARK INSTR RPARENTHESIS  	
+										{ result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],nil,nil) }	
+	| LPARENTHESIS EXPR INTERROGATION_MARK INSTR COLON INSTR RPARENTHESIS  	
+										{ result = CONDITIONAL.new(:CONDITION,val[1],:THEN,val[3],:ELSE,val[5]) }
 	;
 
 	#Iteracion indeterminada
@@ -111,8 +113,10 @@ class Parser
 
 	#Iteracion determinada
 	ITERDET
-	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 				{ result = ITERDET.new(nil,nil,:EXPR,val[1],:EXPR,val[3],:INSTR,val[5]) }
-	| LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET  { result = ITERDET.new(:VARIABLE,val[1],:EXPR,val[3],:EXPR,val[5],:INSTR,val[7]) }
+	: LBRACKET EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET 
+										{ result = ITERDET.new(nil,nil,:EXPR,val[1],:EXPR,val[3],:INSTR,val[5])}
+	| LBRACKET VARIABLE COLON EXPR DOUBLE_DOT EXPR PIPE INSTR RBRACKET  
+										{ result = ITERDET.new(:VARIABLE,val[1],:EXPR,val[3],:EXPR,val[5],:INSTR,val[7]) }
 	;
 
 	#Expresiones (aritmeticas,booleanas,lienzos y relacionales)
@@ -126,7 +130,7 @@ class Parser
 	| LPARENTHESIS EXPR RPARENTHESIS 	{ result = EXPR_PARENTHESIS.new(:EXPR,val[1]) }
 	| EXPR AND EXPR 					{ result = EXPR_BIN.new(:AND,val[1],:EXPR,val[0],:EXPR,val[2]) }
  	| EXPR OR EXPR 						{ result = EXPR_BIN.new(:OR,val[1],:EXPR,val[0],:EXPR,val[2]) }
-	| NOT EXPR 							{ result = EXPR_UNARIA.new(:NOT,val[0],:EXPR,val[1]) }
+	| EXPR NOT							{ result = EXPR_UNARIA.new(:NOT,val[1],:EXPR,val[0]) }
 	| EXPR AMPERSAND EXPR 				{ result = EXPR_BIN.new(:AMPERSAND,val[1],:EXPR,val[0],:EXPR,val[2]) }
 	| EXPR VIRGUILE EXPR 				{ result = EXPR_BIN.new(:VIRGUILE,val[1],:EXPR,val[0],:EXPR,val[2]) }
 	| DOLLAR EXPR  						{ result = EXPR_UNARIA.new(:DOLLAR,val[0],:EXPR,val[1]) }
@@ -169,7 +173,6 @@ require "./Table.rb"
 	# Inicializacion de la clase parser cuyo parametro de entrada es el arreglo de tokens
 	def initialize(tokens)
 		@tokens = tokens
-		@tabla = Table.new
 		@AST = nil
 	end
 
@@ -180,21 +183,4 @@ require "./Table.rb"
 	# Metodo que itera sobre el arreglo de tokens
 	def next_token
 		@tokens.next_token
-	end
-
-	def insertar(declaraciones)
-		if declaraciones.get_dec == nil
-			aux = declaraciones.get_type
-			aux2 = declaraciones.get_listident
-			if aux2.get_listident == nil
-				aux3 = aux2.get_variable.get_value
-			end
-		end
-		puts "######################"
-		puts "Tabla"
-		@tabla.insert(aux,aux3)
-		@tabla.print_actual()
-		puts
-		puts "######################"
-		puts "Arbol"
 	end

@@ -13,11 +13,14 @@
 
 require "./Lexer.rb"
 require "./Parser.rb"
+require "./FuncionesDeTablas.rb"
+require "./Table.rb"
 
 name_file = ARGV[0]				# Nombre del archivo recibido por entrada
 file = open(name_file,"r")		
 token = Lexer.new				# Creamos una nueva clase Lexer. Se inicializan los arreglos de tokens y de caracteres invalidos
 token.read(file)				# Se inicia la lectura del archivo de entrada
+table = Table.new
 
 # Se imprime la linea donde empezo un comentario que no fue cerrado 
 if token.get_comment.size > 0
@@ -29,7 +32,7 @@ elsif token.get_invalids.size > 0
 else
 	parser = Parser.new(token); # Creamos una nueva clase Parser cuyo parametro es el arreglo de tokens  
 	begin
-		parser.parser #Se llama al metodo parser que genera el arbol abstracto sintactico y lo imprime.
+		verificarTablas(parser.parser,table) #Comentario
 	# En caso de encontrar error de parseo, lo atrapa y genera un mensaje
 	rescue Exception => e
 	  puts "Syntax Error:",e
