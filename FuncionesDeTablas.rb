@@ -13,38 +13,40 @@
 
 # Clase que representa la regla del programa principal
 
+require "./Table.rb"
 require "./TableSymbol.rb"
 
-def verificarTablas(ast,table)
+$table = Table.new() # Definir una varible global llamada tabla
+
+def verifyAST(ast)
 	ast.print_tree(0)
-	estruct = ast.get_estruct
-	dec = estruct.get_dec
-	if dec != nil
-		decla = dec.get_dec
-		type = dec.get_type
-		listident = dec.get_listident
-		if decla == nil
-			symbol = type.get_symbol
-			listident1 = listident.get_listident
-			if listident1 == nil
-				variable = listident.get_variable
-				table.insert(symbol,variable.get_value)
-			end
-		end
+	verifyEstruct(ast.get_estruct)
+	
+end
+
+def verifyEstruct(estruct)
+	verifyDeclaration(estruct.get_dec)
+	#verifyInstr(estruct.get_instr)
+end
+
+def verifyDeclaration(declaration)
+	if declaration == nil
+		return nil
+	elsif declaration != nil
+		verifyDeclaration(declaration.get_dec)
+		type = declaration.get_type.get_symbol
+		verifyListident(type,declaration.get_listident)
 	end
-	puts "//////////////////////"
-	table.print
-	table.addscope
-	table.insert(symbol,variable.get_value)
-	puts "//////////////////////"
-	table.print
-	table.endscope
-	puts "//////////////////////"
-	table.print
-	table.endscope
-	puts "//////////////////////"
-	table.print
-
-
 
 end
+
+def verifyListident(type,listident)
+	if listident.get_listident == nil
+		variable = listident.get_variable
+		$table.insert(type,variable.get_value)
+		$table.print
+	elsif listident.get_listident != nil
+		verifyListident(type,listident.get_listident)
+	end
+end
+
