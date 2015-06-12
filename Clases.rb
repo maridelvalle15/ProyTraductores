@@ -86,7 +86,7 @@ class DECLARATION
 	end
 
 	def get_type
-		return @values[1].get_symbol
+		return @values[1]
 	end
 
 	def get_listident

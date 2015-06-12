@@ -17,22 +17,34 @@ require "./TableSymbol.rb"
 
 def verificarTablas(ast,table)
 	ast.print_tree(0)
-	table.print
-	print "entra"
 	estruct = ast.get_estruct
 	dec = estruct.get_dec
-	if dec == nil
+	if dec != nil
 		decla = dec.get_dec
 		type = dec.get_type
 		listident = dec.get_listident
 		if decla == nil
 			symbol = type.get_symbol
 			listident1 = listident.get_listident
-			if listident == nil
+			if listident1 == nil
 				variable = listident.get_variable
-				tabla.insert(type,variable)
+				table.insert(symbol,variable.get_value)
 			end
 		end
 	end
-	tabla.print
+	puts "//////////////////////"
+	table.print
+	table.addscope
+	table.insert(symbol,variable.get_value)
+	puts "//////////////////////"
+	table.print
+	table.endscope
+	puts "//////////////////////"
+	table.print
+	table.endscope
+	puts "//////////////////////"
+	table.print
+
+
+
 end
