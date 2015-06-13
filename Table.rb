@@ -33,14 +33,14 @@ class Table
 		end
 	end
 
-	def update(symbol,identifier,value)
+	def update(symbol,identifier)
 		aux = @actual
 		while aux != nil do
 			if aux.contains(identifier)
 				aux2 = aux.get_symbols
 				array = aux2[identifier]
 				if array[0] == symbol
-					aux.update(symbol,identifier,value)
+					aux.update(symbol,identifier)
 					break
 				end
 			end
