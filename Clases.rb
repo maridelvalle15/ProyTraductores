@@ -16,7 +16,6 @@ class S
 	def initialize(symbol,estruct)
 		@symbol= symbol
 		@estruct = estruct
-
 	end
 
 	def get_estruct
@@ -40,7 +39,7 @@ class ESTRUCT
 		return @estruct[0]
 	end 
 
-	def get_inst
+	def get_instr
 		return @estruct[1]
 	end
 
@@ -54,6 +53,14 @@ class INSTR
 	def initialize(symbol1,instr1,symbol2=nil,instr2=nil)
 		@symbol= [symbol1, symbol2]
 		@instr = [instr1,instr2]
+	end
+
+	def get_instr
+		return @instr
+	end
+
+	def get_symbol
+		return @symbol
 	end
 
 	def print_tree(num)
@@ -184,8 +191,11 @@ class WRITE_READ
 		@write = [expr]
 	end
 
+	def get_expr
+		return @write[0]
+	end
+
 	def print_tree(num)
-		
 		@write.each do |write|
 			for i in 1..num
 				print "| "
