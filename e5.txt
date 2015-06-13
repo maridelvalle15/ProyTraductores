@@ -1,4 +1,7 @@
 {
-	@ dos domingo ! luis navarro gutierrez | 
-	read luis; write dos; read as
+	@ dos domingo ! luis navarro gutierrez % y| 
+	read y; {
+	@ maria ! karla | 
+	write dos; read as
+	}
 }
