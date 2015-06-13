@@ -171,6 +171,14 @@ class ASSIGN
 		@values = [variable,expr]
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
+	end
+
 	def print_tree(num)
 
 		for i in 0..1
