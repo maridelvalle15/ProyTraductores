@@ -17,6 +17,7 @@ require "./Table.rb"
 require "./TableSymbol.rb"
 
 $table = Table.new() # Definir una varible global llamada tabla
+
 def verifyAST(ast)
 	ast.print_tree(0)
 	verifyEstruct(ast.get_estruct)
