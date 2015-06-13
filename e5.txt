@@ -1,4 +1,4 @@
 {
 	@ dos domingo ! luis navarro gutierrez | 
-	read luis; write dos
+	read luis; write dos; read as
 }
