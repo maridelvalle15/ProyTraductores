@@ -38,7 +38,7 @@ class TableSymbol
 
 	def insert(symbol, identifier)
 		if !@symbols.has_key?(identifier)
-			@symbols[identifier] = [symbol,nil]
+			@symbols[identifier] = symbol
 		else
 			puts "Elemento ya encontrado en la tabla"
 		end
@@ -52,9 +52,9 @@ class TableSymbol
 		end
 	end
 
-	def update(symbol,identifier,value)
+	def update(symbol,identifier)
 		if @symbols.has_key?(identifier)
-			@symbols[identifier] = [symbol,value]
+			@symbols[identifier] = symbol
 		else
 			puts "Elemento ya encontrado en la tabla"
 		end

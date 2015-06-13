@@ -49,31 +49,63 @@ def verifyListident(type,listident)
 end
 
 def verifyInstr(instr)
-	puts "Entra"
-
 	if instr.class == WRITE_READ
-
 		symbol = instr.get_symbol
-
 		case symbol
-
 		when :WRITE
-			puts "Hola"
 			verifyWrite(instr.get_instr)
 		end
 	end
 end
 
 def verifyWrite(expr)
-	puts "Entra"
 	if expr.class == EXPR_VALUE
 		symbol = expr.get_expr.get_symbol
 		puts "#{symbol}"
 		if symbol == :CANVAS || symbol == :EMPTY_CANVAS
 			puts "Somos nosotros"
 			puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
+		elsif
+			symbol == :IDENTIFIER
+			if $table.contains(expr.get_expr.get_value)
+				type = $table.lookup(expr.get_expr.get_value)
+				puts "#{type}"
+				if type == :LIENZO
+					puts "Somos nosotros"
+					puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
+				else
+					puts "Tipo identificador invalido"
+				end
+			else
+				puts "Identificador no contenido en la tabla de simbolos"
+			end
 		else
-			puts "Tipo invalido"
+			puts "Tipo expr invalida"
 		end
+	elsif expr.class == EXPR_BIN
+		arit = expr.get_arit
+		case arit
+		when :AMPERSAND, :VIRGUILE 
+			exprs = expr.get_expr
+			verifyWrite(exprs[0])
+			verifyWrite(exprs[1])
+		else
+			puts "Operacion binaria lienzo invalida"
+		end
+
+	elsif expr.class == EXPR_UNARIA
+		arit = expr.get_arit
+		case arit
+		when :DOLLAR, :APOSTROPHE 
+			puts "Entra"
+			verifyWrite(expr.get_expr)
+
+		else
+			puts "Operacion unaria lienzo invalida"
+		end
+	elsif expr.class == EXPR_PARENTHESIS
+		verifyWrite(expr.get_expr)
+	else
+		puts "Tipo de expression invalida distinta de lienzo"
 	end
 end
