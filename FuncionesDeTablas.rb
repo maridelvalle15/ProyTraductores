@@ -54,6 +54,8 @@ def verifyInstr(instr)
 		case symbol
 		when :WRITE
 			verifyWrite(instr.get_instr)
+		when :READ
+			verifyRead(instr.get_instr)
 		end
 	end
 end
@@ -107,5 +109,27 @@ def verifyWrite(expr)
 		verifyWrite(expr.get_expr)
 	else
 		puts "Tipo de expression invalida distinta de lienzo"
+	end
+end
+
+def verifyRead(expr)
+	if expr.class == EXPR_VALUE
+		symbol = expr.get_expr.get_symbol
+		puts "#{symbol}"
+		symbol == :IDENTIFIER
+		if $table.contains(expr.get_expr.get_value)
+			type = $table.lookup(expr.get_expr.get_value)
+			puts "#{type}"
+			if type == :NUMBER || type == :BOOLEAN
+				puts "Somos nosotros"
+				puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
+			else
+				puts "Tipo identificador invalido"
+			end
+		else
+			puts "Identificador no contenido en la tabla de simbolos"
+		end
+	else
+		puts "Tipo de expression invalida distinta de identificador booleano o numero"
 	end
 end
