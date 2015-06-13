@@ -1,3 +1,4 @@
 {
-	@ dos domingo ! luis navarro gutierrez | write luis & dos
+	@ dos domingo ! luis navarro gutierrez | 
+	read luis
 }
