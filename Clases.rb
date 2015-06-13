@@ -191,7 +191,7 @@ class WRITE_READ
 		@write = [expr]
 	end
 
-	def get_intr
+	def get_instr
 		return @write[0]
 	end
 
@@ -281,6 +281,14 @@ class EXPR_PARENTHESIS
 		@expr_parenthesis = expr
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_expr
+		return  @expr_parenthesis
+	end
+
 	def print_tree(num)
 		@expr_parenthesis.print_tree(num)
 	end
@@ -293,6 +301,22 @@ class EXPR_BIN
 		@val = val
 		@symbol = [symbol1,symbol2]
 		@expr = [expr1,expr2]
+	end
+
+	def get_arit
+		return @arit
+	end
+
+	def get_val
+		return @val
+	end
+
+	def get_symbol
+		return @symbol
+	end
+
+	def get_expr
+		return  @expr
 	end
 
 	def print_tree(num)
@@ -317,6 +341,22 @@ class EXPR_UNARIA
 		@expr = expr1
 	end
 
+	def get_arit
+		return @arit
+	end
+
+	def get_val
+		return @val
+	end
+
+	def get_symbol
+		return @symbol
+	end
+	
+	def get_expr
+		return  @expr
+	end
+
 	def print_tree(num)
 		for k in 1..num
 			print "| "
@@ -334,6 +374,14 @@ class EXPR_VALUE
 		@expr_value = expr_value
 	end
 
+	def get_symbol
+		return @symbol
+	end
+	
+	def get_expr
+		return  @expr_value
+	end
+
 	def print_tree(num)
 		@expr_value.print_tree(num)
 	end
@@ -346,8 +394,12 @@ class VALUE
 		@value = value
 	end
 
+	def get_symbol
+		return @symbol
+	end
+	
 	def get_value
-		return @value
+		return  @value
 	end
 
 	def print_tree(num)

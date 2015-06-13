@@ -26,7 +26,7 @@ end
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
 	$table.print_actual
-	#verifyInstr(estruct.get_instr)
+	verifyInstr(estruct.get_instr)
 	#$table.endscope
 end
 
@@ -49,26 +49,31 @@ def verifyListident(type,listident)
 end
 
 def verifyInstr(instr)
-	instrs = instr.get_instr 
-	symbols = instr.get_symbol
-	
+	puts "Entra"
 
-	if instrs.length == 1
-		case symbol[i]
+	if instr.class == WRITE_READ
+
+		symbol = instr.get_symbol
+
+		case symbol
 
 		when :WRITE
-			verifyWrite(instrs[i].get_expr)
+			puts "Hola"
+			verifyWrite(instr.get_instr)
 		end
-	else
-		# when :SEC
-		# $table.addscope
-		# verifycEstrcut
-		return true
-	else
-
+	end
 end
 
 def verifyWrite(expr)
-
+	puts "Entra"
+	if expr.class == EXPR_VALUE
+		symbol = expr.get_expr.get_symbol
+		puts "#{symbol}"
+		if symbol == :CANVAS || symbol == :EMPTY_CANVAS
+			puts "Somos nosotros"
+			puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
+		else
+			puts "Tipo invalido"
+		end
+	end
 end
-=end
