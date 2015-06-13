@@ -57,18 +57,30 @@ def verifyInstr(instr)
 		when :READ
 			verifyRead(instr.get_instr)
 		end
+	elsif instr.class == INSTR
+		instrs = instr.get_instr
+		symbol = instr.get_symbol
+		for i in 0..1
+			if symbol[i]!= nil
+				case symbol[i]
+				when :INSTR
+					verifyInstr(instr[i].get_expr)
+				end
+			end
+		end
 	end
 end
 
 def verifyWrite(expr)
+	puts "Entra"
+	puts expr.class
 	if expr.class == EXPR_VALUE
 		symbol = expr.get_expr.get_symbol
 		puts "#{symbol}"
 		if symbol == :CANVAS || symbol == :EMPTY_CANVAS
 			puts "Somos nosotros"
 			puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
-		elsif
-			symbol == :IDENTIFIER
+		elsif symbol == :IDENTIFIER
 			if $table.contains(expr.get_expr.get_value)
 				type = $table.lookup(expr.get_expr.get_value)
 				puts "#{type}"
@@ -99,7 +111,7 @@ def verifyWrite(expr)
 		arit = expr.get_arit
 		case arit
 		when :DOLLAR, :APOSTROPHE 
-			puts "Entra"
+
 			verifyWrite(expr.get_expr)
 
 		else
@@ -113,21 +125,25 @@ def verifyWrite(expr)
 end
 
 def verifyRead(expr)
-	if expr.class == EXPR_VALUE
-		symbol = expr.get_expr.get_symbol
+	puts "Entra"
+	puts expr.class
+	if expr.class == VALUE
+		symbol = expr.get_symbol
 		puts "#{symbol}"
-		symbol == :IDENTIFIER
-		if $table.contains(expr.get_expr.get_value)
-			type = $table.lookup(expr.get_expr.get_value)
-			puts "#{type}"
-			if type == :NUMBER || type == :BOOLEAN
-				puts "Somos nosotros"
-				puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
+
+		if symbol == :IDENTIFIER
+			if $table.contains(expr.get_value)
+				type = $table.lookup(expr.get_value)
+				puts "#{type}"
+				if type == :NUMBER || type == :BOOLEAN
+					puts "Somos nosotros"
+					puts "Valor #{symbol} con valor #{expr.get_value}"
+				else
+					puts "Tipo identificador invalido"
+				end
 			else
-				puts "Tipo identificador invalido"
+				puts "Identificador no contenido en la tabla de simbolos"
 			end
-		else
-			puts "Identificador no contenido en la tabla de simbolos"
 		end
 	else
 		puts "Tipo de expression invalida distinta de identificador booleano o numero"
