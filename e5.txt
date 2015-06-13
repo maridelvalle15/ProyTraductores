@@ -1,4 +1,4 @@
 {
-	@ dos domingo ! luis navarro gutierrez | 
-	write mama
+	@ dos domingo ! luis navarro gutierrez % y z | 
+	read luis; write dos; read y
 }

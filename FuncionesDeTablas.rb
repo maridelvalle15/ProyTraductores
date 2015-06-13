@@ -17,6 +17,7 @@ require "./Table.rb"
 require "./TableSymbol.rb"
 
 $table = Table.new() # Definir una varible global llamada tabla
+
 def verifyAST(ast)
 	ast.print_tree(0)
 	verifyEstruct(ast.get_estruct)
@@ -58,13 +59,14 @@ def verifyInstr(instr)
 			verifyRead(instr.get_instr)
 		end
 	elsif instr.class == INSTR
+		
 		instrs = instr.get_instr
-		symbol = instr.get_symbol
+		symbols = instr.get_symbol
 		for i in 0..1
-			if symbol[i]!= nil
-				case symbol[i]
+			if symbols[i] != nil
+				case symbols[i]
 				when :INSTR
-					verifyInstr(instr[i].get_expr)
+					verifyInstr(instrs[i])
 				end
 			end
 		end
