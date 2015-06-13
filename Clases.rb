@@ -191,8 +191,12 @@ class WRITE_READ
 		@write = [expr]
 	end
 
-	def get_expr
+	def get_intr
 		return @write[0]
+	end
+
+	def get_symbol
+		return @symbol
 	end
 
 	def print_tree(num)

@@ -27,6 +27,7 @@ def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
 	$table.print_actual
 	#verifyInstr(estruct.get_instr)
+	#$table.endscope
 end
 
 def verifyDeclaration(declaration)
@@ -47,19 +48,24 @@ def verifyListident(type,listident)
 	$table.insert(type,variable.get_value)
 end
 
-=begin
 def verifyInstr(instr)
-	instrs = instr.get_instr // Hay que verificar si es clase INSTR o WRITE_READ
+	instrs = instr.get_instr 
 	symbols = instr.get_symbol
-	for i in 0..1
-		if instrs[i] != nil
-			case symbol[i]
+	
 
-			when :WRITE
-				verifyWrite(instrs[i].get_expr)
-			end
+	if instrs.length == 1
+		case symbol[i]
+
+		when :WRITE
+			verifyWrite(instrs[i].get_expr)
 		end
-	end
+	else
+		# when :SEC
+		# $table.addscope
+		# verifycEstrcut
+		return true
+	else
+
 end
 
 def verifyWrite(expr)
