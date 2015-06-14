@@ -25,8 +25,6 @@ $error = false			# Definir una varible global llamada error
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
 def verifyAST(ast)
-	ast.print_tree(0)
-	puts
 	verifyEstruct(ast.get_estruct)
 	if !$error
 		#Si no hay errores se imprime toda la tabla de simbolos 
@@ -285,10 +283,9 @@ def verifyExpression(expr)
 		if symbol == :IDENTIFIER
 			if !$table.lookup(identif)
 				puts "Identificador #{identif} no declarado"
-				return nil
+				return :UNKNOW
 			else 
 				symbol = $table.lookup(identif)
-				#puts symbol
 			end
 		end
 		return symbol
@@ -300,47 +297,40 @@ def verifyExpression(expr)
 		case arit
 		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
 			if symbol1 == :INTEGER and symbol2 == :INTEGER
 				return symbol1
 			else
-				puts "Las expressiones integer no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :AND, :OR
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
 			if symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
 				return symbol1
 			else
-				puts "Las expressiones boolean no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :AMPERSAND, :VIRGUILLE
-			#puts "ENTRA"
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
 			if symbol1 == :CANVAS and symbol2 == :CANVAS
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
 			if symbol1 == symbol2 
 				return :BOOLEAN
 			else
-				puts "Las expressiones igualdad no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
-		else
-			puts "ERROR"
 		end
 	# Caso que sea una expresion unaria
 	elsif expr.class == EXPR_UNARIA
@@ -350,27 +340,27 @@ def verifyExpression(expr)
 		case arit
 		when :MINUS_UNARY
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
 			if symbol1 == :INTEGER
 				return symbol1
 			else
-				puts "Las expressiones integer no es valida"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				$error = true
 			end
 		when :DOLLAR, :APOSTROPHE
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
 			if symbol1 == :CANVAS
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				return :UNKNOW
 			end
 		when :NOT
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
 			if symbol1 == :BOOLEAN
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				return :UNKNOW
 			end
 		end
 	# En caso de conseguir expresiones parentizadas, verifica la expresion
