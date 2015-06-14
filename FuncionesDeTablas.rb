@@ -17,6 +17,9 @@ require "./Table.rb"
 require "./TableSymbol.rb"
 
 $table = Table.new() # Definir una varible global llamada tabla
+$nivel = 0
+$ftable = []
+$error = false
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
@@ -24,30 +27,41 @@ def verifyAST(ast)
 	ast.print_tree(0)
 	puts
 	verifyEstruct(ast.get_estruct)
+	if !$error
+		puts "Table de simbolos: "
+		$ftable.each do |ftable|
+			ftable[0].print_symbols(ftable[1])
+			puts
+		end
+	end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
 # Finaliza la tabla
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
-	puts "Tabla Actual"
-	$table.print_actual
-	puts
-	verifyInstr(estruct.get_instr)
-	$table.endscope
+	if !$error
+		$ftable << [$table.get_actual,$nivel]
+		verifyInstr(estruct.get_instr)
+		if !$error
+			$table.endscope
+			$nivel -= 1
+		end
+	end
 end
 
 # Chequea las declaraciones del programa
 def verifyDeclaration(declaration)
 	if declaration == nil
-		return nil
 	# Si hay declaracon, llama recursivamente a la funcion
 	elsif declaration != nil
 		verifyDeclaration(declaration.get_dec)
 		# Obtiene el tipo de la variable declarada
 		type = declaration.get_type.get_symbol
 		# Verifica la lista de identificadores
-		verifyListident(type,declaration.get_listident)
+		if !$error
+			verifyListident(type,declaration.get_listident)
+		end
 	end
 end
 
@@ -55,13 +69,15 @@ end
 def verifyListident(type,listident)
 	# Si no obtiene nada, llama recursivamente a la funcion
 	if listident.get_listident != nil
-		verifyListident(type,listident.get_listident)
+		if !$error
+			verifyListident(type,listident.get_listident)
+		end
 	end
 	# Obtiene la variable declarada
 	variable = listident.get_variable
 	# Inserta la variable en la tabla junto con el tipo correspondiente 
 	# Al ser una tabla de hash, la clave es la variable y el valor el tipo 
-	$table.insert(type,variable.get_value)
+	$error = $table.insert(type,variable.get_value)
 end
 
 # Verifica quer instruccion esta leyendo
@@ -93,6 +109,7 @@ def verifyInstr(instr)
 				# una tabla
 				when :ESTRUCT
 					$table.addscope
+					$nivel += 1
 					verifyEstruct(instrs[i])
 				# Verifica la estructura de la asignacion
 				when :ASSIGN
@@ -139,9 +156,9 @@ def verifyWrite(expr)
 	symbol= verifyExpression(expr)
 	# Unicamente se pueden escribir lienzos
 	if symbol==:CANVAS
-		puts "Comparacion asignacion correcta"
+		#puts "Comparacion asignacion correcta"
 	else
-		puts "Comparacion asignacion incorrecta"
+		puts "instrucción`write`espera tipo`CANVAS`y obtuvo`#{symbol}."
 	end
 end
 

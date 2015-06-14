@@ -7,7 +7,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	30/05/2015
+# 	14/06/2015
 
 # Clase que genera un arbol sintactico abstracto a raiz de un  
 # un arreglo de tokens tomado como parametro de entrada que ha sido
@@ -169,7 +169,7 @@ end
 ---- inner 
 
 require "./Clases.rb"
-require "./Table.rb"
+
 	# Inicializacion de la clase parser cuyo parametro de entrada es el arreglo de tokens
 	def initialize(tokens)
 		@tokens = tokens

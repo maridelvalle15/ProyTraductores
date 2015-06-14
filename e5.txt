@@ -1,5 +1,19 @@
 {
-	@ dos dos ! luis navarro gutierrez % y| 
+	@ marko ! luis % y| 
 
-	[ 5 < 5 | write </> ]
+	write marko;
+	{
+		@ marko ! luis % y| 
+
+		write marko
+
+	};
+	{
+		@ marko ! luis % y| 
+
+		write marko
+
+	}
+
 }
+
