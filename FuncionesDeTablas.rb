@@ -16,10 +16,10 @@
 require "./Table.rb"
 require "./TableSymbol.rb"
 
-$table = Table.new() # Definir una varible global llamada tabla
-$nivel = 0
-$ftable = []
-$error = false
+$table = Table.new() 	# Definir una varible global llamada tabla
+$alcance = 0			# Definir una varible global llamada alcance
+$ftable = []			# Definir una varible global llamada ftabla
+$error = false			# Definir una varible global llamada error
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
@@ -28,6 +28,7 @@ def verifyAST(ast)
 	puts
 	verifyEstruct(ast.get_estruct)
 	if !$error
+		#Si no hay errores se imprime toda la tabla de simbolos 
 		puts "Table de simbolos: "
 		$ftable.each do |ftable|
 			ftable[0].print_symbols(ftable[1])
@@ -41,20 +42,20 @@ end
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
 	if !$error
-		$ftable << [$table.get_actual,$nivel]
+		#Se va insertando la tabla actual y su alcance a la varible global ftable
+		$ftable << [$table.get_actual,$alcance]
 		verifyInstr(estruct.get_instr)
 		if !$error
 			$table.endscope
-			$nivel -= 1
+			$alcance -= 1
 		end
 	end
 end
 
 # Chequea las declaraciones del programa
 def verifyDeclaration(declaration)
-	if declaration == nil
 	# Si hay declaracon, llama recursivamente a la funcion
-	elsif declaration != nil
+	if declaration != nil
 		verifyDeclaration(declaration.get_dec)
 		# Obtiene el tipo de la variable declarada
 		type = declaration.get_type.get_symbol
@@ -109,7 +110,7 @@ def verifyInstr(instr)
 				# una tabla
 				when :ESTRUCT
 					$table.addscope
-					$nivel += 1
+					$alcance += 1
 					verifyEstruct(instrs[i])
 				# Verifica la estructura de la asignacion
 				when :ASSIGN
