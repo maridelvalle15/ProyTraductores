@@ -1,8 +1,4 @@
 {
 	@ dos dos ! luis navarro gutierrez % y| 
-	write dos & $</>'; read y; y = 5 + 5 ;{
-
-	@ dos domingo ! luis navarro gutierrez % y| 
-	write dos & $</>'; read y; y = 5 + 5
-	}
+	( 5 = 5 ? write </> : y = 5)
 }

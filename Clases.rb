@@ -226,6 +226,14 @@ class CONDITIONAL
 		@values = [expr,instr1,instr2]
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
+	end
+
 	def print_tree(num)
 		for i in 0..2
 			if @symbol[i] != nil

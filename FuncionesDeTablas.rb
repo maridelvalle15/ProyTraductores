@@ -74,6 +74,8 @@ def verifyInstr(instr)
 					verifyEstruct(instrs[i])
 				when :ASSIGN
 					verifyAssign(instrs[i])
+				when :CONDIC
+					verifyConditional(instrs[i])
 				end
 			end
 		end
@@ -118,6 +120,18 @@ def verifyRead(expr)
 		if symbol == :IDENTIFIER
 			verifyIdentifierINT_BOOL(expr)
 		end
+	else
+		puts "Tipo de expression invalida distinta de identificador booleano o numero"
+		return nil
+	end
+end
+
+def verifyConditional(expr)
+	symbol = expr.get_symbol
+	values = expr.get_values
+	if verifyExpression(values[0]) == :BOOLEAN
+		verifyInstr(values[1])
+		verifyInstr(values[2])
 	else
 		puts "Tipo de expression invalida distinta de identificador booleano o numero"
 		return nil
