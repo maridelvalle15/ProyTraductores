@@ -7,21 +7,22 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	08/06/2015
+# 	14/06/2015
 
-# Archivo main del proyecto
 
 require "./TableSymbol.rb"
 
+# Tabla de simbolos
 class Table
+	# inicializa la nueva tabla
 	def initialize
 		@actual = TableSymbol.new()
 	end
-
+	# Inserta un elemento nuevo a la tabla
 	def insert(symbol, identifier)
 		@actual.insert(symbol, identifier)
 	end
-
+	# Elimina la tabla, cambia el padre en el arbol
 	def delete(identifier)
 		aux = @actual
 		while aux != nil do
@@ -32,7 +33,7 @@ class Table
 			aux = aux.get_father
 		end
 	end
-
+	# Actualiza la tabla, actualiza el padre en el arbol
 	def update(symbol,identifier)
 		aux = @actual
 		while aux != nil do
@@ -47,7 +48,7 @@ class Table
 			aux = aux.get_father
 		end
 	end
-
+	# Verifica que la tabla se encuentre en el arbol
 	def contains(identifier)
 		aux = @actual
 		while aux != nil do
@@ -58,7 +59,7 @@ class Table
 		end
 		return false
 	end
-
+	# Busca la tabla en el arbol
 	def lookup(identifier)
 		aux = @actual
 		while aux != nil do
@@ -69,23 +70,22 @@ class Table
 		end
 		return false
 	end
-
-
+	# Agrega un nuevo nodo al arbol
 	def addscope
 		new_table = TableSymbol.new()
 		@actual.change_son(new_table)
 		new_table.change_father(@actual)
 		@actual = new_table
 	end
-
+	# Termina la tabla
 	def endscope
 		@actual = @actual.get_father()
 	end
-
+	# Imprime el arbol
 	def print_actual
 		@actual.print_symbols
 	end
-
+	# Imprime la tabla actual
 	def print 
 		aux = @actual
 		while aux != nil do
