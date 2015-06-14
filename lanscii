@@ -34,6 +34,7 @@ else
 		verifyAST(parser.parser) #Comentario
 	# En caso de encontrar error de parseo, lo atrapa y genera un mensaje
 	rescue Exception => e
-	  puts "Syntax Error:",e
+	  	print "Syntax Error:" 
+	  	puts e
 	end	
 end

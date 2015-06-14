@@ -418,23 +418,15 @@ class VALUE
 			print @symbol  
 			print ": "
 			puts "#{@value}"
-		elsif @symbol == :TRUE 
+		elsif @symbol == :BOOLEAN 
 			print @symbol  
 			print ": "
 			puts "#@value"
-		elsif @symbol == :FALSE 
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :NUMBER 
+		elsif @symbol == :INTEGER
 			print @symbol  
 			print ": "
 			puts "#{@value}"
 		elsif @symbol == :IDENTIFIER
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :EMPTY_CANVAS
 			print @symbol  
 			print ": "
 			puts "#{@value}"

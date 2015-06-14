@@ -1,7 +1,8 @@
 {
+	@ dos dos ! luis navarro gutierrez % y| 
+	write dos & $</>'; read y; y = 5 + 5 ;{
+
 	@ dos domingo ! luis navarro gutierrez % y| 
-	read y; write dos; {
-	@ maria ! karla | 
-	write dos; read as; y = 5
+	write dos & $</>'; read y; y = 5 + 5
 	}
 }
