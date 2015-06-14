@@ -171,6 +171,14 @@ class ASSIGN
 		@values = [variable,expr]
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
+	end
+
 	def print_tree(num)
 
 		for i in 0..1
@@ -216,6 +224,14 @@ class CONDITIONAL
 	def initialize(symbol1,expr,symbol2,instr1,symbol3=nil,instr2=nil)
 		@symbol = [symbol1,symbol2,symbol3]
 		@values = [expr,instr1,instr2]
+	end
+
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
 	end
 
 	def print_tree(num)
@@ -410,23 +426,15 @@ class VALUE
 			print @symbol  
 			print ": "
 			puts "#{@value}"
-		elsif @symbol == :TRUE 
+		elsif @symbol == :BOOLEAN 
 			print @symbol  
 			print ": "
 			puts "#@value"
-		elsif @symbol == :FALSE 
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :NUMBER 
+		elsif @symbol == :INTEGER
 			print @symbol  
 			print ": "
 			puts "#{@value}"
 		elsif @symbol == :IDENTIFIER
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :EMPTY_CANVAS
 			print @symbol  
 			print ": "
 			puts "#{@value}"

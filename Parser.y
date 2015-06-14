@@ -67,7 +67,7 @@ class Parser
 	TYPE
 	: EXCLAMATION_MARK  				{ result = TYPE.new(:BOOLEAN,val[0]) }
 	| PERCENT  							{ result = TYPE.new(:INTEGER,val[0]) }
-	| AT 								{ result = TYPE.new(:LIENZO,val[0]) }
+	| AT 								{ result = TYPE.new(:CANVAS,val[0]) }
 	;
 
 	# Lista de Identificadores
@@ -149,19 +149,19 @@ class Parser
 
 	# Valor de Numeros
 	NUM 
-	: NUMBER							{ result = VALUE.new(:NUMBER,val[0]) }
+	: NUMBER							{ result = VALUE.new(:INTEGER,val[0]) }
 	;
 
 	#Valores Booleanos
 	BOOL
-	: TRUE								{ result = VALUE.new(:TRUE,val[0]) }
-	| FALSE								{ result = VALUE.new(:FALSE,val[0]) }
+	: TRUE								{ result = VALUE.new(:BOOLEAN,val[0]) }
+	| FALSE								{ result = VALUE.new(:BOOLEAN,val[0]) }
 	;
 
 	# Valores de lienzos
 	LIEN
 	: CANVAS  							{ result = VALUE.new(:CANVAS,val[0]) }
-	| EMPTY_CANVAS						{ result = VALUE.new(:EMPTY_CANVAS,val[0]) }
+	| EMPTY_CANVAS						{ result = VALUE.new(:CANVAS,val[0]) }
 	;
 
 end

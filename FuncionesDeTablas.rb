@@ -20,13 +20,15 @@ $table = Table.new() # Definir una varible global llamada tabla
 
 def verifyAST(ast)
 	ast.print_tree(0)
+	puts
 	verifyEstruct(ast.get_estruct)
-	
 end
 
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
+	puts "Tabla Actual"
 	$table.print_actual
+	puts
 	verifyInstr(estruct.get_instr)
 	$table.endscope
 end
@@ -70,87 +72,178 @@ def verifyInstr(instr)
 				when :ESTRUCT
 					$table.addscope
 					verifyEstruct(instrs[i])
+				when :ASSIGN
+					verifyAssign(instrs[i])
+				when :CONDIC
+					verifyConditional(instrs[i])
 				end
 			end
+		end
+	end
+end
+
+def  verifyAssign(instr)
+	#puts instr.class
+	symbol = instr.get_symbol
+	values = instr.get_values
+	#puts symbol
+	identif = values[0].get_value
+	#puts identif
+	if !$table.lookup(identif)
+		puts "Identificador #{identif} no declarado"
+		return nil
+	else 
+		symbol_identif = $table.lookup(identif)
+		#puts symbol_identif 
+		symbol_expr = verifyExpression(values[1])
+		#puts symbol_expr
+		if symbol_identif == symbol_expr
+			puts "Comparacion asignacion correcta"
+		else
+			puts "Comparacion asignacion incorrecta"
 		end
 	end
 end
 
 def verifyWrite(expr)
-	puts "Entra"
-	puts expr.class
-	if expr.class == EXPR_VALUE
-		symbol = expr.get_expr.get_symbol
-		puts "#{symbol}"
-		if symbol == :CANVAS || symbol == :EMPTY_CANVAS
-			puts "Somos nosotros"
-			puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
-		elsif symbol == :IDENTIFIER
-			if $table.contains(expr.get_expr.get_value)
-				type = $table.lookup(expr.get_expr.get_value)
-				puts "#{type}"
-				if type == :LIENZO
-					puts "Somos nosotros"
-					puts "Valor #{symbol} con valor #{expr.get_expr.get_value}"
-				else
-					puts "Tipo identificador invalido"
-				end
-			else
-				puts "Identificador no contenido en la tabla de simbolos"
-			end
-		else
-			puts "Tipo expr invalida"
-		end
-	elsif expr.class == EXPR_BIN
-		arit = expr.get_arit
-		case arit
-		when :AMPERSAND, :VIRGUILE 
-			exprs = expr.get_expr
-			verifyWrite(exprs[0])
-			verifyWrite(exprs[1])
-		else
-			puts "Operacion binaria lienzo invalida"
-		end
-
-	elsif expr.class == EXPR_UNARIA
-		arit = expr.get_arit
-		case arit
-		when :DOLLAR, :APOSTROPHE 
-
-			verifyWrite(expr.get_expr)
-
-		else
-			puts "Operacion unaria lienzo invalida"
-		end
-	elsif expr.class == EXPR_PARENTHESIS
-		verifyWrite(expr.get_expr)
+	symbol= verifyExpression(expr)
+	if symbol==:CANVAS
+		puts "Comparacion asignacion correcta"
 	else
-		puts "Tipo de expression invalida distinta de lienzo"
+		puts "Comparacion asignacion incorrecta"
 	end
 end
 
 def verifyRead(expr)
-	puts "Entra"
-	puts expr.class
 	if expr.class == VALUE
 		symbol = expr.get_symbol
-		puts "#{symbol}"
-
 		if symbol == :IDENTIFIER
-			if $table.contains(expr.get_value)
-				type = $table.lookup(expr.get_value)
-				puts "#{type}"
-				if type == :INTEGER || type == :BOOLEAN
-					puts "Somos nosotros"
-					puts "Valor #{symbol} con valor #{expr.get_value}"
-				else
-					puts "Tipo identificador invalido"
-				end
-			else
-				puts "Identificador no contenido en la tabla de simbolos"
-			end
+			verifyIdentifierINT_BOOL(expr)
 		end
 	else
 		puts "Tipo de expression invalida distinta de identificador booleano o numero"
+		return nil
+	end
+end
+
+def verifyConditional(expr)
+	symbol = expr.get_symbol
+	values = expr.get_values
+	if verifyExpression(values[0]) == :BOOLEAN
+		verifyInstr(values[1])
+		verifyInstr(values[2])
+	else
+		puts "Tipo de expression invalida distinta de identificador booleano o numero"
+		return nil
+	end
+end
+
+def verifyExpression(expr)
+	exprs = expr.get_expr
+	if expr.class == EXPR_VALUE
+		symbol = exprs.get_symbol
+		identif = exprs.get_value
+		if symbol == :IDENTIFIER
+			if !$table.lookup(identif)
+				puts "Identificador #{identif} no declarado"
+				return nil
+			else 
+				symbol = $table.lookup(identif)
+				#puts symbol
+			end
+		end
+		return symbol
+	elsif expr.class == EXPR_BIN
+		arit = expr.get_arit
+		case arit
+		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
+			symbol1 = verifyExpression(exprs[0])
+			#puts symbol1
+			symbol2 = verifyExpression(exprs[1])
+			#puts symbol2
+			if symbol1 == :INTEGER and symbol2 == :INTEGER
+				return symbol1
+			else
+				puts "Las expressiones integer no concuerdan"
+			end
+		when :AND, :OR
+			symbol1 = verifyExpression(exprs[0])
+			#puts symbol1
+			symbol2 = verifyExpression(exprs[1])
+			#puts symbol2
+			if symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
+				return symbol1
+			else
+				puts "Las expressiones boolean no concuerdan"
+			end
+		when :AMPERSAND, :VIRGUILLE
+			#puts "ENTRA"
+			symbol1 = verifyExpression(exprs[0])
+			#puts symbol1
+			symbol2 = verifyExpression(exprs[1])
+			#puts symbol2
+			if symbol1 == :CANVAS and symbol2 == :CANVAS
+				return symbol1
+			else
+				puts "Las expressiones canvas no concuerdan"
+			end
+		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
+			symbol1 = verifyExpression(exprs[0])
+			puts symbol1
+			symbol2 = verifyExpression(exprs[1])
+			puts symbol2
+			if symbol1 == symbol2 
+				return :BOOLEAN
+			else
+				puts "Las expressiones igualdad no concuerdan"
+			end
+		else
+			puts "ERROR"
+		end
+	elsif expr.class == EXPR_UNARIA
+		arit = expr.get_arit
+		case arit
+		when :MINUS_UNARY
+			symbol1 = verifyExpression(exprs)
+			#puts symbol1
+			if symbol1 == :INTEGER
+				return symbol1
+			else
+				puts "Las expressiones integer no es valida"
+			end
+		when :DOLLAR, :APOSTROPHE
+			symbol1 = verifyExpression(exprs)
+			#puts symbol1
+			if symbol1 == :CANVAS
+				return symbol1
+			else
+				puts "Las expressiones canvas no concuerdan"
+			end
+		when :NOT
+			symbol1 = verifyExpression(exprs)
+			#puts symbol1
+			if symbol1 == :BOOLEAN
+				return symbol1
+			else
+				puts "Las expressiones canvas no concuerdan"
+			end
+		end
+	elsif expr.class == EXPR_PARENTHESIS
+		return verifyExpression(exprs)
+	end
+end
+
+def verifyIdentifierINT_BOOL(expr)
+	identif = expr.get_value
+	if $table.contains(identif)
+		type = $table.lookup(identif)
+		if type == :INTEGER || type == :BOOLEAN
+		else
+			puts "Tipo identificador #{identif} invalido"
+			return nil
+		end
+	else
+		puts "Identificador #{identif} no contenido en la tabla de simbolos"
+		return nil
 	end
 end

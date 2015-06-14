@@ -1,7 +1,4 @@
 {
-	@ dos domingo ! luis navarro gutierrez % y| 
-	read y; write dos; read y; write dos; {
-	@ maria ! karla |  
-	write maria
-	}
+	@ dos dos ! luis navarro gutierrez % y| 
+	( 5 = 5 ? write </> : y = #)
 }

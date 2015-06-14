@@ -488,7 +488,7 @@ module_eval(<<'.,.,', 'Parser.y', 68)
 
 module_eval(<<'.,.,', 'Parser.y', 69)
   def _reduce_8(val, _values, result)
-     result = TYPE.new(:LIENZO,val[0]) 
+     result = TYPE.new(:CANVAS,val[0]) 
     result
   end
 .,.,
@@ -782,21 +782,21 @@ module_eval(<<'.,.,', 'Parser.y', 146)
 
 module_eval(<<'.,.,', 'Parser.y', 151)
   def _reduce_50(val, _values, result)
-     result = VALUE.new(:NUMBER,val[0]) 
+     result = VALUE.new(:INTEGER,val[0]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 156)
   def _reduce_51(val, _values, result)
-     result = VALUE.new(:TRUE,val[0]) 
+     result = VALUE.new(:BOOLEAN,val[0]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 157)
   def _reduce_52(val, _values, result)
-     result = VALUE.new(:FALSE,val[0]) 
+     result = VALUE.new(:BOOLEAN,val[0]) 
     result
   end
 .,.,
@@ -810,7 +810,7 @@ module_eval(<<'.,.,', 'Parser.y', 162)
 
 module_eval(<<'.,.,', 'Parser.y', 163)
   def _reduce_54(val, _values, result)
-     result = VALUE.new(:EMPTY_CANVAS,val[0]) 
+     result = VALUE.new(:CANVAS,val[0]) 
     result
   end
 .,.,
