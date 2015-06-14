@@ -219,15 +219,16 @@ end
 def verifyIterInd(expr)
 	symbol = expr.get_symbol
 	values = expr.get_values
+	type_expr = verifyExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
-	if verifyExpression(values[0]) == :BOOLEAN
+	if type_expr == :BOOLEAN
 		verifyInstr(values[1])
 		if values[2] != nil
 			verifyInstr(values[2])
 		end
 	else
-		puts "Tipo de expression invalida distinta de identificador booleano o numero"
-		return nil
+		puts "Instrucción `ITERIND` expresion tipo #{type_expr} encontrada, se espera tipo `BOOLEAN`"
+		$error = true
 	end
 end
 
@@ -242,8 +243,8 @@ def verifyIterDet(expr)
 	if values[0] != nil
 		identif = values[0].get_value
 		if !$table.lookup(identif)
-			puts "Identificador #{identif} no declarado"
-			return nil
+			puts "Instrucción `ITERDET` Identificador: #{identif}, no contenido en la tabla de simbolos"
+			$error = true
 		# Busca el identificador en la tabla y chequea el tipo (entero)
 		else 
 			symbol1 = $table.lookup(identif)
@@ -252,11 +253,12 @@ def verifyIterDet(expr)
 					verifyInstr(values[3])
 				# En caso que no se cumpla que ambas expresiones sean aritmeticas
 				else 
-					puts "No son expressiones aritmeticas"
+					puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
+					$error = true
 				end
 			else
-				puts "Tipo de expression invalida distinta de identificador numero"
-				return nil
+				puts "Instrucción `ITERDET` Identificador: #{identif}, tipo #{symbol1} se espera tipo `BOOLEAN`"
+				$error = true
 			end
 		end
 	else
@@ -264,7 +266,8 @@ def verifyIterDet(expr)
 			verifyInstr(values[3])
 		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 
-			puts "No son expressiones aritmeticas"
+			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER "
+			$error = true
 		end
 	end
 end
