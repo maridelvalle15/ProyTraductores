@@ -7,7 +7,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	08/06/2015
+# 	14/06/2015
 
 # Archivo main del proyecto
 
@@ -89,7 +89,7 @@ class Table
 	def get_actual
 		return @actual
 	end 
-	
+
 	def print 
 		aux = @actual
 		while aux != nil do

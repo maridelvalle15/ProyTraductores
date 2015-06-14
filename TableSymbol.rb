@@ -45,7 +45,7 @@ class TableSymbol
 			@symbols[identifier] = symbol
 			return false
 		else
-			puts "Identificador: #{identifier},  declarado dos veces en un mismo alcance:  "
+			puts "Identificador: #{identifier}, declarado dos veces en un mismo alcance:"
 			return true
 		end
 	end
@@ -55,7 +55,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			@symbols.delete(identifier)
 		else
-			puts "Elemento no se encuentra en la tabla"
+			puts "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 
@@ -64,7 +64,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			@symbols[identifier] = symbol
 		else
-			puts "Elemento ya encontrado en la tabla"
+			puts "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 
@@ -78,7 +78,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			return @symbols[identifier]
 		else
-			print "Elemento no se encontra en la tabla"
+			print "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 

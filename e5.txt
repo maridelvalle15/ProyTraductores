@@ -1,19 +1,10 @@
-{
-	@ marko ! luis % y| 
-
-	write marko;
-	{
-		@ marko ! luis % y| 
-
-		write marko
-
-	};
-	{
-		@ marko ! luis % y| 
-
-		write marko
-
+{!a  %b @c |
+	write c;
+	b = 5;
+	read a;
+	(true ? write </> :a = true);
+	{ %d |
+		write c;
+		write </>
 	}
-
 }
-

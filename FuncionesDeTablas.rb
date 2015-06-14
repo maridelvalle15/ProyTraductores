@@ -138,16 +138,18 @@ def  verifyAssign(instr)
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
 	if !$table.lookup(identif)
-		puts "Identificador #{identif} no declarado"
-		return nil
+		puts "Instrucción `ASSIGN` Identificador: #{identif}, no declarado en la tabla de simbolos"
+		$error = true
 	# Si lo consigue, verifica que la asignacion corresponda con el tipo
 	else 
 		symbol_identif = $table.lookup(identif)
 		symbol_expr = verifyExpression(values[1])
 		if symbol_identif == symbol_expr
-			puts "Comparacion asignacion correcta"
+			##puts "Comparacion asignacion correcta"
 		else
-			puts "Comparacion asignacion incorrecta"
+			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
+			puts "#{symbol_identif} y #{symbol_expr} encontrados."
+			$error = true
 		end
 	end
 end
@@ -159,7 +161,8 @@ def verifyWrite(expr)
 	if symbol==:CANVAS
 		#puts "Comparacion asignacion correcta"
 	else
-		puts "instrucción`write`espera tipo`CANVAS`y obtuvo`#{symbol}."
+		puts "Instrucción `WRITE` espera  una expresion tipo `CANVAS` y obtuvo #{symbol}."
+		$error = true
 	end
 end
 
@@ -172,24 +175,43 @@ def verifyRead(expr)
 			verifyIdentifierINT_BOOL(expr)
 		end
 	else
-		puts "Tipo de expression invalida distinta de identificador booleano o numero"
-		return nil
+		puts "Instrucción `READ` espera una expresion tipo `BOOLEAN` o `INTEGER` " 
+		$error = true
 	end
 end
 
+# Chequea la estructura de los identificadores booleanos y/o enteros
+def verifyIdentifierINT_BOOL(expr)
+	identif = expr.get_value
+	# Verifica en la tabla que el identificador corresponda con entero o 
+	# booleano, o que simplemente no se encuentre en la tabla
+	if $table.contains(identif)
+		type = $table.lookup(identif)
+		if type == :INTEGER || type == :BOOLEAN
+		else
+			print "Instrucción `READ` Identificador: #{identif}, con tipo "
+			puts "distinto `BOOLEAN` o `INTEGER`"
+			$error = true
+		end
+	else
+		puts "Instrucción `READ` Identificador: #{identif}, no contenido en la tabla de simbolos"
+		$error = true
+	end
+end
 # Verifica la estructura de los condicionales
 def verifyConditional(expr)
 	symbol = expr.get_symbol
 	values = expr.get_values
+	type_expr = verifyExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
-	if verifyExpression(values[0]) == :BOOLEAN
+	if type_expr == :BOOLEAN
 		verifyInstr(values[1])
 		if values[2] != nil
 			verifyInstr(values[2])
 		end
 	else
-		puts "Tipo de expression invalida distinta de identificador booleano o numero"
-		return nil
+		puts "Instrucción `CONDITIONAL` expresion tipo #{type_expr} encontrada, se espera tipo `BOOLEAN`"
+		$error = true
 	end
 end
 
@@ -353,20 +375,3 @@ def verifyExpression(expr)
 	end
 end
 
-# Chequea la estructura de los identificadores booleanos y/o enteros
-def verifyIdentifierINT_BOOL(expr)
-	identif = expr.get_value
-	# Verifica en la tabla que el identificador corresponda con entero o 
-	# booleano, o que simplemente no se encuentre en la tabla
-	if $table.contains(identif)
-		type = $table.lookup(identif)
-		if type == :INTEGER || type == :BOOLEAN
-		else
-			puts "Tipo identificador #{identif} invalido"
-			return nil
-		end
-	else
-		puts "Identificador #{identif} no contenido en la tabla de simbolos"
-		return nil
-	end
-end
