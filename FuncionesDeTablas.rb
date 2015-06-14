@@ -76,6 +76,10 @@ def verifyInstr(instr)
 					verifyAssign(instrs[i])
 				when :CONDIC
 					verifyConditional(instrs[i])
+				when :ITERIND
+					verifyIterInd(instrs[i])
+				when :ITERDET
+					verifyIterDet(instrs[i])
 				end
 			end
 		end
@@ -83,20 +87,15 @@ def verifyInstr(instr)
 end
 
 def  verifyAssign(instr)
-	#puts instr.class
 	symbol = instr.get_symbol
 	values = instr.get_values
-	#puts symbol
 	identif = values[0].get_value
-	#puts identif
 	if !$table.lookup(identif)
 		puts "Identificador #{identif} no declarado"
 		return nil
 	else 
 		symbol_identif = $table.lookup(identif)
-		#puts symbol_identif 
 		symbol_expr = verifyExpression(values[1])
-		#puts symbol_expr
 		if symbol_identif == symbol_expr
 			puts "Comparacion asignacion correcta"
 		else
@@ -131,10 +130,58 @@ def verifyConditional(expr)
 	values = expr.get_values
 	if verifyExpression(values[0]) == :BOOLEAN
 		verifyInstr(values[1])
-		verifyInstr(values[2])
+		if values[2] != nil
+			verifyInstr(values[2])
+		end
 	else
 		puts "Tipo de expression invalida distinta de identificador booleano o numero"
 		return nil
+	end
+end
+
+def verifyIterInd(expr)
+	symbol = expr.get_symbol
+	values = expr.get_values
+	if verifyExpression(values[0]) == :BOOLEAN
+		verifyInstr(values[1])
+		if values[2] != nil
+			verifyInstr(values[2])
+		end
+	else
+		puts "Tipo de expression invalida distinta de identificador booleano o numero"
+		return nil
+	end
+end
+
+def verifyIterDet(expr)
+	symbol = expr.get_symbol
+	values = expr.get_values
+	symbol2 = verifyExpression(values[1])
+	symbol3 = verifyExpression(values[2])
+	if values[0] != nil
+		identif = values[0].get_value
+		if !$table.lookup(identif)
+			puts "Identificador #{identif} no declarado"
+			return nil
+		else 
+			symbol1 = $table.lookup(identif)
+			if symbol1 == :INTEGER
+				if symbol2 == :INTEGER and symbol3 ==:INTEGER
+					verifyInstr(values[3])
+				else 
+					puts "No son expressiones aritmeticas"
+				end
+			else
+				puts "Tipo de expression invalida distinta de identificador numero"
+				return nil
+			end
+		end
+	else
+		if symbol2 == :INTEGER && symbol3 ==:INTEGER
+			verifyInstr(values[3])
+		else 
+			puts "No son expressiones aritmeticas"
+		end
 	end
 end
 

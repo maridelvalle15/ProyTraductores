@@ -255,6 +255,14 @@ class ITERIND
 		@values = [expr,instr]
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
+	end
+
 	def print_tree(num)
 		for i in 0..1
 			if @symbol[i] != nil
@@ -276,6 +284,14 @@ class ITERDET
 		@values = [var,expr1,expr2,instr]
 	end
 
+	def get_symbol
+		return @symbol
+	end
+
+	def get_values
+		return @values
+	end
+	
 	def print_tree(num)
 		for i in 0..3
 			if @symbol[i] != nil
