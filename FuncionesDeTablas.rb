@@ -28,7 +28,7 @@ def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
 	$table.print_actual
 	verifyInstr(estruct.get_instr)
-	#$table.endscope
+	$table.endscope
 end
 
 def verifyDeclaration(declaration)
@@ -67,6 +67,9 @@ def verifyInstr(instr)
 				case symbols[i]
 				when :INSTR
 					verifyInstr(instrs[i])
+				when :ESTRUCT
+					$table.addscope
+					verifyEstruct(instrs[i])
 				end
 			end
 		end
@@ -137,7 +140,7 @@ def verifyRead(expr)
 			if $table.contains(expr.get_value)
 				type = $table.lookup(expr.get_value)
 				puts "#{type}"
-				if type == :NUMBER || type == :BOOLEAN
+				if type == :INTEGER || type == :BOOLEAN
 					puts "Somos nosotros"
 					puts "Valor #{symbol} con valor #{expr.get_value}"
 				else
