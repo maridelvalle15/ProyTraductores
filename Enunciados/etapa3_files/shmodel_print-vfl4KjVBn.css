@@ -1,2 +1,0 @@
-@media print{@page{margin:1in}.nav-header,.content-flag,#notify-wrapper,#preview-img{display:none !important;visibility:hidden !important}#shmodel-content-area *{margin:0 !important;padding:0 !important}#code-wrapper,.content-shadow,body.file-preview-body .content-shadow{border:none !important;-moz-box-shadow:none !important;-webkit-box-shadow:none !important;box-shadow:none !important}#full-img{display:block !important;visibility:visible !important;max-width:100% !important}}
-/*# sourceMappingURL=shmodel_print.css.map */
