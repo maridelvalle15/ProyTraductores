@@ -1,4 +1,5 @@
 {
 	@ dos dos ! luis navarro gutierrez % y| 
-	( 5 = 5 ? write </> : y = #)
+
+	[ 5 < 5 | write </> ]
 }
