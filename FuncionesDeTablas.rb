@@ -236,9 +236,9 @@ def verifyExpression(expr)
 			end
 		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
 			symbol1 = verifyExpression(exprs[0])
-			puts symbol1
+			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			puts symbol2
+			#puts symbol2
 			if symbol1 == symbol2 
 				return :BOOLEAN
 			else
