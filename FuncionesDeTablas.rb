@@ -298,7 +298,9 @@ def verifyExpression(expr)
 		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :INTEGER and symbol2 == :INTEGER
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :INTEGER and symbol2 == :INTEGER
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
@@ -307,7 +309,9 @@ def verifyExpression(expr)
 		when :AND, :OR
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
@@ -316,7 +320,9 @@ def verifyExpression(expr)
 		when :AMPERSAND, :VIRGUILLE
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :CANVAS and symbol2 == :CANVAS
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :CANVAS and symbol2 == :CANVAS
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
@@ -325,7 +331,9 @@ def verifyExpression(expr)
 		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == symbol2 
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == symbol2 
 				return :BOOLEAN
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
@@ -340,15 +348,19 @@ def verifyExpression(expr)
 		case arit
 		when :MINUS_UNARY
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :INTEGER
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :INTEGER
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
-				$error = true
+				return :UNKNOW
 			end
 		when :DOLLAR, :APOSTROPHE
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :CANVAS
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :CANVAS
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
@@ -356,7 +368,9 @@ def verifyExpression(expr)
 			end
 		when :NOT
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :BOOLEAN
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :BOOLEAN
 				return symbol1
 			else
 				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
