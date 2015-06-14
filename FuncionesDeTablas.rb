@@ -16,7 +16,10 @@
 require "./Table.rb"
 require "./TableSymbol.rb"
 
-$table = Table.new() # Definir una varible global llamada tabla
+$table = Table.new() 	# Definir una varible global llamada tabla
+$alcance = 0			# Definir una varible global llamada alcance
+$ftable = []			# Definir una varible global llamada ftabla
+$error = false			# Definir una varible global llamada error
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
@@ -24,30 +27,42 @@ def verifyAST(ast)
 	ast.print_tree(0)
 	puts
 	verifyEstruct(ast.get_estruct)
+	if !$error
+		#Si no hay errores se imprime toda la tabla de simbolos 
+		puts "Table de simbolos: "
+		$ftable.each do |ftable|
+			ftable[0].print_symbols(ftable[1])
+			puts
+		end
+	end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
 # Finaliza la tabla
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
-	puts "Tabla Actual"
-	$table.print_actual
-	puts
-	verifyInstr(estruct.get_instr)
-	$table.endscope
+	if !$error
+		#Se va insertando la tabla actual y su alcance a la varible global ftable
+		$ftable << [$table.get_actual,$alcance]
+		verifyInstr(estruct.get_instr)
+		if !$error
+			$table.endscope
+			$alcance -= 1
+		end
+	end
 end
 
 # Chequea las declaraciones del programa
 def verifyDeclaration(declaration)
-	if declaration == nil
-		return nil
 	# Si hay declaracon, llama recursivamente a la funcion
-	elsif declaration != nil
+	if declaration != nil
 		verifyDeclaration(declaration.get_dec)
 		# Obtiene el tipo de la variable declarada
 		type = declaration.get_type.get_symbol
 		# Verifica la lista de identificadores
-		verifyListident(type,declaration.get_listident)
+		if !$error
+			verifyListident(type,declaration.get_listident)
+		end
 	end
 end
 
@@ -55,13 +70,15 @@ end
 def verifyListident(type,listident)
 	# Si no obtiene nada, llama recursivamente a la funcion
 	if listident.get_listident != nil
-		verifyListident(type,listident.get_listident)
+		if !$error
+			verifyListident(type,listident.get_listident)
+		end
 	end
 	# Obtiene la variable declarada
 	variable = listident.get_variable
 	# Inserta la variable en la tabla junto con el tipo correspondiente 
 	# Al ser una tabla de hash, la clave es la variable y el valor el tipo 
-	$table.insert(type,variable.get_value)
+	$error = $table.insert(type,variable.get_value)
 end
 
 # Verifica quer instruccion esta leyendo
@@ -93,6 +110,7 @@ def verifyInstr(instr)
 				# una tabla
 				when :ESTRUCT
 					$table.addscope
+					$alcance += 1
 					verifyEstruct(instrs[i])
 				# Verifica la estructura de la asignacion
 				when :ASSIGN
@@ -120,16 +138,18 @@ def  verifyAssign(instr)
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
 	if !$table.lookup(identif)
-		puts "Identificador #{identif} no declarado"
-		return nil
+		puts "Instrucción `ASSIGN` Identificador: #{identif}, no declarado en la tabla de simbolos"
+		$error = true
 	# Si lo consigue, verifica que la asignacion corresponda con el tipo
 	else 
 		symbol_identif = $table.lookup(identif)
 		symbol_expr = verifyExpression(values[1])
 		if symbol_identif == symbol_expr
-			puts "Comparacion asignacion correcta"
+			##puts "Comparacion asignacion correcta"
 		else
-			puts "Comparacion asignacion incorrecta"
+			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
+			puts "#{symbol_identif} y #{symbol_expr} encontrados."
+			$error = true
 		end
 	end
 end
@@ -139,9 +159,10 @@ def verifyWrite(expr)
 	symbol= verifyExpression(expr)
 	# Unicamente se pueden escribir lienzos
 	if symbol==:CANVAS
-		puts "Comparacion asignacion correcta"
+		#puts "Comparacion asignacion correcta"
 	else
-		puts "Comparacion asignacion incorrecta"
+		puts "Instrucción `WRITE` espera  una expresion tipo `CANVAS` y obtuvo #{symbol}."
+		$error = true
 	end
 end
 
@@ -154,24 +175,43 @@ def verifyRead(expr)
 			verifyIdentifierINT_BOOL(expr)
 		end
 	else
-		puts "Tipo de expression invalida distinta de identificador booleano o numero"
-		return nil
+		puts "Instrucción `READ` espera una expresion tipo `BOOLEAN` o `INTEGER` " 
+		$error = true
 	end
 end
 
+# Chequea la estructura de los identificadores booleanos y/o enteros
+def verifyIdentifierINT_BOOL(expr)
+	identif = expr.get_value
+	# Verifica en la tabla que el identificador corresponda con entero o 
+	# booleano, o que simplemente no se encuentre en la tabla
+	if $table.contains(identif)
+		type = $table.lookup(identif)
+		if type == :INTEGER || type == :BOOLEAN
+		else
+			print "Instrucción `READ` Identificador: #{identif}, con tipo "
+			puts "distinto `BOOLEAN` o `INTEGER`"
+			$error = true
+		end
+	else
+		puts "Instrucción `READ` Identificador: #{identif}, no contenido en la tabla de simbolos"
+		$error = true
+	end
+end
 # Verifica la estructura de los condicionales
 def verifyConditional(expr)
 	symbol = expr.get_symbol
 	values = expr.get_values
+	type_expr = verifyExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
-	if verifyExpression(values[0]) == :BOOLEAN
+	if type_expr == :BOOLEAN
 		verifyInstr(values[1])
 		if values[2] != nil
 			verifyInstr(values[2])
 		end
 	else
-		puts "Tipo de expression invalida distinta de identificador booleano o numero"
-		return nil
+		puts "Instrucción `CONDITIONAL` expresion tipo #{type_expr} encontrada, se espera tipo `BOOLEAN`"
+		$error = true
 	end
 end
 
@@ -335,20 +375,3 @@ def verifyExpression(expr)
 	end
 end
 
-# Chequea la estructura de los identificadores booleanos y/o enteros
-def verifyIdentifierINT_BOOL(expr)
-	identif = expr.get_value
-	# Verifica en la tabla que el identificador corresponda con entero o 
-	# booleano, o que simplemente no se encuentre en la tabla
-	if $table.contains(identif)
-		type = $table.lookup(identif)
-		if type == :INTEGER || type == :BOOLEAN
-		else
-			puts "Tipo identificador #{identif} invalido"
-			return nil
-		end
-	else
-		puts "Identificador #{identif} no contenido en la tabla de simbolos"
-		return nil
-	end
-end

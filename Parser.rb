@@ -10,7 +10,7 @@ class Parser < Racc::Parser
 module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 170)
 
 require "./Clases.rb"
-require "./Table.rb"
+
 	# Inicializacion de la clase parser cuyo parametro de entrada es el arreglo de tokens
 	def initialize(tokens)
 		@tokens = tokens

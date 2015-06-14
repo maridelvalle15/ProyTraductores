@@ -20,7 +20,7 @@ class Table
 	end
 	# Inserta un elemento nuevo a la tabla
 	def insert(symbol, identifier)
-		@actual.insert(symbol, identifier)
+		return @actual.insert(symbol, identifier)
 	end
 	# Elimina la tabla, cambia el padre en el arbol
 	def delete(identifier)
@@ -82,9 +82,13 @@ class Table
 		@actual = @actual.get_father()
 	end
 	# Imprime el arbol
-	def print_actual
-		@actual.print_symbols
+	def print_actual(num)
+		@actual.print_symbols(num)
 	end
+	# Devuelve la tabla actual
+	def get_actual
+		return @actual
+	end 
 	# Imprime la tabla actual
 	def print 
 		aux = @actual
@@ -95,40 +99,3 @@ class Table
 		end
 	end
 end
-
-=begin
-tabla = Table.new()
-tabla.insert(:INT,3)
-tabla.insert(:INT,6)
-tabla.print_actual()
-tabla.addscope()
-tabla.insert(:MIa,3)
-tabla.print()
-puts
-tabla.delete(3)
-tabla.print()
-puts
-tabla.endscope()
-tabla.insert(:MEGA,55)
-tabla.print()
-puts
-=begin
-tabla.addscope()
-tabla.insert(:DACA,554)
-tabla.print()
-puts
-tabla.update(:DACA,554,1)
-tabla.print()
-puts tabla.contains(554)
-puts tabla.contains(6)
-puts tabla.contains("andres")
-print tabla.lookup(554)
-puts
-print tabla.lookup(6)
-puts
-
-#tabla.delete(3)
-#tabla.delete(3)
-#tabla.print_actual()
-#hola.insert(:INT,hola);
-=end

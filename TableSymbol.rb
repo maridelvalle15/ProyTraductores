@@ -18,6 +18,7 @@ class TableSymbol
 		@son = nil
 	end
 
+
 	# Cambia el padre del nodo
 	def change_father(father)
 		@father = father
@@ -42,8 +43,10 @@ class TableSymbol
 	def insert(symbol, identifier)
 		if !@symbols.has_key?(identifier)
 			@symbols[identifier] = symbol
+			return false
 		else
-			puts "Elemento ya encontrado en la tabla"
+			puts "Identificador: #{identifier}, declarado dos veces en un mismo alcance:"
+			return true
 		end
 	end
 
@@ -52,7 +55,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			@symbols.delete(identifier)
 		else
-			puts "Elemento no se encuentra en la tabla"
+			puts "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 
@@ -61,7 +64,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			@symbols[identifier] = symbol
 		else
-			puts "Elemento ya encontrado en la tabla"
+			puts "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 
@@ -75,7 +78,7 @@ class TableSymbol
 		if @symbols.has_key?(identifier)
 			return @symbols[identifier]
 		else
-			print "Elemento no se encontra en la tabla"
+			print "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
 	end
 
@@ -85,7 +88,8 @@ class TableSymbol
 	end
 
 	# Imprime el arbol. La clave (variable) y el valor (tipo)
-	def print_symbols
-		@symbols.each { |key,value| puts "#{key} => #{value}"}
+	def print_symbols(num)
+		for i in 0..num-1 do print "    " end
+		@symbols.each  {|key,value| print "#{value} => #{key}  "}
 	end
 end
