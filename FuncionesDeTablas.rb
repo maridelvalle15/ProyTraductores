@@ -25,8 +25,6 @@ $error = false			# Definir una varible global llamada error
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
 def verifyAST(ast)
-	ast.print_tree(0)
-	puts
 	verifyEstruct(ast.get_estruct)
 	if !$error
 		#Si no hay errores se imprime toda la tabla de simbolos 
@@ -147,6 +145,8 @@ def  verifyAssign(instr)
 		symbol_expr = verifyExpression(values[1])
 		if symbol_identif == symbol_expr
 			##puts "Comparacion asignacion correcta"
+		elsif symbol_expr == :UNKNOW
+			$error = true
 		else
 			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
 			puts "#{symbol_identif} y #{symbol_expr} encontrados."
@@ -161,6 +161,8 @@ def verifyWrite(expr)
 	# Unicamente se pueden escribir lienzos
 	if symbol==:CANVAS
 		#puts "Comparacion asignacion correcta"
+	elsif symbol==:UNKNOW
+		$error = true
 	else
 		puts "Instrucción `WRITE` espera  una expresion tipo `CANVAS` y obtuvo #{symbol}."
 		$error = true
@@ -195,7 +197,7 @@ def verifyIdentifierINT_BOOL(expr)
 			$error = true
 		end
 	else
-		puts "Instrucción `READ` Identificador: #{identif}, no contenido en la tabla de simbolos"
+		puts "Identificador: #{identif}, no contenido en la tabla de simbolos"
 		$error = true
 	end
 end
@@ -206,13 +208,15 @@ def verifyConditional(expr)
 	type_expr = verifyExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
 	if type_expr == :BOOLEAN
-		verifyInstr(values[1])
-		if values[2] != nil
-			verifyInstr(values[2])
-		end
+	elsif type_expr == :UNKNOW
+		$error = true
 	else
 		puts "Instrucción `CONDITIONAL` expresion tipo #{type_expr} encontrada, se espera tipo `BOOLEAN`"
 		$error = true
+	end
+	verifyInstr(values[1])
+	if values[2] != nil
+		verifyInstr(values[2])
 	end
 end
 
@@ -223,13 +227,15 @@ def verifyIterInd(expr)
 	type_expr = verifyExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
 	if type_expr == :BOOLEAN
-		verifyInstr(values[1])
-		if values[2] != nil
-			verifyInstr(values[2])
-		end
+	elsif type_expr ==:UNKNOW
+		$error = true
 	else
 		puts "Instrucción `ITERIND` expresion tipo #{type_expr} encontrada, se espera tipo `BOOLEAN`"
 		$error = true
+	end
+	verifyInstr(values[1])
+	if values[2] != nil
+		verifyInstr(values[2])
 	end
 end
 
@@ -243,33 +249,27 @@ def verifyIterDet(expr)
 	# decir, que este declarado
 	if values[0] != nil
 		identif = values[0].get_value
-		if !$table.lookup(identif)
-			puts "Instrucción `ITERDET` Identificador: #{identif}, no contenido en la tabla de simbolos"
-			$error = true
-		# Busca el identificador en la tabla y chequea el tipo (entero)
+		$table.addscope
+		$table.insert(:INTEGER,identif)
+		$ftable << [$table.get_actual,$alcance]
+		if symbol2 == :INTEGER and symbol3 ==:INTEGER
+		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 
-			symbol1 = $table.lookup(identif)
-			if symbol1 == :INTEGER
-				if symbol2 == :INTEGER and symbol3 ==:INTEGER
-					verifyInstr(values[3])
-				# En caso que no se cumpla que ambas expresiones sean aritmeticas
-				else 
-					puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
-					$error = true
-				end
-			else
-				puts "Instrucción `ITERDET` Identificador: #{identif}, tipo #{symbol1} se espera tipo `BOOLEAN`"
-				$error = true
-			end
+			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
+			$error = true
 		end
+		verifyInstr(values[3])
+		$table.endscope
 	else
+		#$table.addscope
+		#$table.insert(:INTEGER,)
 		if symbol2 == :INTEGER && symbol3 ==:INTEGER
-			verifyInstr(values[3])
 		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 
 			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER "
 			$error = true
 		end
+		verifyInstr(values[3])
 	end
 end
 
@@ -284,11 +284,10 @@ def verifyExpression(expr)
 		# programa
 		if symbol == :IDENTIFIER
 			if !$table.lookup(identif)
-				puts "Identificador #{identif} no declarado"
-				return nil
+				puts "Identificador #{identif} no declarado en la tabla de simbolos"
+				return :UNKNOW
 			else 
 				symbol = $table.lookup(identif)
-				#puts symbol
 			end
 		end
 		return symbol
@@ -300,47 +299,48 @@ def verifyExpression(expr)
 		case arit
 		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
-			if symbol1 == :INTEGER and symbol2 == :INTEGER
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :INTEGER and symbol2 == :INTEGER
 				return symbol1
 			else
-				puts "Las expressiones integer no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :AND, :OR
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
-			if symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
 				return symbol1
 			else
-				puts "Las expressiones boolean no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :AMPERSAND, :VIRGUILLE
-			#puts "ENTRA"
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
-			if symbol1 == :CANVAS and symbol2 == :CANVAS
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == :CANVAS and symbol2 == :CANVAS
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
 		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
 			symbol1 = verifyExpression(exprs[0])
-			#puts symbol1
 			symbol2 = verifyExpression(exprs[1])
-			#puts symbol2
-			if symbol1 == symbol2 
+			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
+				return :UNKNOW
+			elsif symbol1 == symbol2 
 				return :BOOLEAN
 			else
-				puts "Las expressiones igualdad no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
+				return :UNKNOW
 			end
-		else
-			puts "ERROR"
 		end
 	# Caso que sea una expresion unaria
 	elsif expr.class == EXPR_UNARIA
@@ -350,27 +350,33 @@ def verifyExpression(expr)
 		case arit
 		when :MINUS_UNARY
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
-			if symbol1 == :INTEGER
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :INTEGER
 				return symbol1
 			else
-				puts "Las expressiones integer no es valida"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				return :UNKNOW
 			end
 		when :DOLLAR, :APOSTROPHE
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
-			if symbol1 == :CANVAS
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :CANVAS
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				return :UNKNOW
 			end
 		when :NOT
 			symbol1 = verifyExpression(exprs)
-			#puts symbol1
-			if symbol1 == :BOOLEAN
+			if symbol1 == :UNKNOW
+				return symbol1
+			elsif symbol1 == :BOOLEAN
 				return symbol1
 			else
-				puts "Las expressiones canvas no concuerdan"
+				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
+				return :UNKNOW
 			end
 		end
 	# En caso de conseguir expresiones parentizadas, verifica la expresion

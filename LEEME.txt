@@ -25,7 +25,8 @@ Implementacion :
 				TableSymbol.rb
 
 Estado actual :
-	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo. Luego se crea una tabla de símbolos con las declaraciones correspondientes (variable y tipo), y se imprime por pantalla.
+	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo. El arbol que genera el parser
+	es pasado por una funcion verifyAST el cual recorre todos los nodos del arbol y va generando la tabla de simbolo y va haciendo el chequeo de tipo respectivamente. Si hay errores de de declaracion, el programa imprime en pantalla todos los errores de declaracion del alcance acutal sin verificar los errores de declaracion de alcance inferiores. Si hay errores de tipos el programa imprime por pantalla todos los errores de tipos del alcance actual sin realizar el chequeo de tipos de alcances inferiores. Si no hay errores de tipos ni de declaraciones se imprime por pantalla la tabla de simbolos con sus diferentes alcances con su respectiva identacion
 
 Problemas presentes : 
 	Presenta problemas cuando se leen varias expresiones relacionales consecutivas, a menos que las expresiones esten parentizadas. De resto esta todo bien.
@@ -41,3 +42,7 @@ Comentarios adicionales :
 	4) Por ejemplo, si tenemos el caso: 'write 5+true' primero evalua la expresion del write (5+true), determinando que no se puede sumar 5 con true, y luego que no se puede escribir una expresion que no sea de tipo lienzo (evalua desde lo mas interno a lo externo)
 
 	5) Al recorrer el codigo, se va creando la tabla. Si no consigue errores, sigue buscando bloques internos. En caso de conseguir error en un siguiente bloque, imprime los errores correspondientes y finaliza el programa.
+
+	6) Se crea un nuevo alcance con el mismo nivel en la tabla de simbolos cuando hay instrucciones de iteracion determinada con identificador. Se hizo para liviar los conflictos de redeclaracion de variables. Una vez concluida esta instruccion se elimina este alcance de la tabla de simbolos
+
+	6) La estructura implementada para la tabla es un arbol con un hijo y padre el cual el apuntador principal es llevado por la clase Tabla y los nodos es llevado por la clase TableSymbol. Para realizar el recorrido por los nodos del arbol AST se llevan cabo funciones de verify especificados en el archivo FuncionesDeTablas.rb.

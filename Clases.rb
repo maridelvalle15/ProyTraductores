@@ -21,10 +21,6 @@ class S
 	def get_estruct
 		return @estruct
 	end
-
-	def print_tree(num) #Al final de todo este metodo se borrara
-		@estruct.print_tree(num)
-	end
 end
 
 # Clase que representa la regla de la estructura del programa
@@ -42,10 +38,6 @@ class ESTRUCT
 	def get_instr
 		return @estruct[1]
 	end
-
-	def print_tree(num)
-		@estruct[1].print_tree(num)
-	end
 end
 
 # Clase que representa la regla de las posibles instrucciones dentro de la estructura del programa
@@ -61,23 +53,6 @@ class INSTR
 
 	def get_symbol
 		return @symbol
-	end
-
-	def print_tree(num)
-		@instr.each do |instr|
-			if instr != nil
-				if @symbol[0] != :INSTR 
-					for i in 1..num
-						print "| "
-					end
-					print @symbol[0]
-					puts ": "
-					instr.print_tree(num+1)	
-				else
-					instr.print_tree(num)
-				end
-			end
-		end
 	end
 end
 
@@ -99,19 +74,6 @@ class DECLARATION
 	def get_listident
 		return @values[2]
 	end
-
-	def print_tree(num)
-		for i in 0..2
-			if @symbol[i] != nil
-				for j in 1..num
-					print "| "
-				end 
-				print @symbol[i]  
-				puts ": "
-				@values[i].print_tree(num+1)
-			end
-		end
-	end
 end
 
 #Clase que representa la regla de los diferentes tipos de identificadores de las declaraciones 
@@ -123,15 +85,6 @@ class TYPE
 
 	def get_symbol
 		return @symbol
-	end
-
-	def print_tree(num)
-		for i in 1..num
-			print "| "
-		end
-		print @symbol  
-		print ": "
-		puts @type
 	end
 end
 
@@ -149,19 +102,6 @@ class LISTIDENT
 	def get_variable
 		return @values[1]
 	end
-
-	def print_tree(num)
-		for i in 0..1
-			if @symbol[i] != nil
-				for j in 1..num
-					print "| "
-				end
-				print @symbol[i]
-				puts ": "
-				@values[i].print_tree(num+1)
-			end
-		end
-	end
 end
 
 #Clase que representa la regla de asignacion de las instrucciones del programa
@@ -177,18 +117,6 @@ class ASSIGN
 
 	def get_values
 		return @values
-	end
-
-	def print_tree(num)
-
-		for i in 0..1
-			for j in 1..num
-				print "| "
-			end
-			print @symbol[i]  
-			puts ": "
-			@values[i].print_tree(num+1)
-		end
 	end
 end
 
@@ -206,17 +134,6 @@ class WRITE_READ
 	def get_symbol
 		return @symbol
 	end
-
-	def print_tree(num)
-		@write.each do |write|
-			for i in 1..num
-				print "| "
-			end
-			print @symbol  
-			puts ": "
-			write.print_tree(num+1)
-		end
-	end
 end
 
 #Clase que representa la regla de condicion if-then-else de las instrucciones del programa
@@ -232,19 +149,6 @@ class CONDITIONAL
 
 	def get_values
 		return @values
-	end
-
-	def print_tree(num)
-		for i in 0..2
-			if @symbol[i] != nil
-				for j in 1..num
-					print "| "
-				end 
-				print @symbol[i]  
-				puts ": "
-				@values[i].print_tree(num+1)
-			end
-		end
 	end
 end
 
@@ -262,19 +166,6 @@ class ITERIND
 	def get_values
 		return @values
 	end
-
-	def print_tree(num)
-		for i in 0..1
-			if @symbol[i] != nil
-				for j in 1..num
-					print "| "
-				end 
-				print @symbol[i]  
-				puts ": "
-				@values[i].print_tree(num+1)
-			end
-		end
-	end
 end
 
 #Clase que representa la regla de iteracion determinada de las instrucciones del programa
@@ -291,19 +182,6 @@ class ITERDET
 	def get_values
 		return @values
 	end
-	
-	def print_tree(num)
-		for i in 0..3
-			if @symbol[i] != nil
-				for j in 1..num
-					print "| "
-				end 
-				print @symbol[i]  
-				puts ": "
-				@values[i].print_tree(num+1)
-			end
-		end
-	end
 end
 
 #Clase que representa la regla de expresiones parentizadas
@@ -319,10 +197,6 @@ class EXPR_PARENTHESIS
 
 	def get_expr
 		return  @expr_parenthesis
-	end
-
-	def print_tree(num)
-		@expr_parenthesis.print_tree(num)
 	end
 end
 
@@ -350,18 +224,6 @@ class EXPR_BIN
 	def get_expr
 		return  @expr
 	end
-
-	def print_tree(num)
-		for k in 1..num
-			print "| "
-		end
-		print "OPERATION: "  
-		puts @val
-
-		for i in 0..1
-			@expr[i].print_tree(num+1)
-		end
-	end
 end
 
 #Clase que representa la regla de expresiones unarias
@@ -388,15 +250,6 @@ class EXPR_UNARIA
 	def get_expr
 		return  @expr
 	end
-
-	def print_tree(num)
-		for k in 1..num
-			print "| "
-		end
-		print "SIGNO: "  
-		puts @val
-		@expr.print_tree(num+1)
-	end
 end
 
 #Clase que representa la regla de valores posibles de las expresiones
@@ -413,10 +266,6 @@ class EXPR_VALUE
 	def get_expr
 		return  @expr_value
 	end
-
-	def print_tree(num)
-		@expr_value.print_tree(num)
-	end
 end
 
 #Clase que representa la regla de valores (lienzos, booleanos, numeros o identificadores)
@@ -432,28 +281,5 @@ class VALUE
 	
 	def get_value
 		return  @value
-	end
-
-	def print_tree(num)
-		for i in 1..num
-			print "| "
-		end 
-		if @symbol == :CANVAS 
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :BOOLEAN 
-			print @symbol  
-			print ": "
-			puts "#@value"
-		elsif @symbol == :INTEGER
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		elsif @symbol == :IDENTIFIER
-			print @symbol  
-			print ": "
-			puts "#{@value}"
-		end
 	end
 end
