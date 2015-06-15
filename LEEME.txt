@@ -25,7 +25,7 @@ Implementacion :
 				TableSymbol.rb
 
 Estado actual :
-	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo y lo imprime por pantalla.
+	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo. Luego se crea una tabla de símbolos con las declaraciones correspondientes (variable y tipo), y se imprime por pantalla.
 
 Problemas presentes : 
 	Presenta problemas cuando se leen varias expresiones relacionales consecutivas, a menos que las expresiones esten parentizadas. De resto esta todo bien.
@@ -36,8 +36,8 @@ Comentarios adicionales :
 
 	2) Todos lo numeros enteros son convertidos en token por nuestro analizador lexicografico. La restriccion numero menor de 32 bits con signo sera tomado en cuenta mas adelante.
 
-	3) Se creo el arbol sintactico tambien con las declaraciones del bloque a pesar que en esta entrega no se imprimen. Cualquier cambio que amerite no tomar en cuenta las declaraciones se pueden realizar para la siguiente entrega referente a la tabla de simbolos
+	3) Al atrapar el error de parseo, aparece el mensaje "Syntax error:" seguido del error encontrado. No se especifica mas nada ya que no es especificado en el enunciado.
 
-	4) Tenemos distintos nombres de salida para el arbol sintactico abstracto pero las estructura del arbol esta bien implementada. 
+	4) Por ejemplo, si tenemos el caso: 'write 5+true' primero evalua la expresion del write (5+true), determinando que no se puede sumar 5 con true, y luego que no se puede escribir una expresion que no sea de tipo lienzo (evalua desde lo mas interno a lo externo)
 
-	5) Al atrapar el error de parseo, aparece el mensaje "Syntax error:" seguido del error encontrado. No se especifica mas nada ya que no es especificado en el enunciado.
+	5) Al recorrer el codigo, se va creando la tabla. Si no consigue errores, sigue buscando bloques internos. En caso de conseguir error en un siguiente bloque, imprime los errores correspondientes y finaliza el programa.
