@@ -1,0 +1,7 @@
+{- example program -}
+{ @cake lie !GLaDOS |
+read lie;
+cake = <|>;
+(cake = lie ? GLaDOS = true : glaDos = false);
+write -1
+}
