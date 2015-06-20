@@ -77,7 +77,7 @@ def verifyListident(type,listident)
 	variable = listident.get_variable
 	# Inserta la variable en la tabla junto con el tipo correspondiente 
 	# Al ser una tabla de hash, la clave es la variable y el valor el tipo 
-	$error = $table.insert(type,variable.get_value)
+	$error = $table.insert(type,variable.get_value,nil)
 end
 
 # Verifica quer instruccion esta leyendo
@@ -142,9 +142,12 @@ def  verifyAssign(instr)
 	# Si lo consigue, verifica que la asignacion corresponda con el tipo
 	else 
 		symbol_identif = $table.lookup(identif)
+		puts symbol_identif[0]
+		puts symbol_identif[1]
 		symbol_expr = verifyExpression(values[1])
-		if symbol_identif == symbol_expr
-			##puts "Comparacion asignacion correcta"
+		if symbol_identif[0] == symbol_expr[0]
+			puts "ENTRA"
+			$table.update(symbol_identif[0],identif,symbol_expr[1])
 		elsif symbol_expr == :UNKNOW
 			$error = true
 		else
@@ -290,7 +293,8 @@ def verifyExpression(expr)
 				symbol = $table.lookup(identif)
 			end
 		end
-		return symbol
+		return [symbol,identif] ### PRUEBAAA DE MODIFICAR LA TABLA
+
 	# Caso que sea una expresion binaria
 	elsif expr.class == EXPR_BIN
 		arit = expr.get_arit

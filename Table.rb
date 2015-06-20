@@ -19,8 +19,8 @@ class Table
 		@actual = TableSymbol.new()
 	end
 	# Inserta un elemento nuevo a la tabla
-	def insert(symbol, identifier)
-		return @actual.insert(symbol, identifier)
+	def insert(symbol, identifier,value)
+		return @actual.insert(symbol, identifier,value)
 	end
 	# Elimina la tabla, cambia el padre en el arbol
 	def delete(identifier)
@@ -34,14 +34,17 @@ class Table
 		end
 	end
 	# Actualiza la tabla, actualiza el padre en el arbol
-	def update(symbol,identifier)
+	def update(symbol,identifier,value)
+		puts symbol
+		puts identifier
+		puts value
 		aux = @actual
 		while aux != nil do
 			if aux.contains(identifier)
 				aux2 = aux.get_symbols
 				array = aux2[identifier]
 				if array[0] == symbol
-					aux.update(symbol,identifier)
+					aux.update(symbol,identifier,value)
 					break
 				end
 			end

@@ -40,9 +40,9 @@ class TableSymbol
 	end
 
 	# Inserta un elemento en la tabla a menos que ya lo encuentre
-	def insert(symbol, identifier)
+	def insert(symbol, identifier,value)
 		if !@symbols.has_key?(identifier)
-			@symbols[identifier] = symbol
+			@symbols[identifier] = [symbol,value]
 			return false
 		else
 			puts "Identificador: #{identifier}, declarado dos veces en un mismo alcance:"
@@ -60,9 +60,9 @@ class TableSymbol
 	end
 
 	# Actualiza un elemento de la tabla a menos que ya se encuentre
-	def update(symbol,identifier)
+	def update(symbol,identifier,value)
 		if @symbols.has_key?(identifier)
-			@symbols[identifier] = symbol
+			@symbols[identifier] = [symbol,value]
 		else
 			puts "Identificador: #{identifier}, no se encuentra en ningun alcance"
 		end
@@ -90,6 +90,6 @@ class TableSymbol
 	# Imprime el arbol. La clave (variable) y el valor (tipo)
 	def print_symbols(num)
 		for i in 0..num-1 do print "    " end
-		@symbols.each  {|key,value| print "#{value} => #{key}  "}
+		@symbols.each  {|key,value| print "#{value}: #{key},  "}
 	end
 end
