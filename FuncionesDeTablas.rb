@@ -21,17 +21,20 @@ $table = Table.new() 	# Definir una varible global llamada tabla
 $alcance = 0			# Definir una varible global llamada alcance
 $ftable = []			# Definir una varible global llamada ftabla
 $error = false			# Definir una varible global llamada error
+$error_eval = false
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
 def verifyAST(ast)
 	verifyEstruct(ast.get_estruct)
-	if !$error
-		#Si no hay errores se imprime toda la tabla de simbolos 
-		puts "Table de simbolos: "
-		$ftable.each do |ftable|
-			ftable[0].print_symbols(ftable[1])
-			puts
+	if !$error_eval
+		if !$error
+			#Si no hay errores se imprime toda la tabla de simbolos 
+			puts "Table de simbolos: "
+			$ftable.each do |ftable|
+				ftable[0].print_symbols(ftable[1])
+				puts
+			end
 		end
 	end
 end
@@ -40,13 +43,15 @@ end
 # Finaliza la tabla
 def verifyEstruct(estruct)
 	verifyDeclaration(estruct.get_dec)
-	if !$error
-		#Se va insertando la tabla actual y su alcance a la varible global ftable
-		$ftable << [$table.get_actual,$alcance]
-		verifyInstr(estruct.get_instr)
+	if !$error_eval
 		if !$error
-			$table.endscope
-			$alcance -= 1
+			#Se va insertando la tabla actual y su alcance a la varible global ftable
+			$ftable << [$table.get_actual,$alcance]
+			verifyInstr(estruct.get_instr)
+			if !$error
+				$table.endscope
+				$alcance -= 1
+			end
 		end
 	end
 end
@@ -83,46 +88,50 @@ end
 # Verifica quer instruccion esta leyendo
 def verifyInstr(instr)
 	# En caso que sea read o write
-	if instr.class == WRITE_READ
-		symbol = instr.get_symbol
-		case symbol
-		# Verifica la estructura del write
-		when :WRITE
-			verifyWrite(instr.get_instr)
-		# Verifica la estructura del read
-		when :READ
-			verifyRead(instr.get_instr)
-		end
-	# En caso que sea una instruccion
-	elsif instr.class == INSTR
-		instrs = instr.get_instr
-		symbols = instr.get_symbol
-		# Iteracion auxiliar para recorrer la instruccion
-		for i in 0..1
-			# Si efectivamente hay algo que chequear
-			if symbols[i] != nil
-				case symbols[i]
-				# Verifica la estructura de la instruccion
-				when :INSTR
-					verifyInstr(instrs[i])
-				# Verifica la estructura del programa, en este caso se agrega
-				# una tabla
-				when :ESTRUCT
-					$table.addscope
-					$alcance += 1
-					verifyEstruct(instrs[i])
-				# Verifica la estructura de la asignacion
-				when :ASSIGN
-					verifyAssign(instrs[i])
-				# Verifica la estructura del condicional
-				when :CONDIC
-					verifyConditional(instrs[i])
-				# Verifica la estructura de la iteracion indeterminada
-				when :ITERIND
-					verifyIterInd(instrs[i])
-				# Verifica la estructura de la iteracion determinada
-				when :ITERDET
-					verifyIterDet(instrs[i])
+	if !$error_eval
+		if instr.class == WRITE_READ
+			symbol = instr.get_symbol
+			case symbol
+			# Verifica la estructura del write
+			when :WRITE
+				verifyWrite(instr.get_instr)
+			# Verifica la estructura del read
+			when :READ
+				verifyRead(instr.get_instr)
+			end
+		# En caso que sea una instruccion
+		elsif instr.class == INSTR
+			instrs = instr.get_instr
+			symbols = instr.get_symbol
+			# Iteracion auxiliar para recorrer la instruccion
+			for i in 0..1
+				# Si efectivamente hay algo que chequear
+				if !$error_eval
+					if symbols[i] != nil
+						case symbols[i]
+						# Verifica la estructura de la instruccion
+						when :INSTR
+							verifyInstr(instrs[i])
+						# Verifica la estructura del programa, en este caso se agrega
+						# una tabla
+						when :ESTRUCT
+							$table.addscope
+							$alcance += 1
+							verifyEstruct(instrs[i])
+						# Verifica la estructura de la asignacion
+						when :ASSIGN
+							verifyAssign(instrs[i])
+						# Verifica la estructura del condicional
+						when :CONDIC
+							verifyConditional(instrs[i])
+						# Verifica la estructura de la iteracion indeterminada
+						when :ITERIND
+							verifyIterInd(instrs[i])
+						# Verifica la estructura de la iteracion determinada
+						when :ITERDET
+							verifyIterDet(instrs[i])
+						end
+					end
 				end
 			end
 		end
@@ -142,13 +151,19 @@ def  verifyAssign(instr)
 	# Si lo consigue, verifica que la asignacion corresponda con el tipo
 	else 
 		symbol_identif = $table.lookup(identif)
-		puts symbol_identif[0]
-		puts symbol_identif[1]
 		symbol_expr = verifyExpression(values[1])
 		if symbol_identif[0] == symbol_expr[0]
-			puts "ENTRA"
-			$table.update(symbol_identif[0],identif,symbol_expr[1])
-		elsif symbol_expr == :UNKNOW
+			if symbol_expr[0] == :INTEGER
+				if symbol_expr[1] > 2147483647 || symbol_expr[1] < -2147483647
+					puts "ERROR numero de 32 bits erroneo"
+					$error_eval = true
+				else
+					$table.update(symbol_identif[0],identif,symbol_expr[1])
+				end
+			else
+				$table.update(symbol_identif[0],identif,symbol_expr[1])
+			end
+		elsif symbol_expr[0] == :UNKNOW
 			$error = true
 		else
 			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
@@ -160,11 +175,12 @@ end
 
 # Verificar la estructura del write
 def verifyWrite(expr)
-	symbol= verifyExpression(expr)
+	symbol = verifyExpression(expr)
 	# Unicamente se pueden escribir lienzos
-	if symbol==:CANVAS
+	if symbol[0] == :CANVAS
+		puts symbol[1]
 		#puts "Comparacion asignacion correcta"
-	elsif symbol==:UNKNOW
+	elsif symbol[0] ==:UNKNOW
 		$error = true
 	else
 		puts "Instrucción `WRITE` espera  una expresion tipo `CANVAS` y obtuvo #{symbol}."
@@ -189,11 +205,36 @@ end
 # Chequea la estructura de los identificadores booleanos y/o enteros
 def verifyIdentifierINT_BOOL(expr)
 	identif = expr.get_value
+	symbol = expr.get_symbol
 	# Verifica en la tabla que el identificador corresponda con entero o 
 	# booleano, o que simplemente no se encuentre en la tabla
 	if $table.contains(identif)
 		type = $table.lookup(identif)
-		if type == :INTEGER || type == :BOOLEAN
+		if type[0] == :INTEGER
+			print "Introduzca un numero entero: "
+			input = $stdin.readline
+			input = input.to_i
+			if input > 2147483647 || input < -2147483647
+				puts "ERROR numero de 32 bits erroneo"
+				$error_eval = true
+			elsif input < 2147483647 && input > -2147483647
+				puts "ENTRA"
+				$table.update(type[0],identif,input)
+			elsif input.class = Fixnum
+				puts "ERROR entrada incorrecta se espera un #{type[0]}"
+				$error_eval = true
+			end
+		elsif type[0] == :BOOLEAN
+			print "Introduzca true or false: "
+			input = $stdin.readline
+			if input.downcase == "true\n"
+				$table.update(type[0],identif,true) 
+			elsif input.downcase == "false\n"
+				$table.update(type[0],identif,false)
+			else
+				puts "ERROR entrada incorrecta se espera un #{type[0]}"
+				$error_eval = true
+			end
 		else
 			print "Instrucción `READ` Identificador: #{identif}, con tipo "
 			puts "distinto `BOOLEAN` o `INTEGER`"
@@ -291,9 +332,10 @@ def verifyExpression(expr)
 				return :UNKNOW
 			else 
 				symbol = $table.lookup(identif)
+				return symbol
 			end
 		end
-		return [symbol,identif] ### PRUEBAAA DE MODIFICAR LA TABLA
+		return [symbol,identif] ### ARREGLAR PARA ASSIGN Y WRITE
 
 	# Caso que sea una expresion binaria
 	elsif expr.class == EXPR_BIN

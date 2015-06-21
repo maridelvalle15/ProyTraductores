@@ -35,9 +35,6 @@ class Table
 	end
 	# Actualiza la tabla, actualiza el padre en el arbol
 	def update(symbol,identifier,value)
-		puts symbol
-		puts identifier
-		puts value
 		aux = @actual
 		while aux != nil do
 			if aux.contains(identifier)
