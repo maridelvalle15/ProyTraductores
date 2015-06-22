@@ -209,6 +209,50 @@ class EXPR_BIN
 		@expr = [expr1,expr2]
 	end
 
+	def get_eval(operation, expr1,expr2)
+		case operation
+		when :PLUS
+			return expr1 + expr2
+		when :MINUS
+			return expr1 - expr2
+		when :DIVISION
+			return expr1 / expr2
+		when :MULTIPLY
+			return expr1 * expr2
+		when :PERCENT
+			return expr1.modulo(expr2)
+		when :AND 
+			return expr1 && expr2
+		when :OR 
+			return expr1 || expr2 
+		when :AMPERSAND
+			if expr1[0].length != expr2[0].length
+				return nil
+			else
+				return expr1+expr2
+			end
+		when :VIRGUILE
+			if expr1[0].length != expr2[0].length
+				return nil
+			else
+				return [expr1[0] + expr2[0]]
+			end
+			return expr1+expr2
+		when :LESS
+			return expr1 < expr2
+		when :LESS_EQUAL
+			return expr1 <= expr2
+		when :MORE
+			return expr1 > expr2
+		when :MORE_EQUAL
+			return expr1 >= expr2
+		when :EQUAL
+			return expr1 == expr2
+		when :INEQUAL
+			return expr1 != expr2
+		end
+	end
+
 	def get_arit
 		return @arit
 	end
@@ -233,6 +277,19 @@ class EXPR_UNARIA
 		@val = val
 		@symbol = symbol1
 		@expr = expr1
+	end
+
+	def get_eval(operation, expr1)
+		case operation
+		when :MINUS_UNARY
+			return -1*expr1 
+		when :DOLLAR #CAMBIAR ESTRUCTURA
+			return nil
+		when :APOSTROPHE #CAMBIAR ESTRUCTURA
+			return nil
+		when :NOT
+			return !expr1
+		end
 	end
 
 	def get_arit

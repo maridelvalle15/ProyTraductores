@@ -1,9 +1,4 @@
-{!a f g %b e @c d |
-	b = 5;
-	e = b;
-	c = </>;
-	d = c;
-	read a;
-	read f;
-	write d
+{@a  |
+	a = </>~</>;
+	write a
 }

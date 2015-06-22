@@ -112,9 +112,9 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "true" 
-							@tokens << Token.new(:TRUE,word,nline,ncolumn)
+							@tokens << Token.new(:TRUE,true,nline,ncolumn)
 						elsif word == "false" 
-							@tokens << Token.new(:FALSE,word,nline,ncolumn)
+							@tokens << Token.new(:FALSE,false,nline,ncolumn)
 						elsif word == "read"
 							@tokens << Token.new(:READ,word,nline,ncolumn)
 						elsif word == "write"
@@ -178,9 +178,9 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "#" then 
-							@tokens << Token.new(:EMPTY_CANVAS,word,nline,ncolumn)
+							@tokens << Token.new(:EMPTY_CANVAS,[" "],nline,ncolumn)
 						else
-							@tokens << Token.new(:CANVAS,word[1],nline,ncolumn)
+							@tokens << Token.new(:CANVAS,[word[1]],nline,ncolumn)
 						end
 					end
 					# Para saber en que columna se encuentra la siguiente palabra/caracter, en 

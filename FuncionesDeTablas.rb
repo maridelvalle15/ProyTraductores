@@ -27,16 +27,16 @@ $error_eval = false
 # Debe verificar la estructura del programa
 def verifyAST(ast)
 	verifyEstruct(ast.get_estruct)
-	if !$error_eval
-		if !$error
-			#Si no hay errores se imprime toda la tabla de simbolos 
-			puts "Table de simbolos: "
-			$ftable.each do |ftable|
-				ftable[0].print_symbols(ftable[1])
-				puts
-			end
-		end
-	end
+	#if !$error_eval
+	#	if !$error
+	#		#Si no hay errores se imprime toda la tabla de simbolos 
+	#		puts "Table de simbolos: "
+	#		$ftable.each do |ftable|
+	#			ftable[0].print_symbols(ftable[1])
+	#			puts
+	#		end
+	#	end
+	#end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
@@ -150,6 +150,7 @@ def  verifyAssign(instr)
 		$error = true
 	# Si lo consigue, verifica que la asignacion corresponda con el tipo
 	else 
+
 		symbol_identif = $table.lookup(identif)
 		symbol_expr = verifyExpression(values[1])
 		if symbol_identif[0] == symbol_expr[0]
@@ -218,7 +219,6 @@ def verifyIdentifierINT_BOOL(expr)
 				puts "ERROR numero de 32 bits erroneo"
 				$error_eval = true
 			elsif input < 2147483647 && input > -2147483647
-				puts "ENTRA"
 				$table.update(type[0],identif,input)
 			elsif input.class = Fixnum
 				puts "ERROR entrada incorrecta se espera un #{type[0]}"
@@ -320,6 +320,7 @@ end
 # Verifica la estructura de la expresion
 def verifyExpression(expr)
 	exprs = expr.get_expr
+	
 	if expr.class == EXPR_VALUE
 		symbol = exprs.get_symbol
 		identif = exprs.get_value
@@ -329,13 +330,13 @@ def verifyExpression(expr)
 		if symbol == :IDENTIFIER
 			if !$table.lookup(identif)
 				puts "Identificador #{identif} no declarado en la tabla de simbolos"
-				return :UNKNOW
+				return [:UNKNOW,nil]
 			else 
 				symbol = $table.lookup(identif)
 				return symbol
 			end
 		end
-		return [symbol,identif] ### ARREGLAR PARA ASSIGN Y WRITE
+		return [symbol,identif] 
 
 	# Caso que sea una expresion binaria
 	elsif expr.class == EXPR_BIN
@@ -346,46 +347,72 @@ def verifyExpression(expr)
 		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
-				return :UNKNOW
-			elsif symbol1 == :INTEGER and symbol2 == :INTEGER
-				return symbol1
+			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+				return [:UNKNOW,nil]
+			elsif symbol1[0] == :INTEGER and symbol2[0] == :INTEGER
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				#Falta verificacion de overflow
+				return [symbol1[0],expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+				return [:UNKNOW,nil]
 			end
 		when :AND, :OR
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
-				return :UNKNOW
-			elsif symbol1 == :BOOLEAN and symbol2 == :BOOLEAN
-				return symbol1
+			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+				return [:UNKNOW,nil]
+			elsif symbol1[0] == :BOOLEAN and symbol2[0] == :BOOLEAN
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				return [symbol1[0],expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+				return [:UNKNOW,nil]
 			end
-		when :AMPERSAND, :VIRGUILLE
+		when :AMPERSAND, :VIRGUILE #CAMBIAR ESTRUCTURA 
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
-				return :UNKNOW
-			elsif symbol1 == :CANVAS and symbol2 == :CANVAS
-				return symbol1
+			if !$error_eval
+				if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+					return [:UNKNOW,nil]
+				elsif symbol1[0] == :CANVAS and symbol2[0] == :CANVAS
+					expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+					if expr_eval == nil
+						puts "ERROR concatenacion vertical incorrecta"
+						$error_eval = true
+						return [:UNKNOW,nil]
+					end
+					return [symbol1[0],expr_eval]
+				else
+					puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+					return [:UNKNOW,nil]
+				end
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
-				return :UNKNOW
+				return [:UNKNOW,nil]
 			end
-		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL, :EQUAL, :INEQUAL
+		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL
 			symbol1 = verifyExpression(exprs[0])
 			symbol2 = verifyExpression(exprs[1])
-			if symbol1 == :UNKNOW or symbol2 == :UNKNOW 
-				return :UNKNOW
-			elsif symbol1 == symbol2 
-				return :BOOLEAN
+			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+				return [:UNKNOW,nil]
+			elsif symbol1[0] == :INTEGER and symbol2[0] == :INTEGER
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				return [:BOOLEAN,expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1} y #{symbol2}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+				return [:UNKNOW,nil]
+			end
+		when :EQUAL, :INEQUAL
+			symbol1 = verifyExpression(exprs[0])
+			symbol2 = verifyExpression(exprs[1])
+			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+				return [:UNKNOW,nil]
+			elsif symbol1[0] == symbol2[0]
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				return [:BOOLEAN,expr_eval]
+			else
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+				return [:UNKNOW,nil]
 			end
 		end
 	# Caso que sea una expresion unaria
@@ -396,33 +423,37 @@ def verifyExpression(expr)
 		case arit
 		when :MINUS_UNARY
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :UNKNOW
-				return symbol1
-			elsif symbol1 == :INTEGER
-				return symbol1
+			if symbol1[0] == :UNKNOW
+				return [symbol1,nil]
+			elsif symbol1[0] == :INTEGER
+				expr_eval = expr.get_eval(arit,symbol1[1])
+				return [symbol1[0],expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
+				return [:UNKNOW,nil]
 			end
-		when :DOLLAR, :APOSTROPHE
+		when :DOLLAR, :APOSTROPHE #CAMBIAR ESTRUCTURA
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :UNKNOW
-				return symbol1
-			elsif symbol1 == :CANVAS
-				return symbol1
+			if symbol1[0] == :UNKNOW
+				return [symbol1,nil]
+			elsif symbol1[0] == :CANVAS
+				expr_eval = expr.get_eval(arit,symbol1[1])
+				return [symbol1[0],expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
+				return [:UNKNOW,nil]
 			end
 		when :NOT
 			symbol1 = verifyExpression(exprs)
-			if symbol1 == :UNKNOW
-				return symbol1
-			elsif symbol1 == :BOOLEAN
-				return symbol1
+			
+			if symbol1[0] == :UNKNOW
+				return [symbol1,nil]
+			elsif symbol1[0] == :BOOLEAN
+				expr_eval = expr.get_eval(arit,symbol1[1])
+				return [symbol1[0],expr_eval]
 			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1}"
-				return :UNKNOW
+				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
+				return [:UNKNOW,nil]
 			end
 		end
 	# En caso de conseguir expresiones parentizadas, verifica la expresion
@@ -430,4 +461,3 @@ def verifyExpression(expr)
 		return verifyExpression(exprs)
 	end
 end
-
