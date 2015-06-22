@@ -1,4 +1,4 @@
-°{ 	
-	hola = ^< > >= fos * dos >= lll
+{ 	
+	hola = < >^ 
 
 }

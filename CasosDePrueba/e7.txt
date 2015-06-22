@@ -1,5 +1,4 @@
-{@a  %b @c |
-	[a:b..b|{	@a  %b @c |
-				[a:b..b|write a]
+{!a %b |
+	[a:b..b|{ @c | read a
 			}]
 }

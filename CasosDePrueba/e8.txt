@@ -1,4 +1,3 @@
-{@a  |
-	a = </>~</>;
-	write a
+{!a  |
+	a = true /\ false /\ true \/ true
 }

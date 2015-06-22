@@ -28,8 +28,7 @@ class Parser
 		nonassoc LESS_EQUAL LESS MORE MORE_EQUAL
 		nonassoc EQUAL INEQUAL
 		right NOT
-		left AND
-		left OR
+		left AND OR
 		right APOSTROPHE 
 		left DOLLAR
 		left VIRGUILE AMPERSAND
