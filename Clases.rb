@@ -216,11 +216,23 @@ class EXPR_BIN
 		when :MINUS
 			return expr1 - expr2
 		when :DIVISION
-			return expr1 / expr2
+			if expr2 == 0
+				puts "ERROR: division por cero no permitida"
+				$error = true
+				return 0
+			else
+				return expr1 / expr2
+			end
 		when :MULTIPLY
 			return expr1 * expr2
 		when :PERCENT
-			return expr1.modulo(expr2)
+			if expr2 == 0
+				puts "ERROR: division por cero no permitida"
+				$error = true
+				return 0
+			else
+				return expr1.modulo(expr2)
+			end
 		when :AND 
 			return expr1 && expr2
 		when :OR 

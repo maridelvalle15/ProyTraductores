@@ -19,8 +19,9 @@ require "./TableSymbol.rb"
 
 $tables = Table.new() 	# Definir una varible global llamada tabla
 $alcance = 0			# Definir una varible global llamada alcance
-$ftables = []			# Definir una varible global llamada ftabla
+$ftables = []			# Definir una varible global llamada ftabl
 $error = false			# Definir una varible global llamada error
+$iteradores = []
 #$error_eval = false
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
@@ -229,17 +230,13 @@ def evalIterInd(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
 	type_expr = evalExpression(values[0])
+	puts type_expr[1]
 	# Los identificadores unicamente pueden ser booleanos o numeros
-	if type_expr[0] == :BOOLEAN
-	elsif type_expr[0] ==:UNKNOW
-		$error = true
-	else
-		puts "Instrucción `ITERIND` expresion tipo #{type_expr[0]} encontrada, se espera tipo `BOOLEAN`"
-		$error = true
-	end
-	evalInstr(values[1])
-	if values[2] != nil
-		evalInstr(values[2])
+	if !$error
+		while type_expr[1] do
+			evalInstr(values[1])
+			type_expr = evalExpression(values[0])
+		end
 	end
 end
 
@@ -248,32 +245,34 @@ def evalIterDet(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
 	symbol2 = evalExpression(values[1])
-	symbol3 = evalExpression(values[2])
+	
 	# Chequea que el identificador se encuentre en la tabla de simbolos, es 
 	# decir, que este declarado
-	if values[0] != nil
-		identif = values[0].get_value
-		$tables.addscope
-		$tables.insert(:INTEGER,identif,nil)
-		$ftables << [$tables.get_actual,$alcance]
-		if symbol2[0] == :INTEGER and symbol3[0] ==:INTEGER
-		# En caso que no se cumpla que ambas expresiones sean aritmeticas
-		else 
-			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
-			$error = true
+	if !$error
+		symbol3 = evalExpression(values[2])
+		if !$error
+			if values[0] != nil
+				identif = values[0].get_value
+				$tables.addscope
+				$tables.insert(:INTEGER,identif,nil)
+				#$iteradores << identif
+				$ftables << [$tables.get_actual,$alcance]
+				if symbol2[0] == :INTEGER and symbol3[0] ==:INTEGER
+				# En caso que no se cumpla que ambas expresiones sean aritmeticas
+				else 
+					puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
+					$error = true
+				end
+				evalInstr(values[3])
+				$tables.endscope
+			else
+				i = symbol2[1]
+				max = [symbol3[1]-symbol2[1]+1,0].max
+				for j in i..max 
+					evalInstr(values[3])
+				end
+			end
 		end
-		evalInstr(values[3])
-		$tables.endscope
-	else
-		#$tables.addscope
-		#$tables.insert(:INTEGER,)
-		if symbol2[0] == :INTEGER && symbol3[0] ==:INTEGER
-		# En caso que no se cumpla que ambas expresiones sean aritmeticas
-		else 
-			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER "
-			$error = true
-		end
-		evalInstr(values[3])
 	end
 end
 
@@ -306,12 +305,14 @@ def evalExpression(expr)
 			case arit
 			when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
-				if expr_eval > 2147483647 || expr_eval < -2147483647
-					puts "ERROR: overflow numero de 32 bits excedido"
-					$error = true
-					return [:UNKNOW,nil]
-				else
-					return [symbol1[0],expr_eval]
+				if !$error	
+					if expr_eval > 2147483647 || expr_eval < -2147483647
+						puts "ERROR: overflow numero de 32 bits excedido"
+						$error = true
+						return [:UNKNOW,nil]
+					else
+						return [symbol1[0],expr_eval]
+					end
 				end
 			when :AND, :OR
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])

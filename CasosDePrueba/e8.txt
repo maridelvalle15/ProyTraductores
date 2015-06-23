@@ -1,4 +1,6 @@
-{ @ e ! a % c|
-	a = false;
-	(a ? a = false : { %a | a = 5 })
+{ @ e ! a % c d|
+	a = true;
+	c = 0;
+	d = 5;
+	[c .. d | d = d + 5  ]
 }
