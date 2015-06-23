@@ -26,14 +26,14 @@ $error = false			# Definir una varible global llamada error
 # Debe verificar la estructura del programa
 def evalAST(ast)
 	evalEstruct(ast.get_estruct)
-	if !$error
-		#Si no hay errores se imprime toda la tabla de simbolos 
-		puts "Table de simbolos Evaluada: "
-		$ftables.each do |ftable|
-			ftable[0].print_symbols(ftable[1])
-			puts
-		end
-	end
+	#if !$error
+	#	#Si no hay errores se imprime toda la tabla de simbolos 
+	#	puts "Table de simbolos Evaluada: "
+	#	$ftables.each do |ftable|
+	#		ftable[0].print_symbols(ftable[1])
+	#		puts
+	#	end
+	#end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
