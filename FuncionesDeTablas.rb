@@ -21,19 +21,20 @@ $table = Table.new() 	# Definir una varible global llamada tabla
 $alcance = 0			# Definir una varible global llamada alcance
 $ftable = []			# Definir una varible global llamada ftabla
 $error = false			# Definir una varible global llamada error
+$var_iter = []
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
 def verifyAST(ast)
 	verifyEstruct(ast.get_estruct)
-	if !$error
-		#Si no hay errores se imprime toda la tabla de simbolos 
-		puts "Table de simbolos: "
-		$ftable.each do |ftable|
-			ftable[0].print_symbols(ftable[1])
-			puts
-		end
-	end
+	#if !$error
+	#	#Si no hay errores se imprime toda la tabla de simbolos 
+	#	puts "Table de simbolos: "
+	#	$ftable.each do |ftable|
+	#		ftable[0].print_symbols(ftable[1])
+	#		puts
+	#	end
+	#end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
@@ -136,21 +137,26 @@ def  verifyAssign(instr)
 	identif = values[0].get_value
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
-	if !$table.lookup(identif)
-		puts "Instrucción `ASSIGN` Identificador: #{identif}, no declarado en la tabla de simbolos"
+	if $var_iter.include?(identif)
+		puts "Variable de iteracion #{identif} no puede ser modificada"
 		$error = true
-	# Si lo consigue, verifica que la asignacion corresponda con el tipo
-	else 
-		symbol_identif = $table.lookup(identif)
-		symbol_expr = verifyExpression(values[1])
-		if symbol_identif[0] == symbol_expr[0]
-			##puts "Comparacion asignacion correcta"
-		elsif symbol_expr[0] == :UNKNOW
+	else
+		if !$table.lookup(identif)
+			puts "Instrucción `ASSIGN` Identificador: #{identif}, no declarado en la tabla de simbolos"
 			$error = true
-		else
-			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
-			puts "#{symbol_identif[0]} y #{symbol_expr[0]} encontrados."
-			$error = true
+		# Si lo consigue, verifica que la asignacion corresponda con el tipo
+		else 
+			symbol_identif = $table.lookup(identif)
+			symbol_expr = verifyExpression(values[1])
+			if symbol_identif[0] == symbol_expr[0]
+				##puts "Comparacion asignacion correcta"
+			elsif symbol_expr[0] == :UNKNOW
+				$error = true
+			else
+				print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
+				puts "#{symbol_identif[0]} y #{symbol_expr[0]} encontrados."
+				$error = true
+			end
 		end
 	end
 end
@@ -250,6 +256,7 @@ def verifyIterDet(expr)
 	# decir, que este declarado
 	if values[0] != nil
 		identif = values[0].get_value
+		$var_iter << identif
 		$table.addscope
 		$table.insert(:INTEGER,identif,nil)
 		$ftable << [$table.get_actual,$alcance]
@@ -261,6 +268,7 @@ def verifyIterDet(expr)
 		end
 		verifyInstr(values[3])
 		$table.endscope
+		$var_iter.pop
 	else
 		#$table.addscope
 		#$table.insert(:INTEGER,)

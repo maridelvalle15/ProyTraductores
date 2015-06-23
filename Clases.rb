@@ -238,18 +238,16 @@ class EXPR_BIN
 		when :OR 
 			return expr1 || expr2 
 		when :AMPERSAND
-			if expr1[0].length != expr2[0].length
-				return nil
-			else
-				return expr1+expr2
-			end
+			return expr1+expr2
 		when :VIRGUILE
-			puts "ENTRO"
-			puts expr1.length
-			print expr1[0]
-			if expr1[1] == nil and expr2[1] == nil
-				return expr1[0]+expr2[0]
-			end
+			#puts "Virguile"
+			#puts "---------"
+			#print expr1
+			#print expr2
+			#puts
+			#print [expr1[0]+expr2[0]]
+			#puts
+			return [expr1[0]+expr2[0]]
 		when :LESS
 			return expr1 < expr2
 		when :LESS_EQUAL

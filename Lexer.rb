@@ -178,7 +178,7 @@ class Lexer
 					if !comment then
 						# Si se cumple la condicion, se crea un nuevo token
 						if word == "#" then 
-							@tokens << Token.new(:EMPTY_CANVAS,[" "],nline,ncolumn)
+							@tokens << Token.new(:EMPTY_CANVAS,[""],nline,ncolumn)
 						else
 							@tokens << Token.new(:CANVAS,[word[1]],nline,ncolumn)
 						end

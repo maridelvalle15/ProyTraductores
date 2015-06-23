@@ -1,0 +1,9 @@
+{ @c d |
+	c = #;
+	[j : 0 .. 5 | c = c ~ </>  ];
+	d = c;
+	write d;
+	write < >;
+	c = c&c;
+	write c
+}

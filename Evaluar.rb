@@ -21,8 +21,6 @@ $tables = Table.new() 	# Definir una varible global llamada tabla
 $alcance = 0			# Definir una varible global llamada alcance
 $ftables = []			# Definir una varible global llamada ftabl
 $error = false			# Definir una varible global llamada error
-$iteradores = []
-#$error_eval = false
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
@@ -147,6 +145,10 @@ def  evalAssign(instr)
 	# devuelve un mensaje
 	#symbol_identif = $tables.lookup(identif)
 	symbol_expr = evalExpression(values[1])
+	#puts "ASSIG"
+	#puts "-----"
+	#print symbol_expr
+	#puts
 	if !$error
 		if symbol_expr[0] == :INTEGER
 			$tables.update(symbol_expr[0],identif,symbol_expr[1])
@@ -226,7 +228,7 @@ def evalConditional(expr) #FALTA
 end
 
 # Verifica la iteracion indeterminada
-def evalIterInd(expr) #FALTA
+def evalIterInd(expr) 
 	symbol = expr.get_symbol
 	values = expr.get_values
 	type_expr = evalExpression(values[0])
@@ -245,25 +247,24 @@ def evalIterDet(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
 	symbol2 = evalExpression(values[1])
-	
-	# Chequea que el identificador se encuentre en la tabla de simbolos, es 
-	# decir, que este declarado
 	if !$error
 		symbol3 = evalExpression(values[2])
 		if !$error
 			if values[0] != nil
 				identif = values[0].get_value
+				#puts identif
+				#puts symbol2[1]
 				$tables.addscope
-				$tables.insert(:INTEGER,identif,nil)
-				#$iteradores << identif
+				$tables.insert(:INTEGER,identif,symbol2[1])
 				$ftables << [$tables.get_actual,$alcance]
-				if symbol2[0] == :INTEGER and symbol3[0] ==:INTEGER
-				# En caso que no se cumpla que ambas expresiones sean aritmeticas
-				else 
-					puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
-					$error = true
+
+				i  = $tables.lookup(identif)[1]
+				max = [symbol3[1]-symbol2[1]+1,0].max
+				while i < max do
+					evalInstr(values[3])
+					$tables.update(:INTEGER,identif,i+1)
+					i = $tables.lookup(identif)[1]
 				end
-				evalInstr(values[3])
 				$tables.endscope
 			else
 				i = symbol2[1]
@@ -285,6 +286,7 @@ def evalExpression(expr)
 		if symbol == :IDENTIFIER
 			symbol = $tables.lookup(identif)
 			if symbol[1] != nil
+				#print symbol
 				return symbol
 			else
 				puts "ERROR: variable #{identif} no inicializada"
@@ -318,8 +320,10 @@ def evalExpression(expr)
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				return [symbol1[0],expr_eval]
 			when :AMPERSAND, :VIRGUILE #PEOS TOTALES
-				#puts symbol1[1]
-				#puts symbol2[1]
+				#puts 
+				#print symbol1[1]
+				#print symbol2[1]
+				#puts
 				#puts arit 
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				if expr_eval == nil
