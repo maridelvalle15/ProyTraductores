@@ -14,6 +14,7 @@
 require "./Lexer.rb"
 require "./Parser.rb"
 require "./FuncionesDeTablas.rb"
+require "./Evaluar.rb"
 
 
 name_file = ARGV[0]				# Nombre del archivo recibido por entrada
@@ -31,10 +32,17 @@ elsif token.get_invalids.size > 0
 else
 	parser = Parser.new(token); # Creamos una nueva clase Parser cuyo parametro es el arreglo de tokens  
 	begin
-		verifyAST(parser.parser) #Comentario
+		AST = parser.parser; #Comentario
 	# En caso de encontrar error de parseo, lo atrapa y genera un mensaje
 	rescue Exception => e
 	  	print "Syntax Error:" 
 	  	puts e
+	  	$error = true
 	end	
+	if !$error
+		verifyAST(AST)
+	end
+	if !$error
+		evalAST(AST)
+	end
 end

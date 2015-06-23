@@ -1,3 +1,4 @@
-{!a  |
-	a = true /\ false /\ true \/ true
+{ @ e ! a % c|
+	a = false;
+	(a ? a = false : { %a | a = 5 })
 }

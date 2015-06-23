@@ -149,7 +149,7 @@ def  verifyAssign(instr)
 			$error = true
 		else
 			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
-			puts "#{symbol_identif} y #{symbol_expr} encontrados."
+			puts "#{symbol_identif[0]} y #{symbol_expr[0]} encontrados."
 			$error = true
 		end
 	end

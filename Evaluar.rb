@@ -17,87 +17,87 @@
 require "./Table.rb"
 require "./TableSymbol.rb"
 
-$table = Table.new() 	# Definir una varible global llamada tabla
+$tables = Table.new() 	# Definir una varible global llamada tabla
 $alcance = 0			# Definir una varible global llamada alcance
-$ftable = []			# Definir una varible global llamada ftabla
+$ftables = []			# Definir una varible global llamada ftabla
 $error = false			# Definir una varible global llamada error
-$error_eval = false
+#$error_eval = false
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
 # Debe verificar la estructura del programa
-def verifyAST(ast)
-	verifyEstruct(ast.get_estruct)
-	#if !$error_eval
-	#	if !$error
-	#		#Si no hay errores se imprime toda la tabla de simbolos 
-	#		puts "Table de simbolos: "
-	#		$ftable.each do |ftable|
-	#			ftable[0].print_symbols(ftable[1])
-	#			puts
-	#		end
-	#	end
-	#end
+def evalAST(ast)
+	evalEstruct(ast.get_estruct)
+	if !$error
+		#Si no hay errores se imprime toda la tabla de simbolos 
+		puts "Table de simbolos Evaluada: "
+		$ftables.each do |ftable|
+			ftable[0].print_symbols(ftable[1])
+			puts
+		end
+	end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
 # Finaliza la tabla
-def verifyEstruct(estruct)
-	verifyDeclaration(estruct.get_dec)
-	if !$error_eval
+def evalEstruct(estruct)
+	evalDeclaration(estruct.get_dec)
+	if !$error
+		#Se va insertando la tabla actual y su alcance a la varible global ftable
+		$ftables << [$tables.get_actual,$alcance]
+		evalInstr(estruct.get_instr)
 		if !$error
-			#Se va insertando la tabla actual y su alcance a la varible global ftable
-			$ftable << [$table.get_actual,$alcance]
-			verifyInstr(estruct.get_instr)
-			if !$error
-				$table.endscope
-				$alcance -= 1
-			end
+			$tables.endscope
+			$alcance -= 1
 		end
 	end
 end
 
 # Chequea las declaraciones del programa
-def verifyDeclaration(declaration)
+def evalDeclaration(declaration)
 	# Si hay declaracon, llama recursivamente a la funcion
 	if declaration != nil
-		verifyDeclaration(declaration.get_dec)
+		evalDeclaration(declaration.get_dec)
 		# Obtiene el tipo de la variable declarada
 		type = declaration.get_type.get_symbol
 		# Verifica la lista de identificadores
 		if !$error
-			verifyListident(type,declaration.get_listident)
+			evalListident(type,declaration.get_listident)
 		end
 	end
 end
 
 # Chequea la lista de identificadores (variables)
-def verifyListident(type,listident)
+def evalListident(type,listident)
 	# Si no obtiene nada, llama recursivamente a la funcion
 	if listident.get_listident != nil
 		if !$error
-			verifyListident(type,listident.get_listident)
+			evalListident(type,listident.get_listident)
 		end
 	end
 	# Obtiene la variable declarada
 	variable = listident.get_variable
 	# Inserta la variable en la tabla junto con el tipo correspondiente 
 	# Al ser una tabla de hash, la clave es la variable y el valor el tipo 
-	$error = $table.insert(type,variable.get_value,nil)
+	if type == :CANVAS
+		$error = $tables.insert(type,variable.get_value,nil)
+	else
+		$error = $tables.insert(type,variable.get_value,nil)
+	end
 end
 
 # Verifica quer instruccion esta leyendo
-def verifyInstr(instr)
+def evalInstr(instr)
 	# En caso que sea read o write
-	if !$error_eval
+	if !$error
 		if instr.class == WRITE_READ
 			symbol = instr.get_symbol
 			case symbol
 			# Verifica la estructura del write
 			when :WRITE
-				verifyWrite(instr.get_instr)
+				evalWrite(instr.get_instr)
 			# Verifica la estructura del read
 			when :READ
-				verifyRead(instr.get_instr)
+				evalRead(instr.get_instr)
 			end
 		# En caso que sea una instruccion
 		elsif instr.class == INSTR
@@ -106,30 +106,30 @@ def verifyInstr(instr)
 			# Iteracion auxiliar para recorrer la instruccion
 			for i in 0..1
 				# Si efectivamente hay algo que chequear
-				if !$error_eval
+				if !$error
 					if symbols[i] != nil
 						case symbols[i]
 						# Verifica la estructura de la instruccion
 						when :INSTR
-							verifyInstr(instrs[i])
+							evalInstr(instrs[i])
 						# Verifica la estructura del programa, en este caso se agrega
 						# una tabla
 						when :ESTRUCT
-							$table.addscope
+							$tables.addscope
 							$alcance += 1
-							verifyEstruct(instrs[i])
+							evalEstruct(instrs[i])
 						# Verifica la estructura de la asignacion
 						when :ASSIGN
-							verifyAssign(instrs[i])
+							evalAssign(instrs[i])
 						# Verifica la estructura del condicional
 						when :CONDIC
-							verifyConditional(instrs[i])
+							evalConditional(instrs[i])
 						# Verifica la estructura de la iteracion indeterminada
 						when :ITERIND
-							verifyIterInd(instrs[i])
+							evalIterInd(instrs[i])
 						# Verifica la estructura de la iteracion determinada
 						when :ITERDET
-							verifyIterDet(instrs[i])
+							evalIterDet(instrs[i])
 						end
 					end
 				end
@@ -139,136 +139,96 @@ def verifyInstr(instr)
 end
 
 # Chequea las asignaciones del programa
-def  verifyAssign(instr)
-	symbol = instr.get_symbol
+def  evalAssign(instr)
 	values = instr.get_values
 	identif = values[0].get_value
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
-	if !$table.lookup(identif)
-		puts "Instrucción `ASSIGN` Identificador: #{identif}, no declarado en la tabla de simbolos"
-		$error = true
-	# Si lo consigue, verifica que la asignacion corresponda con el tipo
-	else 
-
-		symbol_identif = $table.lookup(identif)
-		symbol_expr = verifyExpression(values[1])
-		if symbol_identif[0] == symbol_expr[0]
-			if symbol_expr[0] == :INTEGER
-				if symbol_expr[1] > 2147483647 || symbol_expr[1] < -2147483647
-					puts "ERROR numero de 32 bits erroneo"
-					$error_eval = true
-				else
-					$table.update(symbol_identif[0],identif,symbol_expr[1])
-				end
-			else
-				$table.update(symbol_identif[0],identif,symbol_expr[1])
-			end
-		elsif symbol_expr[0] == :UNKNOW
-			$error = true
+	#symbol_identif = $tables.lookup(identif)
+	symbol_expr = evalExpression(values[1])
+	if !$error
+		if symbol_expr[0] == :INTEGER
+			$tables.update(symbol_expr[0],identif,symbol_expr[1])
+		elsif  symbol_expr[0] == :CANVAS
+			$tables.update(symbol_expr[0],identif,symbol_expr[1])
 		else
-			print "Instrucción `ASSIGN` espera tipos iguales, tipos " 
-			puts "#{symbol_identif} y #{symbol_expr} encontrados."
-			$error = true
+			$tables.update(symbol_expr[0],identif,symbol_expr[1])
 		end
 	end
 end
 
 # Verificar la estructura del write
-def verifyWrite(expr)
-	symbol = verifyExpression(expr)
-	# Unicamente se pueden escribir lienzos
-	if symbol[0] == :CANVAS
-		puts symbol[1]
-		#puts "Comparacion asignacion correcta"
-	elsif symbol[0] ==:UNKNOW
-		$error = true
-	else
-		puts "Instrucción `WRITE` espera  una expresion tipo `CANVAS` y obtuvo #{symbol}."
-		$error = true
-	end
+def evalWrite(expr)
+	symbol = evalExpression(expr)
+	puts symbol[1]
 end
 
 # Verifica la estructura del read
-def verifyRead(expr)
-	# Unicamente se pueden leer enteros o booleanos
-	if expr.class == VALUE
-		symbol = expr.get_symbol
-		if symbol == :IDENTIFIER
-			verifyIdentifierINT_BOOL(expr)
-		end
-	else
-		puts "Instrucción `READ` espera una expresion tipo `BOOLEAN` o `INTEGER` " 
-		$error = true
-	end
+def evalRead(expr)
+	evalIdentifierINT_BOOL(expr)
 end
 
 # Chequea la estructura de los identificadores booleanos y/o enteros
-def verifyIdentifierINT_BOOL(expr)
+def evalIdentifierINT_BOOL(expr)
 	identif = expr.get_value
-	symbol = expr.get_symbol
+	puts identif
 	# Verifica en la tabla que el identificador corresponda con entero o 
 	# booleano, o que simplemente no se encuentre en la tabla
-	if $table.contains(identif)
-		type = $table.lookup(identif)
-		if type[0] == :INTEGER
-			print "Introduzca un numero entero: "
-			input = $stdin.readline
-			input = input.to_i
-			if input > 2147483647 || input < -2147483647
-				puts "ERROR numero de 32 bits erroneo"
-				$error_eval = true
-			elsif input < 2147483647 && input > -2147483647
-				$table.update(type[0],identif,input)
-			elsif input.class = Fixnum
-				puts "ERROR entrada incorrecta se espera un #{type[0]}"
-				$error_eval = true
-			end
-		elsif type[0] == :BOOLEAN
-			print "Introduzca true or false: "
-			input = $stdin.readline
-			if input.downcase == "true\n"
-				$table.update(type[0],identif,true) 
-			elsif input.downcase == "false\n"
-				$table.update(type[0],identif,false)
-			else
-				puts "ERROR entrada incorrecta se espera un #{type[0]}"
-				$error_eval = true
-			end
+	type = $tables.lookup(identif)
+	if type[0] == :INTEGER
+		print "Introduzca un numero entero: "
+		input = $stdin.readline
+		#if input.to_s == /^[a-zA-Z_][a-zA-Z0-9_]*/
+		#	puts "ERROR entrada incorrecta se espera un #{type[0]}"
+		#	$error = true
+		#else
+		input = input.to_i
+		print input
+		if input > 2147483647 || input < -2147483647
+			puts "ERROR numero de 32 bits erroneo"
+			$error = true
+		elsif input < 2147483647 && input > -2147483647
+			$tables.update(type[0],identif,input)
 		else
-			print "Instrucción `READ` Identificador: #{identif}, con tipo "
-			puts "distinto `BOOLEAN` o `INTEGER`"
+			puts "ERROR entrada incorrecta se espera un #{type[0]}"
 			$error = true
 		end
-	else
-		puts "Identificador: #{identif}, no contenido en la tabla de simbolos"
-		$error = true
+		#end
+	elsif type[0] == :BOOLEAN
+		print "Introduzca true or false: "
+		input = $stdin.readline
+		if input.downcase == "true\n"
+			$tables.update(type[0],identif,true) 
+		elsif input.downcase == "false\n"
+			$tables.update(type[0],identif,false)
+		else
+			puts "ERROR entrada incorrecta se espera un #{type[0]}"
+			$error = true
+		end
 	end
 end
 # Verifica la estructura de los condicionales
-def verifyConditional(expr)
+def evalConditional(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
-	type_expr = verifyExpression(values[0])
+	type_expr = evalExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
-	if type_expr[0] == :BOOLEAN
-	elsif type_expr[0] == :UNKNOW
-		$error = true
-	else
-		puts "Instrucción `CONDITIONAL` expresion tipo #{type_expr[0]} encontrada, se espera tipo `BOOLEAN`"
-		$error = true
-	end
-	verifyInstr(values[1])
-	if values[2] != nil
-		verifyInstr(values[2])
+	if !$error
+		if type_expr[1] == true
+			evalInstr(values[1])
+		elsif type_expr[1] == false
+			if values[2] != nil
+				evalInstr(values[2])
+			end
+		end
 	end
 end
 
 # Verifica la iteracion indeterminada
-def verifyIterInd(expr)
+def evalIterInd(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
-	type_expr = verifyExpression(values[0])
+	type_expr = evalExpression(values[0])
 	# Los identificadores unicamente pueden ser booleanos o numeros
 	if type_expr[0] == :BOOLEAN
 	elsif type_expr[0] ==:UNKNOW
@@ -277,63 +237,60 @@ def verifyIterInd(expr)
 		puts "Instrucción `ITERIND` expresion tipo #{type_expr[0]} encontrada, se espera tipo `BOOLEAN`"
 		$error = true
 	end
-	verifyInstr(values[1])
+	evalInstr(values[1])
 	if values[2] != nil
-		verifyInstr(values[2])
+		evalInstr(values[2])
 	end
 end
 
 # Verifica la iteracion determinada
-def verifyIterDet(expr)
+def evalIterDet(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
-	symbol2 = verifyExpression(values[1])
-	symbol3 = verifyExpression(values[2])
+	symbol2 = evalExpression(values[1])
+	symbol3 = evalExpression(values[2])
 	# Chequea que el identificador se encuentre en la tabla de simbolos, es 
 	# decir, que este declarado
 	if values[0] != nil
 		identif = values[0].get_value
-		$table.addscope
-		$table.insert(:INTEGER,identif,nil)
-		$ftable << [$table.get_actual,$alcance]
+		$tables.addscope
+		$tables.insert(:INTEGER,identif,nil)
+		$ftables << [$tables.get_actual,$alcance]
 		if symbol2[0] == :INTEGER and symbol3[0] ==:INTEGER
 		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 
 			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER"
 			$error = true
 		end
-		verifyInstr(values[3])
-		$table.endscope
+		evalInstr(values[3])
+		$tables.endscope
 	else
-		#$table.addscope
-		#$table.insert(:INTEGER,)
+		#$tables.addscope
+		#$tables.insert(:INTEGER,)
 		if symbol2[0] == :INTEGER && symbol3[0] ==:INTEGER
 		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 
 			puts "Instrucción `ITERDET` expresiones con tipos diferentes a INTEGER "
 			$error = true
 		end
-		verifyInstr(values[3])
+		evalInstr(values[3])
 	end
 end
 
 # Verifica la estructura de la expresion
-def verifyExpression(expr)
+def evalExpression(expr)
 	exprs = expr.get_expr
-	
 	if expr.class == EXPR_VALUE
 		symbol = exprs.get_symbol
 		identif = exprs.get_value
-		# Si consigue un identificador, lo busca en la tabla para verificar que
-		# se encuentre. Si no lo encuentra, es porque no fue declarado en el
-		# programa
 		if symbol == :IDENTIFIER
-			if !$table.lookup(identif)
-				puts "Identificador #{identif} no declarado en la tabla de simbolos"
-				return [:UNKNOW,nil]
-			else 
-				symbol = $table.lookup(identif)
+			symbol = $tables.lookup(identif)
+			if symbol[1] != nil
 				return symbol
+			else
+				puts "ERROR: variable #{identif} no inicializada"
+				$error = true
+				return [:UNKNOW,nil]
 			end
 		end
 		return [symbol,identif] 
@@ -341,124 +298,68 @@ def verifyExpression(expr)
 	# Caso que sea una expresion binaria
 	elsif expr.class == EXPR_BIN
 		arit = expr.get_arit
+		symbol1 = evalExpression(exprs[0])
+		symbol2 = evalExpression(exprs[1])
 		# Chequea todos los tipos de expresiones binarias aritmeticas
 		# Para cada caso, asegura que sean correctas
-		case arit
-		when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
-			symbol1 = verifyExpression(exprs[0])
-			symbol2 = verifyExpression(exprs[1])
-			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
-				return [:UNKNOW,nil]
-			elsif symbol1[0] == :INTEGER and symbol2[0] == :INTEGER
+		if !$error
+			case arit
+			when :PLUS , :MINUS, :DIVISION, :MULTIPLY, :PERCENT
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
-				#Falta verificacion de overflow
-				return [symbol1[0],expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
-				return [:UNKNOW,nil]
-			end
-		when :AND, :OR
-			symbol1 = verifyExpression(exprs[0])
-			symbol2 = verifyExpression(exprs[1])
-			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
-				return [:UNKNOW,nil]
-			elsif symbol1[0] == :BOOLEAN and symbol2[0] == :BOOLEAN
-				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
-				return [symbol1[0],expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
-				return [:UNKNOW,nil]
-			end
-		when :AMPERSAND, :VIRGUILE #CAMBIAR ESTRUCTURA 
-			symbol1 = verifyExpression(exprs[0])
-			symbol2 = verifyExpression(exprs[1])
-			if !$error_eval
-				if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
+				if expr_eval > 2147483647 || expr_eval < -2147483647
+					puts "ERROR: overflow numero de 32 bits excedido"
+					$error = true
 					return [:UNKNOW,nil]
-				elsif symbol1[0] == :CANVAS and symbol2[0] == :CANVAS
-					expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
-					if expr_eval == nil
-						puts "ERROR concatenacion vertical incorrecta"
-						$error_eval = true
-						
-						return [:UNKNOW,nil]
-					end
-					return [symbol1[0],expr_eval]
 				else
-					puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
+					return [symbol1[0],expr_eval]
+				end
+			when :AND, :OR
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				return [symbol1[0],expr_eval]
+			when :AMPERSAND, :VIRGUILE #PEOS TOTALES
+				#puts symbol1[1]
+				#puts symbol2[1]
+				#puts arit 
+				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
+				if expr_eval == nil
+					if arit == :AMPERSAND 
+						puts "ERROR concatenacion vertical incorrecta"
+					else
+						puts "ERROR concatenacion horizontal incorrecta"
+					end
+					$error = true
 					return [:UNKNOW,nil]
 				end
-			else
-				return [:UNKNOW,nil]
-			end
-		when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL
-			symbol1 = verifyExpression(exprs[0])
-			symbol2 = verifyExpression(exprs[1])
-			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
-				return [:UNKNOW,nil]
-			elsif symbol1[0] == :INTEGER and symbol2[0] == :INTEGER
+				return [symbol1[0],expr_eval]
+			when :LESS, :LESS_EQUAL, :MORE, :MORE_EQUAL
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				return [:BOOLEAN,expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
-				return [:UNKNOW,nil]
-			end
-		when :EQUAL, :INEQUAL
-			symbol1 = verifyExpression(exprs[0])
-			symbol2 = verifyExpression(exprs[1])
-			if symbol1[0] == :UNKNOW or symbol2[0] == :UNKNOW 
-				return [:UNKNOW,nil]
-			elsif symbol1[0] == symbol2[0]
+			when :EQUAL, :INEQUAL
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				return [:BOOLEAN,expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]} y #{symbol2[0]}"
-				return [:UNKNOW,nil]
 			end
 		end
-	# Caso que sea una expresion unaria
+		# Caso que sea una expresion unaria
 	elsif expr.class == EXPR_UNARIA
 		arit = expr.get_arit
+		symbol1 = evalExpression(exprs)
 		# Verifica las expresiones unarias aritmeticas
 		# Para cada caso, chequea que sean correctas
-		case arit
-		when :MINUS_UNARY
-			symbol1 = verifyExpression(exprs)
-			if symbol1[0] == :UNKNOW
-				return [symbol1,nil]
-			elsif symbol1[0] == :INTEGER
+		if !$error 
+			case arit
+			when :MINUS_UNARY
 				expr_eval = expr.get_eval(arit,symbol1[1])
 				return [symbol1[0],expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
-				return [:UNKNOW,nil]
-			end
-		when :DOLLAR, :APOSTROPHE #CAMBIAR ESTRUCTURA
-			symbol1 = verifyExpression(exprs)
-			if symbol1[0] == :UNKNOW
-				return [symbol1,nil]
-			elsif symbol1[0] == :CANVAS
+			when :DOLLAR, :APOSTROPHE #PEOS TOTALES
 				expr_eval = expr.get_eval(arit,symbol1[1])
 				return [symbol1[0],expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
-				return [:UNKNOW,nil]
-			end
-		when :NOT
-			symbol1 = verifyExpression(exprs)
-			
-			if symbol1[0] == :UNKNOW
-				return [symbol1,nil]
-			elsif symbol1[0] == :BOOLEAN
+			when :NOT
 				expr_eval = expr.get_eval(arit,symbol1[1])
 				return [symbol1[0],expr_eval]
-			else
-				puts "Operador #{arit} no funcionas con operadores #{symbol1[0]}"
-				return [:UNKNOW,nil]
 			end
 		end
 	# En caso de conseguir expresiones parentizadas, verifica la expresion
 	elsif expr.class == EXPR_PARENTHESIS
-		return verifyExpression(exprs)
+		return evalExpression(exprs)
 	end
 end

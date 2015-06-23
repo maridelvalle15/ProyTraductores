@@ -232,12 +232,12 @@ class EXPR_BIN
 				return expr1+expr2
 			end
 		when :VIRGUILE
-			if expr1[0].length != expr2[0].length
-				return nil
-			else
-				return [expr1[0] + expr2[0]]
+			puts "ENTRO"
+			puts expr1.length
+			print expr1[0]
+			if expr1[1] == nil and expr2[1] == nil
+				return expr1[0]+expr2[0]
 			end
-			return expr1+expr2
 		when :LESS
 			return expr1 < expr2
 		when :LESS_EQUAL
