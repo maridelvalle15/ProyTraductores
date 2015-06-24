@@ -27,7 +27,7 @@ $error = false			# Definir una varible global llamada error
 def evalAST(ast)
 	evalEstruct(ast.get_estruct)
 	#if !$error
-	#	#Si no hay errores se imprime toda la tabla de simbolos 
+		#Si no hay errores se imprime toda la tabla de simbolos 
 	#	puts "Table de simbolos Evaluada: "
 	#	$ftables.each do |ftable|
 	#		ftable[0].print_symbols(ftable[1])
@@ -286,7 +286,6 @@ def evalExpression(expr)
 		if symbol == :IDENTIFIER
 			symbol = $tables.lookup(identif)
 			if symbol[1] != nil
-				#print symbol
 				return symbol
 			else
 				puts "ERROR: variable #{identif} no inicializada"

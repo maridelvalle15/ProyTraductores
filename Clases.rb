@@ -300,10 +300,40 @@ class EXPR_UNARIA
 		case operation
 		when :MINUS_UNARY
 			return -1*expr1 
-		when :DOLLAR #CAMBIAR ESTRUCTURA
-			return nil
-		when :APOSTROPHE #CAMBIAR ESTRUCTURA
-			return nil
+		when :DOLLAR 
+			for i in 0..expr1.length-1
+				for j in 0 ..expr1[i].length-1
+					if expr1[i][j] == "_"
+						expr1[i][j] = "|"
+					elsif expr1[i][j] == "-"
+						expr1[i][j] = "|"
+					elsif expr1[i][j] == "\\"
+						expr1[i][j] = "/"
+					elsif expr1[i][j] == "|"
+						expr1[i][j] = "_"
+					elsif expr1[i][j] == "/"
+						expr1[i][j] = "\\"
+					end
+				end
+			end
+			return expr1
+		when :APOSTROPHE 
+			aux = []
+			filas = expr1.length
+			columnas = expr1[0].length
+			for i in 0 .. columnas-1
+				a = ""
+				for j in 0.. filas-1
+					a = a + " "
+				end
+				aux << a
+			end
+			for i in 0 .. columnas-1
+				for j in 0.. filas-1
+					aux[i][j] = expr1[j][i]
+				end
+			end
+			return aux
 		when :NOT
 			return !expr1
 		end
