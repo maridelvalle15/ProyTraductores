@@ -1,7 +1,4 @@
-{ @ a b c |
-	a = $(<->~<->~<->);
-	a = a&(<->~</>~<->);
-	write a;
-	a = a';
-	write a
+{ @ a b c ! d % e|
+	read e;
+	(e > 5 ? write <->:write <|>)
 }

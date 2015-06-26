@@ -1,6 +1,10 @@
-{ @ a b c |
-	a = $(<->~<->);
-	write a;
-	a = $a;
-	write a
+{ @ a b c d ! e f % g h|
+	e = true;
+	f = e^;
+	g = 5;
+	h = -g;
+	a = <->;
+	b = $a;
+	write $b;
+	write b
 }

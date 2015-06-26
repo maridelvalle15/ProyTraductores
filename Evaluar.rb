@@ -8,7 +8,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-#  25/06/2015
+#  26/06/2015
 
 require "./Table.rb"
 require "./TableSymbol.rb"
@@ -130,12 +130,7 @@ def  evalAssign(instr)
 	identif = values[0].get_value
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
-	#symbol_identif = $tables.lookup(identif)
 	symbol_expr = evalExpression(values[1])
-	#puts "ASSIG"
-	#puts "-----"
-	#print symbol_expr
-	#puts
 	if !$error
 		if symbol_expr[0] == :INTEGER
 			$tables.update(symbol_expr[0],identif,symbol_expr[1])
@@ -161,30 +156,28 @@ end
 # Chequea la estructura de los identificadores booleanos y/o enteros
 def evalIdentifierINT_BOOL(expr)
 	identif = expr.get_value
-	puts identif
 	# evalua en la tabla que el identificador corresponda con entero o 
 	# booleano, o que simplemente no se encuentre en la tabla
 	type = $tables.lookup(identif)
 	if type[0] == :INTEGER
 		print "Introduzca un numero entero: "
 		input = $stdin.readline
-		#if input.to_s == /^[a-zA-Z_][a-zA-Z0-9_]*/
-		#	puts "ERROR entrada incorrecta se espera un #{type[0]}"
-		#	$error = true
-		#else
-		input = input.to_i
-		print input
-		if input > 2147483647 || input < -2147483647
-			puts "ERROR: overflow entrada de numero de 32 bits erroneo"
-			$error = true
-		elsif input < 2147483647 && input > -2147483647
-			$tables.update(type[0],identif,input)
+		case input
+		when /^[0-9][0-9]*/ 
+			input = input.to_i
+			if input > 2147483647 || input < -2147483647
+				puts "ERROR: overflow entrada de numero de 32 bits erroneo"
+				$error = true
+			elsif input < 2147483647 && input > -2147483647
+				$tables.update(type[0],identif,input)
+			end
 		else
-			puts "ERROR: entrada incorrecta se espera un #{type[0]}"
+			puts "ERROR: entrada incorrecta se espera un INTEGER"
 			$error = true
 		end
+
 	elsif type[0] == :BOOLEAN
-		print "Introduzca true or false: "
+		print "Introduzca un booleano true or false: "
 		input = $stdin.readline
 		if input.downcase == "true\n"
 			$tables.update(type[0],identif,true) 
@@ -197,7 +190,7 @@ def evalIdentifierINT_BOOL(expr)
 	end
 end
 # evalua la estructura de los condicionales
-def evalConditional(expr) #FALTA
+def evalConditional(expr) 
 	symbol = expr.get_symbol
 	values = expr.get_values
 	type_expr = evalExpression(values[0])
@@ -272,7 +265,7 @@ def evalExpression(expr)
 			if symbol[1] != nil
 				return symbol
 			else
-				puts "ERROR: variable #{identif} no inicializada"
+				puts "ERROR: variable `#{identif}` no inicializada"
 				$error = true
 				return [:UNKNOW,nil]
 			end
@@ -306,9 +299,9 @@ def evalExpression(expr)
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				if expr_eval == nil
 					if arit == :AMPERSAND 
-						puts "ERROR: concatenacion vertical incorrecta"
+						puts "ERROR: concatenacion vertical incorrecta tamano incompatible"
 					else
-						puts "ERROR: concatenacion horizontal incorrecta"
+						puts "ERROR: concatenacion horizontal incorrecta tamano incompatible"
 					end
 					$error = true
 					return [:UNKNOW,nil]
@@ -333,7 +326,7 @@ def evalExpression(expr)
 			when :MINUS_UNARY
 				expr_eval = expr.get_eval(arit,symbol1[1])
 				return [symbol1[0],expr_eval]
-			when :DOLLAR, :APOSTROPHE #PEOS TOTALES
+			when :DOLLAR, :APOSTROPHE 
 				expr_eval = expr.get_eval(arit,symbol1[1])
 				return [symbol1[0],expr_eval]
 			when :NOT

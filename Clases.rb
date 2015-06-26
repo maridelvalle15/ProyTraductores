@@ -7,7 +7,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-#  25/06/2015
+#  26/06/2015
 
 # Clases utilizadas por el parser para crear el arbol sintactico abstracto
 
@@ -301,22 +301,32 @@ class EXPR_UNARIA
 		when :MINUS_UNARY
 			return -1*expr1 
 		when :DOLLAR 
+			aux = []
+			filas = expr1.length
+			columnas = expr1[0].length
+			for i in 0 .. filas-1
+				a = ""
+				for j in 0.. columnas-1
+					a = a + " "
+				end
+				aux << a
+			end
 			for i in 0..expr1.length-1
 				for j in 0 ..expr1[i].length-1
 					if expr1[i][j] == "_"
-						expr1[i][j] = "|"
+						aux[i][j] = "|"
 					elsif expr1[i][j] == "-"
-						expr1[i][j] = "|"
+						aux[i][j] = "|"
 					elsif expr1[i][j] == "\\"
-						expr1[i][j] = "/"
+						aux[i][j] = "/"
 					elsif expr1[i][j] == "|"
-						expr1[i][j] = "_"
+						aux[i][j] = "_"
 					elsif expr1[i][j] == "/"
-						expr1[i][j] = "\\"
+						aux[i][j] = "\\"
 					end
 				end
 			end
-			return expr1
+			return aux
 		when :APOSTROPHE 
 			aux = []
 			filas = expr1.length
