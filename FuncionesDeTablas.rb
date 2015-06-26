@@ -10,9 +10,6 @@
 # Fecha Ultima Modificacion: 
 # 	14/06/2015
 
-# Clases utilizadas por el parser para crear el arbol sintactico abstracto
-
-# Clase que representa la regla del programa principal
 
 require "./Table.rb"
 require "./TableSymbol.rb"
@@ -27,14 +24,6 @@ $var_iter = []
 # Debe verificar la estructura del programa
 def verifyAST(ast)
 	verifyEstruct(ast.get_estruct)
-	#if !$error
-	#	#Si no hay errores se imprime toda la tabla de simbolos 
-	#	puts "Table de simbolos: "
-	#	$ftable.each do |ftable|
-	#		ftable[0].print_symbols(ftable[1])
-	#		puts
-	#	end
-	#end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
@@ -138,7 +127,7 @@ def  verifyAssign(instr)
 	# Si al buscar en la tabla, la variable no ha sido declarada, 
 	# devuelve un mensaje
 	if $var_iter.include?(identif)
-		puts "Variable de iteracion #{identif} no puede ser modificada"
+		puts "Variable de iteracion: #{identif}, no puede ser modificada"
 		$error = true
 	else
 		if !$table.lookup(identif)
@@ -149,7 +138,6 @@ def  verifyAssign(instr)
 			symbol_identif = $table.lookup(identif)
 			symbol_expr = verifyExpression(values[1])
 			if symbol_identif[0] == symbol_expr[0]
-				##puts "Comparacion asignacion correcta"
 			elsif symbol_expr[0] == :UNKNOW
 				$error = true
 			else
@@ -167,7 +155,6 @@ def verifyWrite(expr)
 	
 	# Unicamente se pueden escribir lienzos
 	if symbol[0] == :CANVAS
-		#puts "Comparacion asignacion correcta"
 	elsif symbol[0] == :UNKNOW
 		$error = true
 	else
@@ -270,8 +257,6 @@ def verifyIterDet(expr)
 		$table.endscope
 		$var_iter.pop
 	else
-		#$table.addscope
-		#$table.insert(:INTEGER,)
 		if symbol2[0] == :INTEGER && symbol3[0] ==:INTEGER
 		# En caso que no se cumpla que ambas expresiones sean aritmeticas
 		else 

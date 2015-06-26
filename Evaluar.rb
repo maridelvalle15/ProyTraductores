@@ -8,11 +8,7 @@
 # 	Marisela Del Valle  11-10217
 #
 # Fecha Ultima Modificacion: 
-# 	14/06/2015
-
-# Clases utilizadas por el parser para crear el arbol sintactico abstracto
-
-# Clase que representa la regla del programa principal
+#  25/06/2015
 
 require "./Table.rb"
 require "./TableSymbol.rb"
@@ -23,17 +19,8 @@ $ftables = []			# Definir una varible global llamada ftabl
 $error = false			# Definir una varible global llamada error
 
 # Luego de realizar parseo, se comienza a crear el arbol abstracto sintactico. 
-# Debe verificar la estructura del programa
 def evalAST(ast)
 	evalEstruct(ast.get_estruct)
-	#if !$error
-		#Si no hay errores se imprime toda la tabla de simbolos 
-	#	puts "Table de simbolos Evaluada: "
-	#	$ftables.each do |ftable|
-	#		ftable[0].print_symbols(ftable[1])
-	#		puts
-	#	end
-	#end
 end
 
 # Chequea la estructura del programa (declaraciones e instrucciones). 
@@ -58,7 +45,7 @@ def evalDeclaration(declaration)
 		evalDeclaration(declaration.get_dec)
 		# Obtiene el tipo de la variable declarada
 		type = declaration.get_type.get_symbol
-		# Verifica la lista de identificadores
+		# evalua la lista de identificadores
 		if !$error
 			evalListident(type,declaration.get_listident)
 		end
@@ -84,17 +71,17 @@ def evalListident(type,listident)
 	end
 end
 
-# Verifica quer instruccion esta leyendo
+# evalua quer instruccion esta leyendo
 def evalInstr(instr)
 	# En caso que sea read o write
 	if !$error
 		if instr.class == WRITE_READ
 			symbol = instr.get_symbol
 			case symbol
-			# Verifica la estructura del write
+			# evalua la estructura del write
 			when :WRITE
 				evalWrite(instr.get_instr)
-			# Verifica la estructura del read
+			# evalua la estructura del read
 			when :READ
 				evalRead(instr.get_instr)
 			end
@@ -108,25 +95,25 @@ def evalInstr(instr)
 				if !$error
 					if symbols[i] != nil
 						case symbols[i]
-						# Verifica la estructura de la instruccion
+						# evalua la estructura de la instruccion
 						when :INSTR
 							evalInstr(instrs[i])
-						# Verifica la estructura del programa, en este caso se agrega
+						# evalua la estructura del programa, en este caso se agrega
 						# una tabla
 						when :ESTRUCT
 							$tables.addscope
 							$alcance += 1
 							evalEstruct(instrs[i])
-						# Verifica la estructura de la asignacion
+						# evalua la estructura de la asignacion
 						when :ASSIGN
 							evalAssign(instrs[i])
-						# Verifica la estructura del condicional
+						# evalua la estructura del condicional
 						when :CONDIC
 							evalConditional(instrs[i])
-						# Verifica la estructura de la iteracion indeterminada
+						# evalua la estructura de la iteracion indeterminada
 						when :ITERIND
 							evalIterInd(instrs[i])
-						# Verifica la estructura de la iteracion determinada
+						# evalua la estructura de la iteracion determinada
 						when :ITERDET
 							evalIterDet(instrs[i])
 						end
@@ -160,13 +147,13 @@ def  evalAssign(instr)
 	end
 end
 
-# Verificar la estructura del write
+# evaluar la estructura del write
 def evalWrite(expr)
 	symbol = evalExpression(expr)
 	puts symbol[1]
 end
 
-# Verifica la estructura del read
+# evalua la estructura del read
 def evalRead(expr)
 	evalIdentifierINT_BOOL(expr)
 end
@@ -175,7 +162,7 @@ end
 def evalIdentifierINT_BOOL(expr)
 	identif = expr.get_value
 	puts identif
-	# Verifica en la tabla que el identificador corresponda con entero o 
+	# evalua en la tabla que el identificador corresponda con entero o 
 	# booleano, o que simplemente no se encuentre en la tabla
 	type = $tables.lookup(identif)
 	if type[0] == :INTEGER
@@ -188,15 +175,14 @@ def evalIdentifierINT_BOOL(expr)
 		input = input.to_i
 		print input
 		if input > 2147483647 || input < -2147483647
-			puts "ERROR numero de 32 bits erroneo"
+			puts "ERROR: overflow entrada de numero de 32 bits erroneo"
 			$error = true
 		elsif input < 2147483647 && input > -2147483647
 			$tables.update(type[0],identif,input)
 		else
-			puts "ERROR entrada incorrecta se espera un #{type[0]}"
+			puts "ERROR: entrada incorrecta se espera un #{type[0]}"
 			$error = true
 		end
-		#end
 	elsif type[0] == :BOOLEAN
 		print "Introduzca true or false: "
 		input = $stdin.readline
@@ -205,12 +191,12 @@ def evalIdentifierINT_BOOL(expr)
 		elsif input.downcase == "false\n"
 			$tables.update(type[0],identif,false)
 		else
-			puts "ERROR entrada incorrecta se espera un #{type[0]}"
+			puts "ERROR: entrada incorrecta se espera un #{type[0]}"
 			$error = true
 		end
 	end
 end
-# Verifica la estructura de los condicionales
+# evalua la estructura de los condicionales
 def evalConditional(expr) #FALTA
 	symbol = expr.get_symbol
 	values = expr.get_values
@@ -227,7 +213,7 @@ def evalConditional(expr) #FALTA
 	end
 end
 
-# Verifica la iteracion indeterminada
+# evalua la iteracion indeterminada
 def evalIterInd(expr) 
 	symbol = expr.get_symbol
 	values = expr.get_values
@@ -242,8 +228,8 @@ def evalIterInd(expr)
 	end
 end
 
-# Verifica la iteracion determinada
-def evalIterDet(expr) #FALTA
+# evalua la iteracion determinada
+def evalIterDet(expr) 
 	symbol = expr.get_symbol
 	values = expr.get_values
 	symbol2 = evalExpression(values[1])
@@ -252,8 +238,6 @@ def evalIterDet(expr) #FALTA
 		if !$error
 			if values[0] != nil
 				identif = values[0].get_value
-				#puts identif
-				#puts symbol2[1]
 				$tables.addscope
 				$tables.insert(:INTEGER,identif,symbol2[1])
 				$ftables << [$tables.get_actual,$alcance]
@@ -277,7 +261,7 @@ def evalIterDet(expr) #FALTA
 	end
 end
 
-# Verifica la estructura de la expresion
+# evalua la estructura de la expresion
 def evalExpression(expr)
 	exprs = expr.get_expr
 	if expr.class == EXPR_VALUE
@@ -318,18 +302,13 @@ def evalExpression(expr)
 			when :AND, :OR
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				return [symbol1[0],expr_eval]
-			when :AMPERSAND, :VIRGUILE #PEOS TOTALES
-				#puts 
-				#print symbol1[1]
-				#print symbol2[1]
-				#puts
-				#puts arit 
+			when :AMPERSAND, :VIRGUILE 
 				expr_eval = expr.get_eval(arit,symbol1[1],symbol2[1])
 				if expr_eval == nil
 					if arit == :AMPERSAND 
-						puts "ERROR concatenacion vertical incorrecta"
+						puts "ERROR: concatenacion vertical incorrecta"
 					else
-						puts "ERROR concatenacion horizontal incorrecta"
+						puts "ERROR: concatenacion horizontal incorrecta"
 					end
 					$error = true
 					return [:UNKNOW,nil]
@@ -347,7 +326,7 @@ def evalExpression(expr)
 	elsif expr.class == EXPR_UNARIA
 		arit = expr.get_arit
 		symbol1 = evalExpression(exprs)
-		# Verifica las expresiones unarias aritmeticas
+		# evalua las expresiones unarias aritmeticas
 		# Para cada caso, chequea que sean correctas
 		if !$error 
 			case arit
@@ -362,7 +341,7 @@ def evalExpression(expr)
 				return [symbol1[0],expr_eval]
 			end
 		end
-	# En caso de conseguir expresiones parentizadas, verifica la expresion
+	# En caso de conseguir expresiones parentizadas, evalua la expresion
 	elsif expr.class == EXPR_PARENTHESIS
 		return evalExpression(exprs)
 	end

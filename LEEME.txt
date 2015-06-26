@@ -23,6 +23,7 @@ Implementacion :
 				FuncionesDeTablas.rb
 				Table.rb
 				TableSymbol.rb
+				Evaluar.rb
 
 Estado actual :
 	Actualmente el proyecto lee un archivo de entrada, detecta los simbolos que el lenguaje Lanscii acepta y devuelve los tokens correspondientes. Si todos los simbolos son aceptados, Se ejecuta el Parser tomando como parametro de entrada y se crea el arbol sintactico abstracto respectivo. El arbol que genera el parser
